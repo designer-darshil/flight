@@ -132,7 +132,7 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
             </div>
             <button
               onClick={() => selectFlight(flight)}
-              className="mt-2 w-full md:w-auto h-10 px-5 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs tracking-wider uppercase transition-colors shadow-sm flex items-center justify-center cursor-pointer"
+              className="mt-2 w-full md:w-auto min-h-[44px] px-6 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-semibold text-xs tracking-wider uppercase transition-colors shadow-sm flex items-center justify-center cursor-pointer focus-visible:ring-2 focus-visible:ring-[#963F24]"
             >
               SELECT FLIGHT
             </button>
@@ -155,7 +155,7 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setIsSaveModalOpen(true)}
-              className="font-mono text-xs text-[#6F6A61] hover:text-[#963F24] font-medium flex items-center space-x-1 cursor-pointer transition-colors"
+              className="min-h-[44px] px-2 font-mono text-xs text-[#6F6A61] hover:text-[#963F24] font-medium flex items-center space-x-1 cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-[#963F24] rounded-[6px]"
               title="Save to itineraries"
             >
               <Bookmark className="w-3.5 h-3.5" />
@@ -164,7 +164,7 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
 
             <button
               onClick={() => openDrawer(flight)}
-              className="font-mono text-xs text-[#963F24] hover:underline font-semibold flex items-center space-x-1 cursor-pointer"
+              className="min-h-[44px] px-2 font-mono text-xs text-[#963F24] hover:underline font-semibold flex items-center space-x-1 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#963F24] rounded-[6px]"
             >
               <Info className="w-3.5 h-3.5" />
               <span>Flight Details</span>
@@ -172,7 +172,7 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
 
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="font-mono text-xs text-ink hover:text-[#963F24] font-medium flex items-center space-x-1 bg-sand px-3 py-1 rounded-[6px] transition-colors cursor-pointer"
+              className="min-h-[44px] font-mono text-xs text-ink hover:text-[#963F24] font-medium flex items-center space-x-1 bg-sand px-3 py-1 rounded-[6px] transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#963F24]"
             >
               <span>{isExpanded ? 'Less' : 'Quick Specs'}</span>
               {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}

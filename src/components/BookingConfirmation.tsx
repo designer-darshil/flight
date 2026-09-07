@@ -67,7 +67,7 @@ export const BookingConfirmation: React.FC = () => {
         {/* CLOSE BUTTON */}
         <button
           onClick={resetBooking}
-          className="absolute top-5 right-5 p-2 rounded-[8px] hover:bg-[#EFE9DE] text-[#6F6A61] hover:text-[#171717] transition-colors"
+          className="absolute top-4 right-4 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] hover:bg-[#EFE9DE] text-[#6F6A61] hover:text-[#171717] transition-colors focus-visible:ring-2 focus-visible:ring-[#963F24] cursor-pointer"
           aria-label="Close confirmation"
         >
           <X className="w-5 h-5" />

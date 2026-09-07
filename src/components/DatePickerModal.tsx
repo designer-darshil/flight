@@ -72,7 +72,8 @@ export const DatePickerModal: React.FC = () => {
           </div>
           <button
             onClick={() => setIsDatePickerOpen(false)}
-            className="p-2 rounded-[8px] hover:bg-sand text-warm-gray hover:text-ink transition-colors"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] hover:bg-sand text-warm-gray hover:text-ink transition-colors focus-visible:ring-2 focus-visible:ring-[#963F24] cursor-pointer"
+            aria-label="Close date picker"
           >
             <X className="w-5 h-5" />
           </button>

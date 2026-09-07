@@ -328,3 +328,27 @@
 .text-accent-accessible {
   color: var(--color-accent-primary); /* Contrast ratio 6.2:1 on white */
 }
+
+/* ==================================================
+   UNIVERSAL ACCESSIBLE FOCUS-VISIBLE (WCAG 2.1 AA)
+   Every interactive element receives a high-contrast focus indicator.
+   ================================================== */
+:focus-visible {
+  outline: 2px solid var(--color-accent-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* ==================================================
+   PREFERS-REDUCED-MOTION (WCAG 2.1 AA MANDATORY)
+   Disables non-essential motion for vestibular disorder protection.
+   ================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

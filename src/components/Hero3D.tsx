@@ -156,30 +156,46 @@ export const Hero3D: React.FC = () => {
     };
     window.addEventListener('resize', handleResize);
 
-    // ANIMATION LOOP
+    // Motion preference check
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ANIMATION LOOP & INTERSECTION OBSERVER FOR PERFORMANCE
     let animationId: number;
     let progress = 0;
+    let isVisible = true;
     const historyPositions: THREE.Vector3[] = [];
 
     const animate = () => {
       animationId = requestAnimationFrame(animate);
 
-      // Smooth mouse parallax
-      currentX += (targetX - currentX) * 0.04;
-      currentY += (targetY - currentY) * 0.04;
+      if (!isVisible) return;
+
+      // Smooth mouse parallax (disabled if reduced motion)
+      if (!prefersReducedMotion) {
+        currentX += (targetX - currentX) * 0.04;
+        currentY += (targetY - currentY) * 0.04;
+      } else {
+        currentX = 0;
+        currentY = 0;
+      }
       camera.position.x = currentX;
       camera.position.y = 1.2 - currentY;
       camera.lookAt(0, 0.1, 0);
 
-      // Advance aircraft along route (looping smoothly)
-      progress = (progress + 0.0012) % 1;
+      // Advance aircraft along route (stationary at midpoint if reduced motion)
+      if (!prefersReducedMotion) {
+        progress = (progress + 0.0012) % 1;
+      } else {
+        progress = 0.5;
+      }
       const point = curve.getPointAt(progress);
       const tangent = curve.getTangentAt(progress);
 
       planeGroup.position.copy(point);
       planeGroup.lookAt(point.clone().add(tangent));
-      // Subtle bank on turn
-      planeGroup.rotation.z = Math.sin(progress * Math.PI * 2) * 0.25;
+      if (!prefersReducedMotion) {
+        planeGroup.rotation.z = Math.sin(progress * Math.PI * 2) * 0.25;
+      }
 
       // Update trail
       historyPositions.unshift(point.clone());
@@ -192,20 +208,33 @@ export const Hero3D: React.FC = () => {
       }
       posAttr.needsUpdate = true;
 
-      // Pulse waypoint rings
-      waypointGroup.children.forEach((child, idx) => {
-        if (child instanceof THREE.Mesh && child.geometry instanceof THREE.RingGeometry) {
-          const s = 1 + Math.sin(Date.now() * 0.003 + idx) * 0.08;
-          child.scale.set(s, s, 1);
-        }
-      });
+      // Pulse waypoint rings (only if normal motion)
+      if (!prefersReducedMotion) {
+        waypointGroup.children.forEach((child, idx) => {
+          if (child instanceof THREE.Mesh && child.geometry instanceof THREE.RingGeometry) {
+            const s = 1 + Math.sin(Date.now() * 0.003 + idx) * 0.08;
+            child.scale.set(s, s, 1);
+          }
+        });
+      }
 
       renderer.render(scene, camera);
     };
 
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          isVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(container);
+
     animate();
 
     return () => {
+      observer.disconnect();
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationId);

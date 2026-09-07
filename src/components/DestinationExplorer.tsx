@@ -200,6 +200,8 @@ export const DestinationExplorer: React.FC = () => {
             <img
               src={heroItem.image}
               alt={heroItem.name}
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             {/* Cinematic Scrim */}
@@ -260,6 +262,8 @@ export const DestinationExplorer: React.FC = () => {
                   <img
                     src={dest.image}
                     alt={dest.name}
+                    loading="lazy"
+                    decoding="async"
                     className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#171717] via-[#171717]/45 to-transparent" />
@@ -294,6 +298,8 @@ export const DestinationExplorer: React.FC = () => {
                 <img
                   src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1200&q=80"
                   alt="London Westminster"
+                  loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#171717] via-[#171717]/40 to-transparent" />

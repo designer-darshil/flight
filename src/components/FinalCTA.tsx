@@ -24,6 +24,8 @@ export const FinalCTA: React.FC = () => {
         <img
           src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000&auto=format&fit=crop"
           alt="Golden hour coastal horizon"
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover filter brightness-[0.88] contrast-[1.05] saturate-[0.95]"
         />
         {/* Warm Golden Hour & Sand Editorial Overlays */}

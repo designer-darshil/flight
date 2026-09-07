@@ -136,7 +136,7 @@ export const BookingEngine: React.FC = () => {
 
           {/* FROM DROPDOWN / AIRPORT SELECTOR POPOVER */}
           {fromOpen && (
-            <div className="absolute left-0 top-full mt-2 w-[340px] sm:w-[400px] bg-[#FFFFFF] border border-[#D8D1C5] rounded-[16px] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-4 z-50 text-ink">
+            <div className="absolute left-0 top-full mt-2 w-[calc(100vw-3rem)] max-w-[400px] sm:w-[400px] bg-[#FFFFFF] border border-[#D8D1C5] rounded-[16px] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-4 z-50 text-ink">
               {/* Search bar */}
               <div className="relative mb-3">
                 <Search className="w-3.5 h-3.5 text-warm-gray absolute left-3 top-1/2 -translate-y-1/2" />
@@ -256,13 +256,14 @@ export const BookingEngine: React.FC = () => {
           )}
         </div>
 
-        {/* SWAP AIRPORTS BUTTON (Floating center icon) */}
+        {/* SWAP AIRPORTS BUTTON */}
         <div className="hidden md:flex absolute left-[25%] -translate-x-1/2 top-1/2 -translate-y-1/2 z-20">
           <button
             type="button"
             onClick={swapAirports}
             title="Swap Origin and Destination"
-            className="w-8 h-8 rounded-full bg-white border border-border text-warm-gray hover:text-ink hover:border-ink flex items-center justify-center transition-all shadow-sm"
+            aria-label="Swap Origin and Destination"
+            className="w-8 h-8 rounded-full bg-white border border-[#D8D1C5] text-[#6F6A61] hover:text-[#171717] hover:border-[#171717] flex items-center justify-center transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-[#963F24]"
           >
             <ArrowLeftRight className="w-3.5 h-3.5" />
           </button>
@@ -294,7 +295,7 @@ export const BookingEngine: React.FC = () => {
 
           {/* TO DROPDOWN / AIRPORT SELECTOR POPOVER */}
           {toOpen && (
-            <div className="absolute left-0 top-full mt-2 w-[340px] sm:w-[400px] bg-[#FFFFFF] border border-[#D8D1C5] rounded-[16px] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-4 z-50 text-ink">
+            <div className="absolute left-0 sm:left-auto md:left-0 top-full mt-2 w-[calc(100vw-3rem)] max-w-[400px] sm:w-[400px] bg-[#FFFFFF] border border-[#D8D1C5] rounded-[16px] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-4 z-50 text-ink">
               {/* Search bar */}
               <div className="relative mb-3">
                 <Search className="w-3.5 h-3.5 text-warm-gray absolute left-3 top-1/2 -translate-y-1/2" />
@@ -469,7 +470,7 @@ export const BookingEngine: React.FC = () => {
 
           {/* PASSENGERS POPOVER (Adults, Children, Infants with quantity controls) */}
           {passengerOpen && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-[#FFFFFF] border border-[#D8D1C5] rounded-[16px] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-5 z-50 space-y-4 text-ink">
+            <div className="absolute right-0 top-full mt-2 w-[calc(100vw-3rem)] sm:w-80 max-w-[320px] bg-[#FFFFFF] border border-[#D8D1C5] rounded-[16px] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-5 z-50 space-y-4 text-ink">
               
               {/* Adults Control */}
               <div className="flex items-center justify-between">

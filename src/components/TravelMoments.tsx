@@ -63,6 +63,7 @@ export const TravelMoments: React.FC = () => {
                   alt={moment.title} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter saturate-[0.95]"
                   loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-black/20" />
                 

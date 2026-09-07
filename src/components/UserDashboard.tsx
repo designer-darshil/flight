@@ -263,10 +263,65 @@ export const UserDashboard: React.FC = () => {
 
       {/* DASHBOARD LAYOUT: CREAM/WHITE SIDEBAR + MAIN CONTENT */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-8">
+        
+        {/* MOBILE HORIZONTAL TABS BAR (< lg) */}
+        <div className="lg:hidden bg-[#FFFFFF] rounded-[12px] border border-[#D8D1C5] p-3 shadow-sm mb-6">
+          <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#D8D1C5]">
+            <div 
+              onClick={() => setActiveSidebarTab('profile')}
+              className="flex items-center space-x-2.5 cursor-pointer"
+            >
+              <div className="w-8 h-8 rounded-[8px] bg-[#EFE9DE] border border-[#D8D1C5] flex items-center justify-center font-serif text-xs font-bold text-[#171717]">
+                AM
+              </div>
+              <div>
+                <div className="font-serif font-medium text-xs text-[#171717]">Alex Morgan</div>
+                <div className="text-[10px] font-mono text-[#6F6A61]">GB ••••921</div>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsFlightStatusOpen(true)}
+              className="text-[11px] font-mono text-[#963F24] font-semibold flex items-center gap-1 bg-[#EFE9DE] px-2.5 py-1.5 rounded-[6px] cursor-pointer"
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Live Radar</span>
+            </button>
+          </div>
+          
+          <div className="flex overflow-x-auto gap-2 py-1 no-scrollbar">
+            {[
+              { id: 'overview', label: 'Overview', icon: Compass },
+              { id: 'my-trips', label: 'My Trips', icon: Briefcase },
+              { id: 'profile', label: 'Profile', icon: User },
+              { id: 'settings', label: 'Settings', icon: Settings },
+              { id: 'travel-documents', label: 'Documents', icon: FileText },
+              { id: 'saved-flights', label: 'Saved', icon: Bookmark },
+              { id: 'price-alerts', label: 'Alerts', icon: Bell },
+            ].map(item => {
+              const Icon = item.icon;
+              const isActive = activeSidebarTab === item.id;
+              return (
+                <button
+                  key={`mob-${item.id}`}
+                  onClick={() => setActiveSidebarTab(item.id as SidebarTab)}
+                  className={`shrink-0 flex items-center space-x-1.5 px-3 py-2 rounded-[8px] text-xs font-mono transition-colors cursor-pointer ${
+                    isActive
+                      ? 'bg-[#963F24] text-white font-bold shadow-xs'
+                      : 'bg-[#F6F2EA] text-[#6F6A61] hover:text-[#171717]'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* SIDEBAR NAVIGATION - CREAM / WHITE, NO DARK / NO BLUE */}
-          <aside className="lg:col-span-3 bg-[#FFFFFF] rounded-[12px] border border-[#D8D1C5] p-5 shadow-[0_4px_20px_rgba(23,23,23,0.04)] sticky top-24">
+          {/* DESKTOP SIDEBAR NAVIGATION - CREAM / WHITE, NO DARK / NO BLUE */}
+          <aside className="hidden lg:block lg:col-span-3 bg-[#FFFFFF] rounded-[12px] border border-[#D8D1C5] p-5 shadow-[0_4px_20px_rgba(23,23,23,0.04)] sticky top-24">
             
             {/* USER MINI PROFILE */}
             <div 

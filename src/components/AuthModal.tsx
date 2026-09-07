@@ -45,8 +45,8 @@ export const AuthModal: React.FC = () => {
         {/* CLOSE BUTTON */}
         <button
           onClick={() => setIsAuthModalOpen(false)}
-          className="absolute top-4 right-4 z-20 p-2 rounded-[8px] bg-[#FFFFFF]/80 hover:bg-[#FFFFFF] text-[#6F6A61] hover:text-[#171717] transition-colors shadow-xs"
-          aria-label="Close"
+          className="absolute top-4 right-4 z-20 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] bg-[#FFFFFF] hover:bg-[#EFE9DE] text-[#6F6A61] hover:text-[#171717] transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-[#963F24] cursor-pointer"
+          aria-label="Close authentication modal"
         >
           <X className="w-5 h-5" />
         </button>

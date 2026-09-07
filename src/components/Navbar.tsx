@@ -261,7 +261,8 @@ export const Navbar: React.FC = () => {
         <div className="md:hidden flex items-center space-x-2">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`p-2 transition-colors ${
+            aria-label="Toggle navigation menu"
+            className={`min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] transition-colors focus-visible:ring-2 focus-visible:ring-[#963F24] cursor-pointer ${
               isScrolled ? 'text-ink' : 'text-white'
             }`}
           >
@@ -274,22 +275,22 @@ export const Navbar: React.FC = () => {
       {/* MOBILE DROPDOWN */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-cream border-b border-warm-gray-border px-6 py-6 space-y-4 shadow-paper-elevated text-ink">
-          <div className="space-y-3 font-sans uppercase font-bold text-sm tracking-wider">
+          <div className="space-y-1 font-sans uppercase font-bold text-sm tracking-wider">
             <button
               onClick={() => scrollToSection('booking-panel')}
-              className="block w-full text-left py-2 hover:text-terracotta"
+              className="w-full text-left min-h-[44px] flex items-center hover:text-terracotta cursor-pointer"
             >
               Flights
             </button>
             <button
               onClick={() => scrollToSection('destination-showcase')}
-              className="block w-full text-left py-2 hover:text-terracotta"
+              className="w-full text-left min-h-[44px] flex items-center hover:text-terracotta cursor-pointer"
             >
               Explore
             </button>
             <button
               onClick={() => scrollToSection('smart-deals-section')}
-              className="block w-full text-left py-2 hover:text-terracotta"
+              className="w-full text-left min-h-[44px] flex items-center hover:text-terracotta cursor-pointer"
             >
               Deals
             </button>
@@ -298,7 +299,7 @@ export const Navbar: React.FC = () => {
                 setMobileMenuOpen(false);
                 setIsMyTripsOpen(true);
               }}
-              className="block w-full text-left py-2 hover:text-terracotta"
+              className="w-full text-left min-h-[44px] flex items-center hover:text-terracotta cursor-pointer"
             >
               Trips
             </button>
@@ -308,7 +309,7 @@ export const Navbar: React.FC = () => {
                   setMobileMenuOpen(false);
                   setActiveView('dashboard');
                 }}
-                className="w-full text-left py-2 hover:text-terracotta flex items-center space-x-2"
+                className="w-full text-left min-h-[44px] hover:text-terracotta flex items-center space-x-2 cursor-pointer"
               >
                 <div className="w-5 h-5 rounded-full bg-[#963F24] text-white flex items-center justify-center text-[10px] font-bold">
                   AM
@@ -322,7 +323,7 @@ export const Navbar: React.FC = () => {
                   setAuthMode('login');
                   setIsAuthModalOpen(true);
                 }}
-                className="block w-full text-left py-2 hover:text-terracotta"
+                className="w-full text-left min-h-[44px] flex items-center hover:text-terracotta cursor-pointer"
               >
                 Sign In
               </button>
@@ -335,7 +336,7 @@ export const Navbar: React.FC = () => {
                 setMobileMenuOpen(false);
                 handleBookFlightClick();
               }}
-              className="w-full py-3 bg-terracotta text-white font-bold text-xs uppercase tracking-wider text-center"
+              className="w-full min-h-[48px] rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-bold text-xs uppercase tracking-wider text-center transition-colors cursor-pointer shadow-sm"
             >
               BOOK A FLIGHT
             </button>

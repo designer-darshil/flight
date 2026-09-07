@@ -131,8 +131,8 @@ export const FlightStatusModal: React.FC = () => {
 
           <button
             onClick={() => setIsFlightStatusOpen(false)}
-            className="p-2 rounded-[8px] hover:bg-[#EFE9DE] text-[#6F6A61] hover:text-[#171717] transition-colors font-mono text-xs"
-            aria-label="Close modal"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] hover:bg-[#EFE9DE] text-[#6F6A61] hover:text-[#171717] transition-colors font-mono text-xs focus-visible:ring-2 focus-visible:ring-[#963F24] cursor-pointer"
+            aria-label="Close flight status modal"
           >
             <X className="w-5 h-5" />
           </button>

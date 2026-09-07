@@ -462,7 +462,8 @@ export const FlightResultsApp: React.FC = () => {
                     </button>
                     <button
                       onClick={() => setMobileFilterOpen(false)}
-                      className="p-1.5 rounded-[6px] bg-sand hover:bg-sand/80 text-ink cursor-pointer"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] bg-sand hover:bg-sand/80 text-ink cursor-pointer focus-visible:ring-2 focus-visible:ring-[#963F24]"
+                      aria-label="Close filters"
                     >
                       <X className="w-4 h-4" />
                     </button>

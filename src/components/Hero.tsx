@@ -30,6 +30,7 @@ export const Hero: React.FC = () => {
         <img
           src="https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=2600&q=85"
           alt="Cinematic passenger aircraft approaching coastal destination at golden hour with warm sunlight"
+          fetchPriority="high"
           className="w-full h-full object-cover object-center scale-[1.03] transform transition-transform duration-1000 ease-out"
         />
 

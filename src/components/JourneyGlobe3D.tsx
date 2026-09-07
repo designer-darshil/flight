@@ -185,20 +185,30 @@ export const JourneyGlobe3D: React.FC = () => {
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
 
-    // ANIMATION LOOP
+    // Motion preference check
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ANIMATION LOOP & INTERSECTION OBSERVER FOR PERFORMANCE
     let animId: number;
     let t = 0;
+    let isVisible = true;
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
-      // Gentle auto rotation
-      if (!isDragging) {
+      if (!isVisible) return;
+
+      // Gentle auto rotation (disabled if reduced motion requested)
+      if (!isDragging && !prefersReducedMotion) {
         globeGroup.rotation.y += 0.0012;
       }
 
       // Aircraft travels along the Delhi -> Dubai -> London route
-      t = (t + 0.002) % 1;
+      if (!prefersReducedMotion) {
+        t = (t + 0.002) % 1;
+      } else {
+        t = 0.25; // Stationary at scenic waypoint
+      }
       const activeCurve = t < 0.5 ? mainRouteCurves[0] : mainRouteCurves[1];
       const curveT = (t % 0.5) * 2;
       const pos = activeCurve.getPointAt(curveT);
@@ -209,6 +219,17 @@ export const JourneyGlobe3D: React.FC = () => {
 
       renderer.render(scene, camera);
     };
+
+    // IntersectionObserver to pause rendering when scrolled out of view
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          isVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(container);
 
     animate();
 
@@ -223,6 +244,7 @@ export const JourneyGlobe3D: React.FC = () => {
     window.addEventListener('resize', handleResize);
 
     return () => {
+      observer.disconnect();
       container.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
