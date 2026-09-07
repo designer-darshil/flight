@@ -23,7 +23,7 @@ export const ProductSearchSection: React.FC = () => {
   });
 
   return (
-    <section className="py-28 px-6 sm:px-12 lg:px-16 bg-sand/50 text-ink border-t border-warm-gray-border/60 overflow-hidden">
+    <section className="py-28 px-6 sm:px-12 lg:px-16 bg-sand/50 text-ink border-t border-border/60 overflow-hidden">
       <div className="max-w-[1440px] mx-auto">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -46,7 +46,7 @@ export const ProductSearchSection: React.FC = () => {
               We stripped away the noise, the bait-and-switch pricing, and the hidden booking fees. Compare 450+ verified airlines on a clean, zero-friction interface built for clarity.
             </p>
 
-            <div className="space-y-4 pt-4 border-t border-warm-gray-border/70 text-xs font-sans">
+            <div className="space-y-4 pt-4 border-t border-border/70 text-xs font-sans">
               <div className="flex items-start space-x-3">
                 <span className="w-5 h-5 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center font-mono font-bold text-[10px] shrink-0 mt-0.5">
                   01
@@ -96,7 +96,7 @@ export const ProductSearchSection: React.FC = () => {
           <div className="lg:col-span-7 space-y-4">
             
             {/* Top Results Header Bar */}
-            <div className="bg-white border border-warm-gray-border p-4 flex flex-wrap items-center justify-between gap-3 shadow-paper">
+            <div className="bg-white border border-border p-4 flex flex-wrap items-center justify-between gap-3 shadow-paper">
               <div className="flex items-center space-x-3">
                 <span className="text-xs font-mono font-bold text-terracotta uppercase">
                   {searchParams.from.code} ➔ {searchParams.to.code}
@@ -129,7 +129,7 @@ export const ProductSearchSection: React.FC = () => {
               {sortedFlights.slice(0, 3).map((flight: Flight) => (
                 <div
                   key={flight.id}
-                  className="bg-white border border-warm-gray-border p-5 sm:p-6 shadow-paper hover:shadow-paper-elevated transition-all duration-300 relative group"
+                  className="bg-white border border-border p-5 sm:p-6 shadow-paper hover:shadow-paper-elevated transition-all duration-300 relative group"
                 >
                   {flight.recommended && (
                     <div className="absolute top-0 right-6 -translate-y-1/2 px-2.5 py-0.5 bg-terracotta text-white font-mono text-[9px] font-bold uppercase tracking-wider">
@@ -137,11 +137,11 @@ export const ProductSearchSection: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-warm-gray-border/50">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/50">
                     
                     {/* Airline & Aircraft */}
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-sand/60 border border-warm-gray-border flex items-center justify-center font-mono font-bold text-xs text-ink">
+                      <div className="w-8 h-8 bg-sand/60 border border-border flex items-center justify-center font-mono font-bold text-xs text-ink">
                         {flight.airlineCode}
                       </div>
                       <div>
@@ -208,7 +208,7 @@ export const ProductSearchSection: React.FC = () => {
                   </div>
 
                   {/* BOTTOM ACTION BAR */}
-                  <div className="pt-3 border-t border-warm-gray-border/50 flex flex-wrap items-center justify-between gap-3">
+                  <div className="pt-3 border-t border-border/50 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center space-x-3 text-xs text-warm-gray font-mono">
                       <span>{flight.baggage.cabin} Cabin</span>
                       <span>·</span>
@@ -227,7 +227,7 @@ export const ProductSearchSection: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => openDrawer(flight)}
-                          className="px-3 py-2 text-xs font-sans text-warm-gray hover:text-ink border border-warm-gray-border hover:border-ink transition-colors"
+                          className="px-3 py-2 text-xs font-sans text-warm-gray hover:text-ink border border-border hover:border-ink transition-colors"
                         >
                           Specs
                         </button>

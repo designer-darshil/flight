@@ -20,51 +20,51 @@ export const FlightDetailsDrawer: React.FC = () => {
   if (!isDrawerOpen || !drawerFlight) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm transition-opacity">
-      <div className="w-full max-w-xl h-full bg-white text-slate-900 shadow-2xl flex flex-col justify-between overflow-y-auto animate-slideInRight">
+    <div className="fixed inset-0 z-50 flex justify-end bg-ink/40 backdrop-blur-sm transition-opacity">
+      <div className="w-full max-w-xl h-full bg-paper text-ink shadow-2xl flex flex-col justify-between overflow-y-auto animate-slideInRight border-l border-border">
         
         {/* DRAWER TOP BAR */}
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div className="p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white text-xs shadow-md"
+              className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-sm"
               style={{ backgroundColor: drawerFlight.accentColor }}
             >
               {drawerFlight.logoText}
             </div>
             <div>
-              <div className="text-lg font-bold font-display text-slate-900">
+              <div className="text-lg font-serif font-medium text-ink">
                 {drawerFlight.airline}
               </div>
-              <div className="text-xs font-mono text-slate-500">
-                {drawerFlight.flightNumber} · {drawerFlight.aircraft}
+              <div className="text-xs font-mono text-warm-gray">
+                {drawerFlight.flightNumber} &bull; {drawerFlight.aircraft}
               </div>
             </div>
           </div>
 
           <button
             onClick={closeDrawer}
-            className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-800 transition-colors"
+            className="p-2 rounded-lg hover:bg-sand text-warm-gray hover:text-ink transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* DRAWER TABS */}
-        <div className="flex border-b border-slate-100 px-6 gap-6 text-xs font-semibold">
+        <div className="flex border-b border-border px-6 gap-6 text-xs font-mono">
           {[
             { id: 'overview', label: 'Overview' },
             { id: 'fare', label: 'Fare Rules' },
             { id: 'baggage', label: 'Baggage' },
-            { id: 'policy', label: 'Cancellation Policy' },
+            { id: 'policy', label: 'Cancellation' },
           ].map(t => (
             <button
               key={t.id}
               onClick={() => setActiveTab(t.id as any)}
-              className={`py-3.5 border-b-2 transition-all ${
+              className={`py-3.5 border-b-2 transition-colors uppercase tracking-wider ${
                 activeTab === t.id
-                  ? 'border-aeriva-blue text-aeriva-blue'
-                  : 'border-transparent text-slate-400 hover:text-slate-700'
+                  ? 'border-terracotta text-terracotta font-medium'
+                  : 'border-transparent text-warm-gray hover:text-ink'
               }`}
             >
               {t.label}
@@ -80,34 +80,34 @@ export const FlightDetailsDrawer: React.FC = () => {
             <div className="space-y-6">
               
               {/* Route Timeline */}
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
-                <div className="flex justify-between items-center text-xs font-mono text-slate-500 pb-2 border-b border-slate-200">
+              <div className="p-5 rounded-xl bg-sand/30 border border-border space-y-4">
+                <div className="flex justify-between items-center text-xs font-mono text-warm-gray pb-2 border-b border-border">
                   <span>SEGMENT TIMELINE</span>
                   <span>{drawerFlight.duration} TOTAL</span>
                 </div>
 
-                <div className="space-y-4 relative pl-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-300">
+                <div className="space-y-4 relative pl-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-[1.5px] before:bg-border">
                   <div>
-                    <div className="text-base font-bold text-slate-900 font-display">
-                      {drawerFlight.departureTime} · {drawerFlight.from.city} ({drawerFlight.from.code})
+                    <div className="text-base font-serif font-medium text-ink">
+                      {drawerFlight.departureTime} &bull; {drawerFlight.from.city} ({drawerFlight.from.code})
                     </div>
-                    <div className="text-xs text-slate-500">
-                      {drawerFlight.from.name} · Terminal 3 · Gate B12
+                    <div className="text-xs text-warm-gray font-mono mt-0.5">
+                      {drawerFlight.from.name} &bull; Terminal 3 &bull; Gate B12
                     </div>
                   </div>
 
                   {drawerFlight.stops > 0 && (
-                    <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 font-mono">
-                      {drawerFlight.stopDetails} · Baggage checked through
+                    <div className="p-2.5 rounded-lg bg-champagne/10 border border-champagne/30 text-xs text-ink font-mono">
+                      {drawerFlight.stopDetails} &bull; Baggage transferred through
                     </div>
                   )}
 
                   <div>
-                    <div className="text-base font-bold text-slate-900 font-display">
-                      {drawerFlight.arrivalTime} · {drawerFlight.to.city} ({drawerFlight.to.code})
+                    <div className="text-base font-serif font-medium text-ink">
+                      {drawerFlight.arrivalTime} &bull; {drawerFlight.to.city} ({drawerFlight.to.code})
                     </div>
-                    <div className="text-xs text-slate-500">
-                      {drawerFlight.to.name} · Terminal 3 · Baggage Belt 4
+                    <div className="text-xs text-warm-gray font-mono mt-0.5">
+                      {drawerFlight.to.name} &bull; Terminal 5 &bull; Baggage Belt 4
                     </div>
                   </div>
                 </div>
@@ -115,36 +115,36 @@ export const FlightDetailsDrawer: React.FC = () => {
 
               {/* Technical Aircraft Amenities Grid */}
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-                  <div className="flex items-center space-x-2 text-slate-600 font-semibold">
-                    <Wifi className="w-4 h-4 text-aeriva-blue" />
+                <div className="p-4 rounded-xl bg-sand/30 border border-border space-y-1">
+                  <div className="flex items-center space-x-2 text-ink font-medium">
+                    <Wifi className="w-4 h-4 text-terracotta" />
                     <span>In-Flight Wi-Fi</span>
                   </div>
-                  <div className="text-slate-500 text-[11px]">{drawerFlight.amenities.wifiText}</div>
+                  <div className="text-warm-gray text-[11px] font-sans">{drawerFlight.amenities.wifiText}</div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-                  <div className="flex items-center space-x-2 text-slate-600 font-semibold">
-                    <Coffee className="w-4 h-4 text-emerald-600" />
+                <div className="p-4 rounded-xl bg-sand/30 border border-border space-y-1">
+                  <div className="flex items-center space-x-2 text-ink font-medium">
+                    <Coffee className="w-4 h-4 text-olive" />
                     <span>Dining</span>
                   </div>
-                  <div className="text-slate-500 text-[11px]">{drawerFlight.amenities.mealText}</div>
+                  <div className="text-warm-gray text-[11px] font-sans">{drawerFlight.amenities.mealText}</div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-                  <div className="flex items-center space-x-2 text-slate-600 font-semibold">
-                    <Zap className="w-4 h-4 text-amber-600" />
+                <div className="p-4 rounded-xl bg-sand/30 border border-border space-y-1">
+                  <div className="flex items-center space-x-2 text-ink font-medium">
+                    <Zap className="w-4 h-4 text-champagne" />
                     <span>In-Seat Power</span>
                   </div>
-                  <div className="text-slate-500 text-[11px]">Universal 110V AC + USB-C high output</div>
+                  <div className="text-warm-gray text-[11px] font-sans">Universal 110V AC + USB-C fast charging</div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-                  <div className="flex items-center space-x-2 text-slate-600 font-semibold">
-                    <Tv className="w-4 h-4 text-purple-600" />
+                <div className="p-4 rounded-xl bg-sand/30 border border-border space-y-1">
+                  <div className="flex items-center space-x-2 text-ink font-medium">
+                    <Tv className="w-4 h-4 text-warm-gray" />
                     <span>Seat Pitch</span>
                   </div>
-                  <div className="text-slate-500 text-[11px]">{drawerFlight.amenities.legroomInches} inches ergonomic pitch</div>
+                  <div className="text-warm-gray text-[11px] font-sans">{drawerFlight.amenities.legroomInches} inches ergonomic recline</div>
                 </div>
               </div>
             </div>
@@ -152,18 +152,18 @@ export const FlightDetailsDrawer: React.FC = () => {
 
           {/* TAB 2: FARE RULES */}
           {activeTab === 'fare' && (
-            <div className="space-y-4 text-xs text-slate-600">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                <div className="font-bold text-slate-900 text-sm">Fare Code & Basis</div>
+            <div className="space-y-4 text-xs text-warm-gray">
+              <div className="p-4 rounded-xl bg-sand/30 border border-border space-y-2">
+                <div className="font-serif font-medium text-ink text-sm">Fare Code & Basis</div>
                 <div>Economy Standard Commercial Tariff</div>
-                <div className="text-[11px] text-slate-500 font-mono">Fare Basis Code: KLX9827GDS</div>
+                <div className="text-[11px] text-warm-gray font-mono">Fare Basis Code: KLX9827GDS</div>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2 text-slate-900 font-bold">
-                  <CheckCircle className="w-4 h-4 text-emerald-600" />
+              <div className="space-y-2 p-4 rounded-xl bg-paper border border-border">
+                <div className="flex items-center space-x-2 text-ink font-medium">
+                  <CheckCircle className="w-4 h-4 text-olive" />
                   <span>Date Changes Permitted</span>
                 </div>
-                <p className="text-slate-500 pl-6">{drawerFlight.changePolicyText}</p>
+                <p className="text-warm-gray pl-6">{drawerFlight.changePolicyText}</p>
               </div>
             </div>
           )}
@@ -171,20 +171,20 @@ export const FlightDetailsDrawer: React.FC = () => {
           {/* TAB 3: BAGGAGE */}
           {activeTab === 'baggage' && (
             <div className="space-y-4 text-xs">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="p-4 rounded-xl bg-sand/30 border border-border space-y-3">
                 <div className="flex items-center space-x-3">
-                  <Luggage className="w-5 h-5 text-aeriva-blue" />
+                  <Luggage className="w-5 h-5 text-terracotta" />
                   <div>
-                    <div className="font-bold text-slate-900">Cabin Carry-On Baggage</div>
-                    <div className="text-slate-500">{drawerFlight.baggage.cabin} (55 x 40 x 20 cm) + Laptop Bag</div>
+                    <div className="font-medium text-ink">Cabin Carry-On Allowance</div>
+                    <div className="text-warm-gray">{drawerFlight.baggage.cabin} (55 x 40 x 20 cm) + Personal Item</div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-slate-200 flex items-center space-x-3">
-                  <Luggage className="w-5 h-5 text-emerald-600" />
+                <div className="pt-3 border-t border-border flex items-center space-x-3">
+                  <Luggage className="w-5 h-5 text-olive" />
                   <div>
-                    <div className="font-bold text-slate-900">Checked In Baggage</div>
-                    <div className="text-slate-500">{drawerFlight.baggage.checked} included in base fare</div>
+                    <div className="font-medium text-ink">Checked Baggage</div>
+                    <div className="text-warm-gray">{drawerFlight.baggage.checked} included in base fare</div>
                   </div>
                 </div>
               </div>
@@ -193,23 +193,23 @@ export const FlightDetailsDrawer: React.FC = () => {
 
           {/* TAB 4: POLICY */}
           {activeTab === 'policy' && (
-            <div className="space-y-4 text-xs text-slate-600">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="flex items-center space-x-2 text-slate-900 font-bold">
-                  <Shield className="w-4 h-4 text-aeriva-blue" />
+            <div className="space-y-4 text-xs text-warm-gray">
+              <div className="p-4 rounded-xl bg-sand/30 border border-border space-y-2">
+                <div className="flex items-center space-x-2 text-ink font-medium">
+                  <Shield className="w-4 h-4 text-terracotta" />
                   <span>Cancellation & Refund Policy</span>
                 </div>
-                <p className="text-slate-500">{drawerFlight.refundPolicyText}</p>
+                <p className="text-warm-gray leading-relaxed">{drawerFlight.refundPolicyText}</p>
               </div>
             </div>
           )}
         </div>
 
         {/* BOTTOM ACTION BAR */}
-        <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+        <div className="p-6 border-t border-border bg-sand/20 flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-mono text-slate-400 uppercase">Fare per traveler</div>
-            <div className="text-2xl font-display font-black text-slate-900">
+            <div className="text-[10px] font-mono text-warm-gray uppercase">Fare per traveler</div>
+            <div className="text-2xl font-serif font-bold text-ink">
               {formatPrice(drawerFlight.priceINR, currency)}
             </div>
           </div>
@@ -219,7 +219,7 @@ export const FlightDetailsDrawer: React.FC = () => {
               closeDrawer();
               selectFlight(drawerFlight);
             }}
-            className="px-8 py-3.5 rounded-2xl bg-aeriva-blue text-white font-bold text-xs tracking-wider uppercase hover:bg-blue-600 transition-all flex items-center space-x-2 shadow-glow-blue"
+            className="px-6 py-3 rounded-lg bg-terracotta hover:bg-terracotta-hover text-paper font-mono font-medium text-xs tracking-wider uppercase transition-colors flex items-center space-x-2 shadow-sm"
           >
             <span>CHOOSE THIS FLIGHT</span>
             <ArrowRight className="w-4 h-4" />

@@ -61,14 +61,14 @@ export const PassengerFormModal: React.FC = () => {
         newErrors[`${idx}-lastName`] = 'Last name is required';
       }
       if (!p.passportNumber.trim()) {
-        newErrors[`${idx}-passportNumber`] = 'Passport/Gov ID is required';
+        newErrors[`${idx}-passportNumber`] = 'Passport / National ID is required';
       }
       if (idx === 0) {
         if (!p.email.trim() || !p.email.includes('@')) {
-          newErrors[`${idx}-email`] = 'Valid email is required';
+          newErrors[`${idx}-email`] = 'Valid e-ticket email is required';
         }
         if (!p.phone.trim()) {
-          newErrors[`${idx}-phone`] = 'Contact phone is required';
+          newErrors[`${idx}-phone`] = 'Contact phone number is required';
         }
       }
     });
@@ -87,48 +87,48 @@ export const PassengerFormModal: React.FC = () => {
   if (!selectedFlight) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-navy-950/85 backdrop-blur-xl overflow-y-auto">
-      <div className="glass-panel w-full max-w-4xl rounded-3xl border border-white/15 shadow-2xl p-6 sm:p-8 my-auto relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/40 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-paper w-full max-w-4xl rounded-2xl border border-border shadow-2xl p-6 sm:p-8 my-auto relative text-ink">
         
         {/* HEADER */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-white/10">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-border">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-cyan-400 mb-1">
+            <div className="flex items-center space-x-2 text-xs font-mono text-terracotta mb-1">
               <span>STEP 4 OF 5</span>
-              <span>·</span>
+              <span>&bull;</span>
               <span>TRAVELER CREDENTIALS</span>
             </div>
-            <h2 className="text-2xl font-display font-extrabold text-white flex items-center space-x-2">
+            <h2 className="text-2xl font-serif font-light text-ink flex items-center space-x-2">
               <span>Passenger Information</span>
-              <Sparkles className="w-5 h-5 text-cyan-400" />
+              <Sparkles className="w-5 h-5 text-terracotta" />
             </h2>
           </div>
 
-          <div className="text-xs text-slate-400 font-mono">
-            Booking route: <span className="text-white font-bold">{selectedFlight.from.code} ➔ {selectedFlight.to.code}</span>
+          <div className="text-xs text-warm-gray font-mono">
+            Itinerary: <span className="text-ink font-semibold">{selectedFlight.from.code} ➔ {selectedFlight.to.code}</span>
           </div>
         </div>
 
         {/* PASSENGER FORMS LIST */}
-        <div className="space-y-8 my-6 max-h-[65vh] overflow-y-auto pr-1">
+        <div className="space-y-6 my-6 max-h-[65vh] overflow-y-auto pr-1">
           {formData.map((passenger, idx) => (
             <div
               key={idx}
-              className="glass-panel p-5 sm:p-6 rounded-2xl border border-white/10 space-y-4"
+              className="p-5 sm:p-6 rounded-xl border border-border bg-sand/20 space-y-4"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                <div className="flex items-center space-x-2">
-                  <div className="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center text-xs">
+              <div className="flex items-center justify-between pb-3 border-b border-border">
+                <div className="flex items-center space-x-2.5">
+                  <div className="w-6 h-6 rounded-md bg-ink text-paper font-mono font-bold flex items-center justify-center text-xs">
                     {idx + 1}
                   </div>
-                  <h3 className="text-sm font-bold text-white font-display">
-                    Passenger {idx + 1} {idx === 0 ? '(Primary Traveler)' : ''}
+                  <h3 className="text-sm font-serif font-medium text-ink">
+                    Passenger {idx + 1} {idx === 0 ? '(Primary Contact)' : ''}
                   </h3>
                 </div>
 
-                <div className="text-xs font-mono text-slate-400">
+                <div className="text-xs font-mono text-warm-gray">
                   Assigned Seat:{' '}
-                  <span className="text-cyan-400 font-bold">
+                  <span className="text-terracotta font-medium">
                     {selectedSeats[idx]?.id || 'Auto-Assigned'}
                   </span>
                 </div>
@@ -139,11 +139,11 @@ export const PassengerFormModal: React.FC = () => {
                 
                 {/* Title */}
                 <div className="sm:col-span-2">
-                  <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">Title</label>
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">Title</label>
                   <select
                     value={passenger.title}
                     onChange={e => handleInputChange(idx, 'title', e.target.value)}
-                    className="w-full glass-input p-2.5 rounded-xl text-xs bg-slate-900 text-white focus:border-cyan-400"
+                    className="w-full p-2.5 rounded-lg border border-border text-xs bg-paper text-ink focus:outline-none focus:border-terracotta"
                   >
                     <option value="Mr">Mr</option>
                     <option value="Mrs">Mrs</option>
@@ -154,21 +154,21 @@ export const PassengerFormModal: React.FC = () => {
 
                 {/* First Name */}
                 <div className="sm:col-span-5">
-                  <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">
                     First / Given Name *
                   </label>
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="e.g. John"
+                      placeholder="e.g. Alex"
                       value={passenger.firstName}
                       onChange={e => handleInputChange(idx, 'firstName', e.target.value)}
-                      className="w-full glass-input p-2.5 rounded-xl text-xs pl-8 focus:border-cyan-400"
+                      className="w-full p-2.5 rounded-lg border border-border text-xs pl-8 bg-paper text-ink focus:outline-none focus:border-terracotta"
                     />
-                    <User className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3" />
+                    <User className="w-3.5 h-3.5 text-warm-gray absolute left-2.5 top-3" />
                   </div>
                   {errors[`${idx}-firstName`] && (
-                    <div className="text-[10px] text-red-400 mt-1 flex items-center space-x-1">
+                    <div className="text-[10px] text-terracotta mt-1 flex items-center space-x-1 font-mono">
                       <AlertCircle className="w-3 h-3" />
                       <span>{errors[`${idx}-firstName`]}</span>
                     </div>
@@ -177,21 +177,21 @@ export const PassengerFormModal: React.FC = () => {
 
                 {/* Last Name */}
                 <div className="sm:col-span-5">
-                  <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">
                     Last / Surname *
                   </label>
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="e.g. Doe"
+                      placeholder="e.g. Morgan"
                       value={passenger.lastName}
                       onChange={e => handleInputChange(idx, 'lastName', e.target.value)}
-                      className="w-full glass-input p-2.5 rounded-xl text-xs pl-8 focus:border-cyan-400"
+                      className="w-full p-2.5 rounded-lg border border-border text-xs pl-8 bg-paper text-ink focus:outline-none focus:border-terracotta"
                     />
-                    <User className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3" />
+                    <User className="w-3.5 h-3.5 text-warm-gray absolute left-2.5 top-3" />
                   </div>
                   {errors[`${idx}-lastName`] && (
-                    <div className="text-[10px] text-red-400 mt-1 flex items-center space-x-1">
+                    <div className="text-[10px] text-terracotta mt-1 flex items-center space-x-1 font-mono">
                       <AlertCircle className="w-3 h-3" />
                       <span>{errors[`${idx}-lastName`]}</span>
                     </div>
@@ -200,7 +200,7 @@ export const PassengerFormModal: React.FC = () => {
 
                 {/* Date of Birth */}
                 <div className="sm:col-span-4">
-                  <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">
                     Date of Birth
                   </label>
                   <div className="relative">
@@ -208,19 +208,19 @@ export const PassengerFormModal: React.FC = () => {
                       type="date"
                       value={passenger.dateOfBirth}
                       onChange={e => handleInputChange(idx, 'dateOfBirth', e.target.value)}
-                      className="w-full glass-input p-2.5 rounded-xl text-xs pl-8 focus:border-cyan-400"
+                      className="w-full p-2.5 rounded-lg border border-border text-xs pl-8 bg-paper text-ink focus:outline-none focus:border-terracotta font-mono"
                     />
-                    <Calendar className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3" />
+                    <Calendar className="w-3.5 h-3.5 text-warm-gray absolute left-2.5 top-3" />
                   </div>
                 </div>
 
                 {/* Gender */}
                 <div className="sm:col-span-4">
-                  <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">Gender</label>
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">Gender</label>
                   <select
                     value={passenger.gender}
                     onChange={e => handleInputChange(idx, 'gender', e.target.value)}
-                    className="w-full glass-input p-2.5 rounded-xl text-xs bg-slate-900 text-white focus:border-cyan-400"
+                    className="w-full p-2.5 rounded-lg border border-border text-xs bg-paper text-ink focus:outline-none focus:border-terracotta"
                   >
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -230,23 +230,23 @@ export const PassengerFormModal: React.FC = () => {
 
                 {/* Nationality */}
                 <div className="sm:col-span-4">
-                  <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">Nationality</label>
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">Nationality</label>
                   <div className="relative">
                     <input
                       type="text"
                       placeholder="e.g. Indian"
                       value={passenger.nationality}
                       onChange={e => handleInputChange(idx, 'nationality', e.target.value)}
-                      className="w-full glass-input p-2.5 rounded-xl text-xs pl-8 focus:border-cyan-400"
+                      className="w-full p-2.5 rounded-lg border border-border text-xs pl-8 bg-paper text-ink focus:outline-none focus:border-terracotta"
                     />
-                    <Globe className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3" />
+                    <Globe className="w-3.5 h-3.5 text-warm-gray absolute left-2.5 top-3" />
                   </div>
                 </div>
 
                 {/* Passport / ID */}
                 <div className="sm:col-span-6">
-                  <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">
-                    Passport / National ID Number *
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">
+                    Passport / National ID *
                   </label>
                   <div className="relative">
                     <input
@@ -254,12 +254,12 @@ export const PassengerFormModal: React.FC = () => {
                       placeholder="e.g. Z8942104"
                       value={passenger.passportNumber}
                       onChange={e => handleInputChange(idx, 'passportNumber', e.target.value)}
-                      className="w-full glass-input p-2.5 rounded-xl text-xs pl-8 focus:border-cyan-400 uppercase font-mono"
+                      className="w-full p-2.5 rounded-lg border border-border text-xs pl-8 bg-paper text-ink focus:outline-none focus:border-terracotta uppercase font-mono"
                     />
-                    <FileText className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3" />
+                    <FileText className="w-3.5 h-3.5 text-warm-gray absolute left-2.5 top-3" />
                   </div>
                   {errors[`${idx}-passportNumber`] && (
-                    <div className="text-[10px] text-red-400 mt-1 flex items-center space-x-1">
+                    <div className="text-[10px] text-terracotta mt-1 flex items-center space-x-1 font-mono">
                       <AlertCircle className="w-3 h-3" />
                       <span>{errors[`${idx}-passportNumber`]}</span>
                     </div>
@@ -268,23 +268,23 @@ export const PassengerFormModal: React.FC = () => {
 
                 {/* Meal Preference */}
                 <div className="sm:col-span-6">
-                  <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">
                     Special Meal Request
                   </label>
                   <div className="relative">
                     <select
                       value={passenger.mealPreference || 'Regular Meal'}
                       onChange={e => handleInputChange(idx, 'mealPreference', e.target.value)}
-                      className="w-full glass-input p-2.5 rounded-xl text-xs pl-8 bg-slate-900 text-white focus:border-cyan-400"
+                      className="w-full p-2.5 rounded-lg border border-border text-xs pl-8 bg-paper text-ink focus:outline-none focus:border-terracotta"
                     >
-                      <option value="Regular Meal">Regular Airline Meal</option>
-                      <option value="Asian Vegetarian">Asian Vegetarian Meal (AVML)</option>
+                      <option value="Regular Meal">Standard Airline Menu</option>
+                      <option value="Asian Vegetarian">Asian Vegetarian Menu (AVML)</option>
                       <option value="Hindu Non-Vegetarian">Hindu Non-Vegetarian (HNML)</option>
-                      <option value="Diabetic Meal">Diabetic Meal (DBML)</option>
-                      <option value="Gluten-Free">Gluten-Free Meal (GFML)</option>
-                      <option value="Fruit Platter">Fresh Fruit Platter (FPML)</option>
+                      <option value="Diabetic Meal">Diabetic Special (DBML)</option>
+                      <option value="Gluten-Free">Gluten-Free Cuisine (GFML)</option>
+                      <option value="Fruit Platter">Seasonal Fruit Platter (FPML)</option>
                     </select>
-                    <Utensils className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3" />
+                    <Utensils className="w-3.5 h-3.5 text-warm-gray absolute left-2.5 top-3" />
                   </div>
                 </div>
 
@@ -292,21 +292,21 @@ export const PassengerFormModal: React.FC = () => {
                 {idx === 0 && (
                   <>
                     <div className="sm:col-span-6 pt-2">
-                      <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">
+                      <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">
                         E-Ticket Email Address *
                       </label>
                       <div className="relative">
                         <input
                           type="email"
-                          placeholder="traveler@example.com"
+                          placeholder="alex.morgan@example.com"
                           value={passenger.email}
                           onChange={e => handleInputChange(idx, 'email', e.target.value)}
-                          className="w-full glass-input p-2.5 rounded-xl text-xs pl-8 focus:border-cyan-400"
+                          className="w-full p-2.5 rounded-lg border border-border text-xs pl-8 bg-paper text-ink focus:outline-none focus:border-terracotta font-mono"
                         />
-                        <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3" />
+                        <Mail className="w-3.5 h-3.5 text-warm-gray absolute left-2.5 top-3" />
                       </div>
                       {errors[`${idx}-email`] && (
-                        <div className="text-[10px] text-red-400 mt-1 flex items-center space-x-1">
+                        <div className="text-[10px] text-terracotta mt-1 flex items-center space-x-1 font-mono">
                           <AlertCircle className="w-3 h-3" />
                           <span>{errors[`${idx}-email`]}</span>
                         </div>
@@ -314,7 +314,7 @@ export const PassengerFormModal: React.FC = () => {
                     </div>
 
                     <div className="sm:col-span-6 pt-2">
-                      <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">
+                      <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">
                         SMS & WhatsApp Flight Alerts Phone *
                       </label>
                       <div className="relative">
@@ -323,12 +323,12 @@ export const PassengerFormModal: React.FC = () => {
                           placeholder="+91 98765 43210"
                           value={passenger.phone}
                           onChange={e => handleInputChange(idx, 'phone', e.target.value)}
-                          className="w-full glass-input p-2.5 rounded-xl text-xs pl-8 focus:border-cyan-400"
+                          className="w-full p-2.5 rounded-lg border border-border text-xs pl-8 bg-paper text-ink focus:outline-none focus:border-terracotta font-mono"
                         />
-                        <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3" />
+                        <Phone className="w-3.5 h-3.5 text-warm-gray absolute left-2.5 top-3" />
                       </div>
                       {errors[`${idx}-phone`] && (
-                        <div className="text-[10px] text-red-400 mt-1 flex items-center space-x-1">
+                        <div className="text-[10px] text-terracotta mt-1 flex items-center space-x-1 font-mono">
                           <AlertCircle className="w-3 h-3" />
                           <span>{errors[`${idx}-phone`]}</span>
                         </div>
@@ -342,10 +342,10 @@ export const PassengerFormModal: React.FC = () => {
         </div>
 
         {/* ACTIONS */}
-        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+        <div className="flex items-center justify-between pt-4 border-t border-border">
           <button
             onClick={() => proceedToStep('seats')}
-            className="px-5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300 hover:text-white font-medium text-xs flex items-center space-x-2 transition-colors"
+            className="px-5 py-2.5 rounded-lg bg-paper border border-border text-ink hover:border-ink/50 font-mono text-xs uppercase flex items-center space-x-2 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Seats</span>
@@ -353,7 +353,7 @@ export const PassengerFormModal: React.FC = () => {
 
           <button
             onClick={handleProceed}
-            className="px-8 py-3 rounded-2xl bg-gradient-to-r from-aerova-blue via-blue-600 to-cyan-500 text-white font-bold text-xs tracking-wide shadow-glow-blue hover:shadow-cyan-500/40 transition-all flex items-center space-x-2"
+            className="px-6 py-3 rounded-lg bg-terracotta hover:bg-terracotta-hover text-paper font-mono font-medium text-xs tracking-wider uppercase transition-colors flex items-center space-x-2 shadow-sm"
           >
             <span>Proceed to Payment</span>
             <ArrowRight className="w-4 h-4" />

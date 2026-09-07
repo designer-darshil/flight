@@ -30,7 +30,7 @@ export const PaymentModal: React.FC = () => {
 
   // Card details
   const [cardNumber, setCardNumber] = useState('4532 8920 4821 9024');
-  const [cardHolder, setCardHolder] = useState('ALEXANDER VANCE');
+  const [cardHolder, setCardHolder] = useState('ALEXANDER MORGAN');
   const [cardExpiry, setCardExpiry] = useState('08/29');
   const [cardCvv, setCardCvv] = useState('842');
 
@@ -61,7 +61,7 @@ export const PaymentModal: React.FC = () => {
       setCouponApplied(true);
       setCouponError('');
     } else {
-      setCouponError('Invalid promo code. Try AERIVA10 for 10% off');
+      setCouponError('Invalid code. Try AERIVA10 for 10% off');
     }
   };
 
@@ -74,50 +74,47 @@ export const PaymentModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-navy-950/85 backdrop-blur-xl overflow-y-auto">
-      <div className="glass-panel w-full max-w-5xl rounded-3xl border border-white/15 shadow-2xl p-6 sm:p-8 my-auto relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/40 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-paper w-full max-w-5xl rounded-2xl border border-border shadow-2xl p-6 sm:p-8 my-auto relative text-ink">
         
-        {/* Glow backdrop */}
-        <div className="absolute top-0 right-1/4 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-
         {/* PROCESSING OVERLAY */}
         {isProcessing && (
-          <div className="absolute inset-0 z-50 bg-aeriva-navy/95 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center">
-            <div className="relative w-24 h-24 mb-6">
-              <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20 animate-ping" />
-              <div className="absolute inset-2 rounded-full border-2 border-aeriva-cyan border-t-transparent animate-spin" />
+          <div className="absolute inset-0 z-50 bg-cream/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center rounded-2xl">
+            <div className="relative w-20 h-20 mb-6">
+              <div className="absolute inset-0 rounded-full border-2 border-terracotta/20 animate-ping" />
+              <div className="absolute inset-2 rounded-full border-2 border-terracotta border-t-transparent animate-spin" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <Lock className="w-8 h-8 text-aeriva-cyan animate-pulse" />
+                <Lock className="w-6 h-6 text-terracotta" />
               </div>
             </div>
-            <span className="text-[10px] font-mono tracking-widest text-aeriva-cyan uppercase mb-1">AERIVA SECURE ENCLAVE</span>
-            <h3 className="text-xl font-display font-bold text-white mb-2">SECURELY PROCESSING YOUR BOOKING</h3>
-            <p className="text-xs text-slate-300 max-w-sm mb-4">
-              Authorizing payment, confirming seat {selectedSeats[0]?.id || '18A'}, and issuing e-ticket confirmation...
+            <span className="text-[10px] font-mono tracking-widest text-terracotta uppercase mb-1">AERIVA ENCRYPTED VAULT</span>
+            <h3 className="text-xl font-serif font-medium text-ink mb-2">Authorizing Payment & Issuing Ticket</h3>
+            <p className="text-xs text-warm-gray max-w-sm mb-4 font-sans">
+              Confirming seat reservation {selectedSeats[0]?.id || '18A'} and generating IATA e-ticket...
             </p>
-            <div className="w-48 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-aeriva-blue via-cyan-400 to-emerald-400 animate-pulse w-full" />
+            <div className="w-48 h-1.5 bg-sand rounded-full overflow-hidden">
+              <div className="h-full bg-terracotta animate-pulse w-full" />
             </div>
           </div>
         )}
 
         {/* HEADER */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-white/10">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-border">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-cyan-400 mb-1">
+            <div className="flex items-center space-x-2 text-xs font-mono text-terracotta mb-1">
               <span>STEP 5 OF 5</span>
-              <span>·</span>
-              <span>INSTANT SECURE CHECKOUT</span>
+              <span>&bull;</span>
+              <span>SECURE CHECKOUT</span>
             </div>
-            <h2 className="text-2xl font-display font-extrabold text-white flex items-center space-x-2">
-              <span>Simulated Payment Gateway</span>
-              <Lock className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-2xl font-serif font-light text-ink flex items-center space-x-2">
+              <span>Payment Confirmation</span>
+              <Lock className="w-4 h-4 text-olive" />
             </h2>
           </div>
 
-          <div className="flex items-center space-x-2 text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
+          <div className="flex items-center space-x-2 text-xs text-olive bg-olive/10 px-3 py-1.5 rounded-lg border border-olive/20 font-mono">
             <ShieldCheck className="w-4 h-4" />
-            <span>256-Bit SSL Encrypted</span>
+            <span>256-Bit Bank Encryption</span>
           </div>
         </div>
 
@@ -128,9 +125,9 @@ export const PaymentModal: React.FC = () => {
           <div className="lg:col-span-7 space-y-6">
             
             {/* PAYMENT TABS */}
-            <div className="grid grid-cols-4 gap-2 p-1.5 rounded-2xl bg-slate-900 border border-white/10">
+            <div className="grid grid-cols-4 gap-2 p-1.5 rounded-xl bg-sand/40 border border-border font-mono text-xs">
               {[
-                { id: 'card', label: 'Cards', icon: CreditCard },
+                { id: 'card', label: 'Card', icon: CreditCard },
                 { id: 'upi', label: 'UPI / QR', icon: QrCode },
                 { id: 'netbanking', label: 'NetBank', icon: Building },
                 { id: 'wallet', label: 'Wallets', icon: Wallet },
@@ -140,10 +137,10 @@ export const PaymentModal: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setPaymentMethod(tab.id as any)}
-                    className={`py-2.5 rounded-xl text-xs font-semibold flex flex-col items-center justify-center space-y-1 transition-all ${
+                    className={`py-2.5 rounded-lg text-xs font-medium flex flex-col items-center justify-center space-y-1 transition-colors ${
                       paymentMethod === tab.id
-                        ? 'bg-gradient-to-r from-aerova-blue to-cyan-500 text-white shadow-glow-blue'
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        ? 'bg-ink text-paper shadow-sm'
+                        : 'text-warm-gray hover:text-ink hover:bg-sand/60'
                     }`}
                   >
                     <IconComp className="w-4 h-4" />
@@ -156,29 +153,27 @@ export const PaymentModal: React.FC = () => {
             {/* TAB CONTENT: CREDIT/DEBIT CARD */}
             {paymentMethod === 'card' && (
               <div className="space-y-4">
-                {/* VIRTUAL METALLIC CREDIT CARD PREVIEW */}
-                <div className="p-6 rounded-2xl bg-gradient-to-tr from-slate-900 via-slate-800 to-cyan-950 border border-white/20 shadow-2xl text-white relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-36 h-36 bg-cyan-400/10 rounded-full blur-xl pointer-events-none" />
-                  
+                {/* VIRTUAL CREDIT CARD PREVIEW */}
+                <div className="p-6 rounded-xl bg-ink text-paper border border-border shadow-md relative overflow-hidden">
                   <div className="flex justify-between items-center mb-6">
-                    <span className="text-xs font-mono tracking-widest text-cyan-400 uppercase">AERIVA SKY PRIVILEGE</span>
-                    <div className="w-10 h-7 rounded-md bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-[9px] font-bold text-amber-300">
+                    <span className="text-xs font-mono tracking-widest text-champagne uppercase">AERIVA WORLD VOYAGER</span>
+                    <div className="w-8 h-6 rounded-md bg-champagne/20 border border-champagne/40 flex items-center justify-center text-[8px] font-mono text-champagne">
                       CHIP
                     </div>
                   </div>
 
-                  <div className="text-xl font-mono tracking-widest font-bold my-4 text-slate-100">
+                  <div className="text-lg font-mono tracking-widest font-semibold my-4 text-paper">
                     {cardNumber || '•••• •••• •••• ••••'}
                   </div>
 
                   <div className="flex justify-between items-end text-xs font-mono">
                     <div>
-                      <div className="text-[9px] text-slate-400 uppercase">Cardholder</div>
-                      <div className="font-bold text-slate-200">{cardHolder || 'TRAVELER NAME'}</div>
+                      <div className="text-[9px] text-warm-gray uppercase">Cardholder</div>
+                      <div className="font-medium text-paper">{cardHolder || 'TRAVELER NAME'}</div>
                     </div>
                     <div>
-                      <div className="text-[9px] text-slate-400 uppercase">Expires</div>
-                      <div className="font-bold text-slate-200">{cardExpiry || 'MM/YY'}</div>
+                      <div className="text-[9px] text-warm-gray uppercase">Expires</div>
+                      <div className="font-medium text-paper">{cardExpiry || 'MM/YY'}</div>
                     </div>
                   </div>
                 </div>
@@ -186,43 +181,43 @@ export const PaymentModal: React.FC = () => {
                 {/* CARD INPUT FIELDS */}
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-[11px] font-mono text-slate-400 uppercase mb-1">Card Number</label>
+                    <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1">Card Number</label>
                     <input
                       type="text"
                       value={cardNumber}
                       onChange={e => setCardNumber(e.target.value)}
-                      className="w-full glass-input p-2.5 rounded-xl text-xs font-mono text-white focus:border-cyan-400"
+                      className="w-full p-2.5 rounded-lg border border-border text-xs font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-mono text-slate-400 uppercase mb-1">Cardholder Name</label>
+                      <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1">Cardholder Name</label>
                       <input
                         type="text"
                         value={cardHolder}
                         onChange={e => setCardHolder(e.target.value)}
-                        className="w-full glass-input p-2.5 rounded-xl text-xs uppercase text-white focus:border-cyan-400"
+                        className="w-full p-2.5 rounded-lg border border-border text-xs uppercase bg-paper text-ink focus:outline-none focus:border-terracotta"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-[11px] font-mono text-slate-400 uppercase mb-1">Expiry</label>
+                        <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1">Expiry</label>
                         <input
                           type="text"
                           value={cardExpiry}
                           onChange={e => setCardExpiry(e.target.value)}
-                          className="w-full glass-input p-2.5 rounded-xl text-xs font-mono text-white focus:border-cyan-400"
+                          className="w-full p-2.5 rounded-lg border border-border text-xs font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-mono text-slate-400 uppercase mb-1">CVV</label>
+                        <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1">CVV</label>
                         <input
                           type="password"
                           maxLength={4}
                           value={cardCvv}
                           onChange={e => setCardCvv(e.target.value)}
-                          className="w-full glass-input p-2.5 rounded-xl text-xs font-mono text-white focus:border-cyan-400"
+                          className="w-full p-2.5 rounded-lg border border-border text-xs font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
                         />
                       </div>
                     </div>
@@ -233,30 +228,29 @@ export const PaymentModal: React.FC = () => {
 
             {/* TAB CONTENT: UPI / QR CODE */}
             {paymentMethod === 'upi' && (
-              <div className="glass-panel p-6 rounded-2xl border border-white/10 text-center space-y-4">
-                <h4 className="text-sm font-bold text-white">Scan UPI QR with Any App</h4>
+              <div className="p-6 rounded-xl border border-border bg-sand/20 text-center space-y-4">
+                <h4 className="text-sm font-serif font-medium text-ink">Scan UPI QR with Any App</h4>
                 
-                {/* SIMULATED HIGH-TECH QR CODE */}
-                <div className="w-44 h-44 mx-auto p-3 rounded-2xl bg-white flex items-center justify-center shadow-glow-cyan">
-                  <div className="w-full h-full border-4 border-slate-900 p-2 flex flex-col items-center justify-center space-y-1">
-                    <QrCode className="w-24 h-24 text-slate-900" />
-                    <span className="text-[9px] font-mono text-slate-800 font-bold">AERIVA-PAY-SECURE</span>
+                <div className="w-40 h-40 mx-auto p-3 rounded-xl bg-paper border border-border flex items-center justify-center shadow-sm">
+                  <div className="w-full h-full border-2 border-border p-2 flex flex-col items-center justify-center space-y-1">
+                    <QrCode className="w-24 h-24 text-ink" />
+                    <span className="text-[8px] font-mono text-warm-gray font-bold">AERIVA SECURE UPI</span>
                   </div>
                 </div>
 
-                <div className="text-xs text-slate-300">
-                  Scan using Google Pay, PhonePe, Paytm, BHIM, or Banking UPI
+                <div className="text-xs text-warm-gray font-sans">
+                  Compatible with Google Pay, PhonePe, Paytm, and BHIM
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex items-center space-x-2">
+                <div className="pt-3 border-t border-border flex items-center space-x-2">
                   <input
                     type="text"
                     value={upiId}
                     onChange={e => setUpiId(e.target.value)}
-                    placeholder="Enter UPI VPA ID (e.g. mobile@upi)"
-                    className="flex-1 glass-input p-2.5 rounded-xl text-xs font-mono text-white focus:border-cyan-400"
+                    placeholder="Enter UPI ID (e.g. mobile@upi)"
+                    className="flex-1 p-2.5 rounded-lg border border-border text-xs font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
                   />
-                  <button className="px-4 py-2.5 rounded-xl bg-slate-800 text-cyan-400 border border-cyan-500/30 text-xs font-bold hover:bg-slate-700">
+                  <button className="px-4 py-2.5 rounded-lg bg-ink text-paper text-xs font-mono hover:bg-terracotta transition-colors">
                     Verify
                   </button>
                 </div>
@@ -266,15 +260,15 @@ export const PaymentModal: React.FC = () => {
             {/* TAB CONTENT: NET BANKING */}
             {paymentMethod === 'netbanking' && (
               <div className="space-y-3">
-                <label className="block text-xs font-mono uppercase text-slate-400">Popular Banks</label>
+                <label className="block text-xs font-mono uppercase text-warm-gray">Select Bank</label>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   {['HDFC Bank', 'ICICI Bank', 'State Bank of India', 'Axis Bank', 'Kotak Mahindra', 'Citibank'].map(bank => (
                     <button
                       key={bank}
-                      className="p-3 rounded-xl bg-slate-900 border border-white/10 text-left hover:border-cyan-400 hover:text-cyan-300 text-slate-300 transition-colors flex items-center justify-between"
+                      className="p-3 rounded-lg bg-paper border border-border text-left hover:border-ink text-ink transition-colors flex items-center justify-between"
                     >
-                      <span>{bank}</span>
-                      <Building className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="font-medium">{bank}</span>
+                      <Building className="w-3.5 h-3.5 text-warm-gray" />
                     </button>
                   ))}
                 </div>
@@ -287,45 +281,45 @@ export const PaymentModal: React.FC = () => {
                 {['Apple Pay', 'Google Pay', 'PayPal', 'Amazon Pay'].map(w => (
                   <button
                     key={w}
-                    className="w-full p-3.5 rounded-xl bg-slate-900 border border-white/10 text-left hover:border-cyan-400 hover:text-cyan-300 text-slate-300 transition-colors flex items-center justify-between"
+                    className="w-full p-3.5 rounded-lg bg-paper border border-border text-left hover:border-ink text-ink transition-colors flex items-center justify-between"
                   >
-                    <span className="font-bold text-white">{w}</span>
-                    <Wallet className="w-4 h-4 text-cyan-400" />
+                    <span className="font-medium">{w}</span>
+                    <Wallet className="w-4 h-4 text-terracotta" />
                   </button>
                 ))}
               </div>
             )}
 
             {/* COUPON CODE INPUT */}
-            <div className="pt-4 border-t border-white/10">
-              <label className="block text-[11px] font-mono text-slate-400 uppercase mb-1.5 flex items-center space-x-1.5">
-                <Tag className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Have a Promo Code? (Use AERIVA10 for 10% Off)</span>
+            <div className="pt-4 border-t border-border">
+              <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1.5 flex items-center space-x-1.5">
+                <Tag className="w-3.5 h-3.5 text-terracotta" />
+                <span>Promo Code (Use AERIVA10 for 10% Off)</span>
               </label>
               <div className="flex space-x-2">
                 <input
                   type="text"
-                  placeholder="Enter code (e.g. AEROVA10)"
+                  placeholder="Enter code (e.g. AERIVA10)"
                   value={couponCode}
                   onChange={e => setCouponCode(e.target.value)}
-                  className="flex-1 glass-input p-2.5 rounded-xl text-xs uppercase font-mono text-white focus:border-cyan-400"
+                  className="flex-1 p-2.5 rounded-lg border border-border text-xs uppercase font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
                 />
                 <button
                   type="button"
                   onClick={handleApplyCoupon}
-                  className="px-5 py-2.5 rounded-xl bg-slate-800 text-cyan-300 border border-cyan-500/30 text-xs font-bold hover:bg-slate-700 transition-colors"
+                  className="px-4 py-2.5 rounded-lg bg-ink text-paper text-xs font-mono hover:bg-terracotta transition-colors"
                 >
                   Apply
                 </button>
               </div>
               {couponApplied && (
-                <div className="text-[11px] text-emerald-400 mt-1.5 flex items-center space-x-1 font-mono">
+                <div className="text-[11px] text-olive mt-1.5 flex items-center space-x-1 font-mono">
                   <CheckCircle className="w-3.5 h-3.5" />
-                  <span>Promo code applied! 10% discount subtracted.</span>
+                  <span>Promo code applied. 10% discount subtracted.</span>
                 </div>
               )}
               {couponError && (
-                <div className="text-[11px] text-red-400 mt-1.5 font-mono">
+                <div className="text-[11px] text-terracotta mt-1.5 font-mono">
                   {couponError}
                 </div>
               )}
@@ -334,116 +328,116 @@ export const PaymentModal: React.FC = () => {
 
           {/* RIGHT: STICKY BOOKING BREAKDOWN SUMMARY (Col 8-12) */}
           <div className="lg:col-span-5">
-            <div className="glass-panel p-6 rounded-3xl border border-white/15 space-y-5 sticky top-24">
+            <div className="p-6 rounded-xl bg-sand/30 border border-border space-y-5 sticky top-24">
               
-              <h3 className="text-sm font-bold font-display uppercase tracking-wider text-white pb-3 border-b border-white/10 flex items-center space-x-2">
-                <Plane className="w-4 h-4 text-cyan-400" />
-                <span>Trip Summary</span>
+              <h3 className="text-xs font-mono uppercase tracking-wider text-warm-gray pb-3 border-b border-border flex items-center space-x-2">
+                <Plane className="w-4 h-4 text-terracotta rotate-90" />
+                <span>Itinerary Summary</span>
               </h3>
 
               {/* Route & Timing Snippet */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Flight:</span>
-                  <span className="font-bold text-white">
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-warm-gray">Route:</span>
+                  <span className="font-serif font-medium text-ink">
                     {selectedFlight.from.city} ➔ {selectedFlight.to.city}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Airline:</span>
-                  <span className="font-mono text-cyan-400">
+                <div className="flex items-center justify-between">
+                  <span className="text-warm-gray">Airline:</span>
+                  <span className="font-mono text-ink">
                     {selectedFlight.airline} ({selectedFlight.flightNumber})
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Date:</span>
-                  <span className="text-slate-200 font-mono">{selectedFlight.departureDate}</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-warm-gray">Date:</span>
+                  <span className="text-ink font-mono">{selectedFlight.departureDate}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Travelers:</span>
-                  <span className="text-slate-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-warm-gray">Travelers:</span>
+                  <span className="text-ink">
                     {passengers.length} {passengers.length === 1 ? 'Passenger' : 'Passengers'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Cabin & Fare:</span>
-                  <span className="text-slate-200">{selectedFarePackage.name} Tier</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-warm-gray">Fare Tier:</span>
+                  <span className="text-ink font-medium">{selectedFarePackage.name}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Seat Selection:</span>
-                  <span className="font-mono text-cyan-400">
+                <div className="flex items-center justify-between">
+                  <span className="text-warm-gray">Seat:</span>
+                  <span className="font-mono text-terracotta font-medium">
                     {selectedSeats.length > 0 ? selectedSeats.map(s => s.id).join(', ') : 'Standard'}
                   </span>
                 </div>
               </div>
 
               {/* ITEMIZED PRICE BREAKDOWN */}
-              <div className="pt-4 border-t border-white/10 space-y-2 text-xs">
-                <div className="flex justify-between text-slate-300">
+              <div className="pt-4 border-t border-border space-y-2 text-xs font-mono">
+                <div className="flex justify-between text-warm-gray">
                   <span>Base Airfare ({passengers.length} pax):</span>
-                  <span className="font-mono">{formatPrice(baseFareINR, currency)}</span>
+                  <span>{formatPrice(baseFareINR, currency)}</span>
                 </div>
 
-                <div className="flex justify-between text-slate-300">
-                  <span>Seat Assignment Add-ons:</span>
-                  <span className="font-mono">{formatPrice(seatsTotalINR, currency)}</span>
+                <div className="flex justify-between text-warm-gray">
+                  <span>Seat Assignment:</span>
+                  <span>{formatPrice(seatsTotalINR, currency)}</span>
                 </div>
 
-                <div className="flex justify-between text-slate-300">
-                  <span>Aviation Taxes & Regulatory Fees:</span>
-                  <span className="font-mono">{formatPrice(taxesINR, currency)}</span>
+                <div className="flex justify-between text-warm-gray">
+                  <span>Airport Taxes & Fees:</span>
+                  <span>{formatPrice(taxesINR, currency)}</span>
                 </div>
 
                 {couponApplied && (
-                  <div className="flex justify-between text-emerald-400 font-medium">
-                    <span>Special Promo Discount (10%):</span>
-                    <span className="font-mono">-{formatPrice(discountINR, currency)}</span>
+                  <div className="flex justify-between text-olive font-medium">
+                    <span>Discount (10%):</span>
+                    <span>-{formatPrice(discountINR, currency)}</span>
                   </div>
                 )}
 
                 {/* TOTAL AMOUNT DUE */}
-                <div className="pt-3 border-t border-white/10 flex justify-between items-baseline">
+                <div className="pt-3 border-t border-border flex justify-between items-baseline">
                   <div>
-                    <span className="text-sm font-bold text-white font-display block">Total Due</span>
-                    <span className="text-[10px] text-slate-400">Includes all taxes & carrier surcharges</span>
+                    <span className="text-sm font-serif font-medium text-ink block">Total Due</span>
+                    <span className="text-[10px] text-warm-gray">All taxes included</span>
                   </div>
-                  <span className="text-2xl font-black font-display text-cyan-300">
+                  <span className="text-2xl font-serif font-bold text-terracotta">
                     {formatPrice(grandTotalINR, currency)}
                   </span>
                 </div>
               </div>
 
-              {/* SIMULATED SUBMIT CTA */}
+              {/* SUBMIT CTA */}
               <button
                 onClick={handlePayNow}
                 disabled={isProcessing}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-aerova-blue via-blue-600 to-cyan-500 text-white font-extrabold text-sm tracking-wide shadow-glow-blue hover:shadow-cyan-500/40 transition-all flex items-center justify-center space-x-2"
+                className="w-full py-3.5 rounded-lg bg-terracotta hover:bg-terracotta-hover text-paper font-mono font-medium text-xs uppercase tracking-wider transition-colors flex items-center justify-center space-x-2 shadow-sm"
               >
                 {isProcessing ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Authorizing Payment...</span>
+                    <div className="w-4 h-4 border-2 border-paper/30 border-t-paper rounded-full animate-spin" />
+                    <span>Authorizing...</span>
                   </>
                 ) : (
                   <>
-                    <Lock className="w-4 h-4" />
+                    <Lock className="w-3.5 h-3.5" />
                     <span>Pay {formatPrice(grandTotalINR, currency)}</span>
                   </>
                 )}
               </button>
 
-              <div className="text-center text-[10px] text-slate-400">
-                Simulated checkout demonstration. No actual bank card will be charged.
+              <div className="text-center text-[10px] text-warm-gray font-sans">
+                Simulated secure demonstration checkout.
               </div>
             </div>
           </div>
         </div>
 
         {/* BOTTOM BACK BUTTON */}
-        <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+        <div className="pt-3 border-t border-border flex items-center justify-between">
           <button
             onClick={() => proceedToStep('passengers')}
-            className="px-5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300 hover:text-white font-medium text-xs flex items-center space-x-2 transition-colors"
+            className="px-5 py-2.5 rounded-lg bg-paper border border-border text-ink hover:border-ink/50 font-mono text-xs uppercase flex items-center space-x-2 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Passengers</span>

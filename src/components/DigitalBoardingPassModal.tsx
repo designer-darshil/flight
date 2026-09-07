@@ -4,6 +4,7 @@ import {
   Download,
   Plane,
   QrCode,
+  Smartphone,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 
@@ -28,12 +29,12 @@ export const DigitalBoardingPassModal: React.FC = () => {
         `DEPARTURE: 02:45\n` +
         `BOARDING TIME: 01:55\n` +
         `TERMINAL: 3 | GATE: B12\n` +
-        `SEAT: 18A (EXTRA LEGROOM)\n` +
-        `CLASS: ECONOMY STANDARD\n` +
-        `ETKT REF: ARV7K92\n`
+        `SEAT: 18A (CLUB SUITE)\n` +
+        `CLASS: CLUB WORLD\n` +
+        `ETKT REF: AER-8942\n`
       ], { type: 'text/plain' });
       element.href = URL.createObjectURL(file);
-      element.download = 'AERIVA_Boarding_Pass_ARV7K92.txt';
+      element.download = 'AERIVA_Boarding_Pass_AER8942.txt';
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
@@ -47,36 +48,34 @@ export const DigitalBoardingPassModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-aeriva-navy/90 backdrop-blur-2xl overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-ink/40 backdrop-blur-sm overflow-y-auto">
       <div className="w-full max-w-xl my-auto relative">
         
         {/* CLOSE BUTTON */}
         <button
           onClick={() => setIsBoardingPassOpen(false)}
-          className="absolute -top-12 right-0 p-2 text-slate-400 hover:text-white"
+          className="absolute -top-10 right-0 p-2 text-paper/80 hover:text-paper transition-colors"
         >
           <X className="w-6 h-6" />
         </button>
 
-        {/* 27. DIGITAL BOARDING PASS WITH PERFORATED PHYSICAL-TICKET TREATMENT */}
-        <div className="rounded-3xl bg-slate-900 border border-white/20 shadow-2xl overflow-hidden text-white relative">
+        {/* SIGNATURE TACTILE DIGITAL BOARDING PASS */}
+        <div className="rounded-2xl bg-paper border border-border shadow-2xl overflow-hidden text-ink relative">
           
-          {/* Top Perforated Notch Cutouts */}
-          <div className="hidden sm:block absolute top-64 -left-4 w-8 h-8 rounded-full bg-aeriva-navy border-r border-white/20 z-10" />
-          <div className="hidden sm:block absolute top-64 -right-4 w-8 h-8 rounded-full bg-aeriva-navy border-l border-white/20 z-10" />
-          <div className="hidden sm:block absolute top-68 left-4 right-4 border-b border-dashed border-white/15" />
+          {/* Perforated Notch Cutouts */}
+          <div className="hidden sm:block absolute top-[280px] -left-3 w-6 h-6 rounded-full bg-ink/40 border-r border-border z-10 shadow-inner" />
+          <div className="hidden sm:block absolute top-[280px] -right-3 w-6 h-6 rounded-full bg-ink/40 border-l border-border z-10 shadow-inner" />
+          <div className="hidden sm:block absolute top-[292px] left-3 right-3 border-b border-dashed border-border" />
 
           {/* Pass Header */}
-          <div className="p-6 sm:p-8 bg-gradient-to-r from-slate-900 to-slate-950 border-b border-white/10 flex items-center justify-between">
+          <div className="p-6 sm:p-8 bg-ink text-paper flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-lg bg-aeriva-blue flex items-center justify-center text-white font-bold">
-                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <polygon points="12 2 2 22 12 17 22 22 12 2" fill="white" />
-                </svg>
-              </div>
-              <span className="text-xl font-display font-black tracking-tightest">AERIVA</span>
+              <span className="text-xl font-serif tracking-widest font-light text-paper">AERIVA</span>
+              <span className="text-xs font-mono text-champagne/80 tracking-widest pl-3 border-l border-white/20 hidden sm:inline">
+                CLUB WORLD
+              </span>
             </div>
-            <div className="px-3 py-1 rounded-full bg-cyan-400/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-400/30">
+            <div className="px-3 py-1 rounded-full bg-paper/10 text-paper font-mono text-xs font-medium border border-paper/20">
               BOARDING PASS
             </div>
           </div>
@@ -87,94 +86,95 @@ export const DigitalBoardingPassModal: React.FC = () => {
             {/* Route Codes & Times */}
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] font-mono uppercase text-slate-400 block">FROM</span>
-                <div className="text-4xl font-display font-black text-white">DEL</div>
-                <div className="text-xs text-slate-300">Delhi</div>
-                <div className="text-sm font-mono font-bold text-cyan-400 mt-1">02:45</div>
+                <span className="text-[10px] font-mono uppercase text-warm-gray block">ORIGIN</span>
+                <div className="text-4xl font-serif font-bold text-ink">DEL</div>
+                <div className="text-xs text-warm-gray">Delhi, India</div>
+                <div className="text-sm font-mono font-medium text-terracotta mt-1">02:45 AM</div>
               </div>
 
               <div className="flex flex-col items-center px-4">
-                <Plane className="w-6 h-6 text-aeriva-electric transform rotate-90" />
-                <span className="text-[10px] font-mono text-slate-400 mt-1">10h 00m</span>
-                <span className="text-[9px] font-mono text-emerald-400">1 Stop (DXB)</span>
+                <Plane className="w-5 h-5 text-terracotta rotate-90" />
+                <span className="text-[10px] font-mono text-warm-gray mt-1">8h 30m</span>
+                <span className="text-[9px] font-mono text-olive font-medium">Non-Stop</span>
               </div>
 
               <div className="text-right">
-                <span className="text-[10px] font-mono uppercase text-slate-400 block">TO</span>
-                <div className="text-4xl font-display font-black text-white">LHR</div>
-                <div className="text-xs text-slate-300">London</div>
-                <div className="text-sm font-mono font-bold text-cyan-400 mt-1">07:15</div>
+                <span className="text-[10px] font-mono uppercase text-warm-gray block">DESTINATION</span>
+                <div className="text-4xl font-serif font-bold text-ink">LHR</div>
+                <div className="text-xs text-warm-gray">London, UK</div>
+                <div className="text-sm font-mono font-medium text-terracotta mt-1">07:15 AM</div>
               </div>
             </div>
 
             {/* Passenger, Flight & Seat Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/10 text-xs font-mono">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-border text-xs font-mono">
               <div>
-                <span className="text-[10px] uppercase text-slate-400 block">PASSENGER</span>
-                <div className="font-bold text-white text-sm">ALEX MORGAN</div>
+                <span className="text-[10px] uppercase text-warm-gray block">PASSENGER</span>
+                <div className="font-medium text-ink text-sm">ALEX MORGAN</div>
               </div>
               <div>
-                <span className="text-[10px] uppercase text-slate-400 block">FLIGHT</span>
-                <div className="font-bold text-white text-sm">EK 513</div>
+                <span className="text-[10px] uppercase text-warm-gray block">FLIGHT</span>
+                <div className="font-medium text-ink text-sm">EK 513</div>
               </div>
               <div>
-                <span className="text-[10px] uppercase text-slate-400 block">DATE</span>
-                <div className="font-bold text-white text-sm">18 SEP</div>
+                <span className="text-[10px] uppercase text-warm-gray block">DATE</span>
+                <div className="font-medium text-ink text-sm">18 SEP</div>
               </div>
               <div>
-                <span className="text-[10px] uppercase text-slate-400 block">SEAT</span>
-                <div className="font-bold text-cyan-300 text-sm">18A</div>
+                <span className="text-[10px] uppercase text-warm-gray block">SEAT</span>
+                <div className="font-bold text-terracotta text-sm">18A</div>
               </div>
             </div>
           </div>
 
           {/* Lower Body (Stub): Gate, Boarding Time & Barcode */}
-          <div className="p-6 sm:p-8 bg-slate-950/80 border-t border-white/10 space-y-6">
+          <div className="p-6 sm:p-8 bg-sand/30 border-t border-border space-y-6">
             <div className="grid grid-cols-3 gap-4 text-center font-mono">
-              <div className="p-2.5 rounded-xl bg-slate-900 border border-white/5">
-                <span className="text-[10px] uppercase text-slate-400 block">TERMINAL</span>
-                <span className="text-lg font-bold text-white">3</span>
+              <div className="p-2.5 rounded-lg bg-paper border border-border">
+                <span className="text-[10px] uppercase text-warm-gray block">TERMINAL</span>
+                <span className="text-lg font-serif font-bold text-ink">T3</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-900 border border-cyan-500/30">
-                <span className="text-[10px] uppercase text-slate-400 block">GATE</span>
-                <span className="text-lg font-bold text-cyan-400">B12</span>
+              <div className="p-2.5 rounded-lg bg-paper border border-border">
+                <span className="text-[10px] uppercase text-warm-gray block">GATE</span>
+                <span className="text-lg font-serif font-bold text-ink">B12</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-900 border border-emerald-500/30">
-                <span className="text-[10px] uppercase text-slate-400 block">BOARDING</span>
-                <span className="text-lg font-bold text-emerald-400">01:55</span>
+              <div className="p-2.5 rounded-lg bg-paper border border-border">
+                <span className="text-[10px] uppercase text-warm-gray block">BOARDING</span>
+                <span className="text-lg font-serif font-bold text-olive">01:55</span>
               </div>
             </div>
 
             {/* QR Code and Barcode */}
-            <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white space-y-2">
-              <QrCode className="w-24 h-24 text-slate-950" />
+            <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-paper border border-border space-y-2 shadow-sm">
+              <QrCode className="w-24 h-24 text-ink" />
               {/* Barcode lines */}
-              <div className="flex items-center space-x-[2px] h-8 w-full justify-center">
+              <div className="flex items-center space-x-[2px] h-8 w-full justify-center opacity-85">
                 {[3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9, 3, 2, 3, 8, 4, 6, 2, 6, 4, 3, 3, 8, 3, 2, 7].map((w, idx) => (
-                  <div key={idx} className="bg-slate-950 h-full" style={{ width: `${w > 4 ? 3 : 1.5}px` }} />
+                  <div key={idx} className="bg-ink h-full" style={{ width: `${w > 4 ? 3 : 1.5}px` }} />
                 ))}
               </div>
-              <span className="text-[9px] font-mono text-slate-900 font-bold tracking-widest">
-                ETKT · ARV7K92 · SECURE ENCRYPTED
+              <span className="text-[9px] font-mono text-warm-gray tracking-widest">
+                ETKT &bull; AER-8942 &bull; IATA CERTIFIED
               </span>
             </div>
           </div>
 
           {/* Action Footer */}
-          <div className="p-6 bg-slate-900 border-t border-white/10 flex items-center justify-between gap-3">
+          <div className="p-6 bg-paper border-t border-border flex items-center justify-between gap-3 font-mono text-xs">
             <button
               onClick={handleWallet}
-              className="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-colors flex items-center justify-center space-x-2"
+              className="flex-1 py-3 rounded-lg bg-sand hover:bg-sand/80 text-ink border border-border font-medium transition-colors flex items-center justify-center space-x-2"
             >
-              <span>{walletAdded ? 'Added to Apple Wallet ✓' : 'ADD TO WALLET'}</span>
+              <Smartphone className="w-4 h-4 text-terracotta" />
+              <span>{walletAdded ? 'Saved to Wallet ✓' : 'Add to Wallet'}</span>
             </button>
 
             <button
               onClick={handleDownload}
-              className="flex-1 py-3 rounded-xl bg-aeriva-blue hover:bg-blue-600 text-white font-bold text-xs transition-colors flex items-center justify-center space-x-2 shadow-glow-blue"
+              className="flex-1 py-3 rounded-lg bg-terracotta hover:bg-terracotta-hover text-paper font-medium transition-colors flex items-center justify-center space-x-2 shadow-sm"
             >
               <Download className="w-4 h-4" />
-              <span>{downloaded ? 'Downloaded ✓' : 'DOWNLOAD'}</span>
+              <span>{downloaded ? 'Downloaded ✓' : 'Download Pass'}</span>
             </button>
           </div>
         </div>
