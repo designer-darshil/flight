@@ -6,13 +6,21 @@ import {
   Wallet,
   ShieldCheck,
   Lock,
-  ArrowLeft,
-  CheckCircle,
-  Tag,
+  CheckCircle2,
+  AlertTriangle,
   Plane,
+  User,
+  Mail,
+  Phone,
+  FileText,
+  Check,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { formatPrice } from '../utils/currency';
+import { BookingProgress } from './BookingProgress';
+
+type PaymentState = 'idle' | 'processing' | 'success' | 'failure';
+type PaymentMethod = 'card' | 'upi' | 'netbanking' | 'wallet';
 
 export const PaymentModal: React.FC = () => {
   const {
@@ -25,10 +33,13 @@ export const PaymentModal: React.FC = () => {
     currency,
   } = useBooking();
 
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi' | 'netbanking' | 'wallet'>('card');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
+  const [paymentState, setPaymentState] = useState<PaymentState>('idle');
+  
+  // Simulation outcome toggle: allows testing both Success and Failure
+  const [simulateOutcome, setSimulateOutcome] = useState<'success' | 'failure'>('success');
 
-  // Card details
+  // Card form details
   const [cardNumber, setCardNumber] = useState('4532 8920 4821 9024');
   const [cardHolder, setCardHolder] = useState('ALEXANDER MORGAN');
   const [cardExpiry, setCardExpiry] = useState('08/29');
@@ -37,6 +48,9 @@ export const PaymentModal: React.FC = () => {
   // UPI VPA
   const [upiId, setUpiId] = useState('traveler@okhdfcbank');
 
+  // Selected Bank for Net Banking
+  const [selectedBank, setSelectedBank] = useState('HDFC');
+
   // Coupon code
   const [couponCode, setCouponCode] = useState('');
   const [couponApplied, setCouponApplied] = useState(false);
@@ -44,17 +58,21 @@ export const PaymentModal: React.FC = () => {
 
   if (!selectedFlight) return null;
 
-  // Pricing calculations
-  const baseFareINR = (selectedFarePackage.priceINR || selectedFlight.priceINR) * passengers.length;
-  const seatsTotalINR = selectedSeats.reduce((sum, s) => {
-    if (selectedFarePackage.id === 'flex') return sum;
-    if (selectedFarePackage.id === 'standard' && s.cabin === 'Economy' && !s.isExitRow) return sum;
-    return sum + s.priceINR;
-  }, 0);
-  const taxesINR = 5320 * passengers.length;
+  const totalPax = passengers.length;
+  const baseFarePerPax = selectedFarePackage.priceINR || selectedFlight.priceINR;
+  const totalBaseFareINR = baseFarePerPax * totalPax;
 
-  const discountINR = couponApplied ? Math.round((baseFareINR + seatsTotalINR + taxesINR) * 0.1) : 0;
-  const grandTotalINR = baseFareINR + seatsTotalINR + taxesINR - discountINR;
+  const totalSeatCostINR = selectedSeats.reduce((sum, s) => {
+    if (selectedFarePackage.id === 'flex') return sum;
+    if (selectedFarePackage.id === 'standard' && !s.isExitRow) return sum;
+    return sum + (s.isExitRow ? 2400 : s.priceINR);
+  }, 0);
+
+  const taxesPerPaxINR = 4820;
+  const totalTaxesINR = taxesPerPaxINR * totalPax;
+
+  const discountINR = couponApplied ? Math.round((totalBaseFareINR + totalSeatCostINR + totalTaxesINR) * 0.1) : 0;
+  const grandTotalINR = totalBaseFareINR + totalSeatCostINR + totalTaxesINR - discountINR;
 
   const handleApplyCoupon = () => {
     if (couponCode.trim().toUpperCase() === 'AERIVA10' || couponCode.trim().toUpperCase() === 'FLY2026') {
@@ -65,384 +83,601 @@ export const PaymentModal: React.FC = () => {
     }
   };
 
-  const handlePayNow = () => {
-    setIsProcessing(true);
+  const handleConfirmAndPay = () => {
+    setPaymentState('processing');
+
     setTimeout(() => {
-      setIsProcessing(false);
-      completePayment(paymentMethod, discountINR);
-    }, 1200);
+      if (simulateOutcome === 'success') {
+        setPaymentState('success');
+      } else {
+        setPaymentState('failure');
+      }
+    }, 1800);
+  };
+
+  const handleFinishSuccess = () => {
+    completePayment(paymentMethod, discountINR);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/25 overflow-y-auto">
-      <div className="bg-paper w-full max-w-5xl rounded-xl border border-border shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-ink">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
+      <div className="bg-white w-full max-w-6xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-4 sm:p-6 lg:p-8 my-auto relative text-ink max-h-[95vh] overflow-y-auto">
         
-        {/* PROCESSING OVERLAY */}
-        {isProcessing && (
-          <div className="absolute inset-0 z-50 bg-cream flex flex-col items-center justify-center p-8 text-center rounded-xl">
-            <div className="relative w-20 h-20 mb-6">
-              <div className="absolute inset-0 rounded-full border-2 border-terracotta/20 animate-ping" />
-              <div className="absolute inset-2 rounded-full border-2 border-terracotta border-t-transparent animate-spin" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Lock className="w-6 h-6 text-terracotta" />
+        {/* ==================================================
+            PAYMENT STATE: PROCESSING
+           ================================================== */}
+        {paymentState === 'processing' && (
+          <div className="absolute inset-0 z-50 bg-white rounded-[12px] flex flex-col items-center justify-center p-8 text-center">
+            {/* Animated Radar Pulse */}
+            <div className="relative w-24 h-24 mb-6 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border border-[#963F24]/30 animate-ping opacity-60" />
+              <div className="absolute inset-2 rounded-full border border-[#D8D1C5] animate-pulse" />
+              <div className="w-14 h-14 rounded-[12px] bg-[#F6F2EA] border border-[#D8D1C5] shadow-md flex items-center justify-center">
+                <Lock className="w-6 h-6 text-[#963F24] animate-pulse" />
               </div>
             </div>
-            <span className="text-[10px] font-mono tracking-widest text-terracotta uppercase mb-1">AERIVA ENCRYPTED VAULT</span>
-            <h3 className="text-xl font-serif font-medium text-ink mb-2">Authorizing Payment & Issuing Ticket</h3>
-            <p className="text-xs text-warm-gray max-w-sm mb-4 font-sans">
-              Confirming seat reservation {selectedSeats[0]?.id || '18A'} and generating IATA e-ticket...
+
+            <div className="text-xs font-mono tracking-widest text-[#963F24] uppercase font-bold mb-1.5">
+              PROCESSING YOUR BOOKING...
+            </div>
+            <h3 className="text-2xl font-serif font-light text-ink mb-2">
+              Authorizing 256-Bit Bank Transaction
+            </h3>
+            <p className="text-xs text-warm-gray max-w-md mb-6 font-sans">
+              Confirming seat assignments and generating official IATA electronic ticket for {passengers[0]?.firstName || 'Traveler'}...
             </p>
-            <div className="w-48 h-1.5 bg-sand rounded-full overflow-hidden">
-              <div className="h-full bg-terracotta animate-pulse w-full" />
+
+            <div className="w-64 h-1.5 bg-sand rounded-full overflow-hidden">
+              <div className="h-full bg-[#963F24] animate-pulse w-3/4 mx-auto rounded-full" />
             </div>
           </div>
         )}
 
-        {/* HEADER */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-border">
-          <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-terracotta mb-1">
-              <span>STEP 5 OF 5</span>
-              <span>&bull;</span>
-              <span>SECURE CHECKOUT</span>
+        {/* ==================================================
+            PAYMENT STATE: SUCCESS
+           ================================================== */}
+        {paymentState === 'success' && (
+          <div className="absolute inset-0 z-50 bg-white rounded-[12px] flex flex-col items-center justify-center p-8 text-center space-y-5">
+            <div className="w-16 h-16 rounded-full bg-[#EEF2EB] border-2 border-[#59604F] text-[#59604F] mx-auto flex items-center justify-center shadow-sm">
+              <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h2 className="text-2xl font-serif font-light text-ink flex items-center space-x-2">
-              <span>Payment Confirmation</span>
-              <Lock className="w-4 h-4 text-olive" />
+
+            <div className="space-y-1.5">
+              <div className="text-xs font-mono tracking-widest text-[#59604F] uppercase font-bold">
+                PAYMENT SUCCESSFUL
+              </div>
+              <h3 className="text-3xl font-serif font-light text-ink">
+                Your journey is confirmed.
+              </h3>
+              <p className="text-xs text-warm-gray max-w-md mx-auto font-sans">
+                Payment of <strong className="text-ink">{formatPrice(grandTotalINR, currency)}</strong> was authorized successfully via {paymentMethod.toUpperCase()}.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-[8px] bg-sand/40 border border-border inline-flex items-center space-x-3 text-xs font-mono">
+              <span className="text-warm-gray uppercase">Booking Reference:</span>
+              <span className="text-sm font-bold text-[#963F24] tracking-widest">AER-89421</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleFinishSuccess}
+              className="px-8 py-3.5 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+            >
+              VIEW E-TICKET & BOARDING PASS
+            </button>
+          </div>
+        )}
+
+        {/* ==================================================
+            PAYMENT STATE: FAILURE
+           ================================================== */}
+        {paymentState === 'failure' && (
+          <div className="absolute inset-0 z-50 bg-white rounded-[12px] flex flex-col items-center justify-center p-8 text-center space-y-5">
+            <div className="w-16 h-16 rounded-full bg-sand/80 border-2 border-[#963F24] text-[#963F24] mx-auto flex items-center justify-center shadow-sm">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="text-xs font-mono tracking-widest text-[#963F24] uppercase font-bold">
+                PAYMENT COULD NOT BE COMPLETED
+              </div>
+              <h3 className="text-2xl font-serif font-light text-ink">
+                Transaction Declined
+              </h3>
+              <p className="text-xs text-warm-gray max-w-md mx-auto font-sans leading-relaxed">
+                The simulated banking gateway returned error <strong className="text-ink font-mono">ERR_AUTH_DECLINED</strong>. No funds were charged. You may verify credentials or select another payment method.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setSimulateOutcome('success');
+                  setPaymentState('idle');
+                }}
+                className="px-6 py-3 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+              >
+                TRY AGAIN (SIMULATE SUCCESS)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setPaymentMethod('upi');
+                  setSimulateOutcome('success');
+                  setPaymentState('idle');
+                }}
+                className="px-6 py-3 rounded-[8px] bg-white border border-[#D8D1C5] text-ink hover:border-ink font-sans font-medium text-xs uppercase transition-colors cursor-pointer"
+              >
+                SWITCH TO UPI / QR
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================
+            IDLE CHECKOUT STAGE
+           ================================================== */}
+        
+        {/* PROGRESS INDICATOR */}
+        <BookingProgress currentStep="payment" onStepClick={proceedToStep} />
+
+        {/* HEADER: COMPLETE YOUR JOURNEY */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-border">
+          <div>
+            <div className="text-[11px] font-mono text-[#963F24] uppercase tracking-wider font-semibold mb-0.5">
+              STAGE 5 &bull; FINAL CHECKOUT
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-serif font-light text-ink tracking-tight uppercase">
+              COMPLETE YOUR JOURNEY
             </h2>
           </div>
 
-          <div className="flex items-center space-x-2 text-xs text-olive bg-olive/10 px-3 py-1.5 rounded-lg border border-olive/20 font-mono">
+          <div className="flex items-center space-x-2 text-xs text-[#59604F] bg-[#EEF2EB] px-3 py-1.5 rounded-[6px] border border-[#59604F]/30 font-mono">
             <ShieldCheck className="w-4 h-4" />
-            <span>256-Bit Bank Encryption</span>
+            <span>256-Bit Bank Encryption Verified</span>
           </div>
         </div>
 
-        {/* MAIN CONTENT: PAYMENT METHODS (LEFT) & BOOKING SUMMARY (RIGHT) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 my-6">
+        {/* MAIN LAYOUT: LEFT (DETAILS + PAYMENT) & RIGHT (STICKY BOOKING SUMMARY) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 my-6 items-start">
           
-          {/* LEFT: PAYMENT OPTIONS (Col 1-7) */}
+          {/* LEFT: PASSENGER, CONTACT, TRAVEL DOCUMENT, PAYMENT (Col 1-7) */}
           <div className="lg:col-span-7 space-y-6">
             
-            {/* PAYMENT TABS */}
-            <div className="grid grid-cols-4 gap-2 p-1.5 rounded-xl bg-sand/40 border border-border font-mono text-xs">
-              {[
-                { id: 'card', label: 'Card', icon: CreditCard },
-                { id: 'upi', label: 'UPI / QR', icon: QrCode },
-                { id: 'netbanking', label: 'NetBank', icon: Building },
-                { id: 'wallet', label: 'Wallets', icon: Wallet },
-              ].map(tab => {
-                const IconComp = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setPaymentMethod(tab.id as any)}
-                    className={`py-2.5 rounded-lg text-xs font-medium flex flex-col items-center justify-center space-y-1 transition-colors ${
-                      paymentMethod === tab.id
-                        ? 'bg-ink text-paper shadow-sm'
-                        : 'text-warm-gray hover:text-ink hover:bg-sand/60'
-                    }`}
-                  >
-                    <IconComp className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
+            {/* 1. PASSENGER SUMMARY */}
+            <div className="p-5 rounded-[12px] bg-white border border-[#D8D1C5] space-y-3 shadow-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-border">
+                <div className="flex items-center space-x-2 text-xs font-serif font-bold text-ink uppercase tracking-wider">
+                  <User className="w-4 h-4 text-[#963F24]" />
+                  <span>Passenger Details</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => proceedToStep('passengers')}
+                  className="text-xs font-mono text-[#963F24] hover:underline font-semibold cursor-pointer"
+                >
+                  Edit
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {passengers.map((p, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-xs font-sans p-2 rounded-[6px] bg-sand/30">
+                    <div>
+                      <strong className="text-ink font-semibold">{p.title} {p.firstName} {p.lastName}</strong>
+                      <span className="text-warm-gray text-[11px] ml-2">DOB: {p.dateOfBirth} &bull; {p.gender}</span>
+                    </div>
+                    <span className="font-mono text-xs font-bold text-[#963F24]">
+                      Seat {selectedSeats[idx]?.id || 'Assigned'}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* TAB CONTENT: CREDIT/DEBIT CARD */}
-            {paymentMethod === 'card' && (
-              <div className="space-y-4">
-                {/* VIRTUAL CREDIT CARD PREVIEW */}
-                <div className="p-6 rounded-xl bg-ink text-paper border border-border shadow-md relative overflow-hidden">
-                  <div className="flex justify-between items-center mb-6">
-                    <span className="text-xs font-mono tracking-widest text-champagne uppercase">AERIVA WORLD VOYAGER</span>
-                    <div className="w-8 h-6 rounded-md bg-champagne/20 border border-champagne/40 flex items-center justify-center text-[8px] font-mono text-champagne">
-                      CHIP
-                    </div>
-                  </div>
-
-                  <div className="text-lg font-mono tracking-widest font-semibold my-4 text-paper">
-                    {cardNumber || '•••• •••• •••• ••••'}
-                  </div>
-
-                  <div className="flex justify-between items-end text-xs font-mono">
-                    <div>
-                      <div className="text-[9px] text-warm-gray uppercase">Cardholder</div>
-                      <div className="font-medium text-paper">{cardHolder || 'TRAVELER NAME'}</div>
-                    </div>
-                    <div>
-                      <div className="text-[9px] text-warm-gray uppercase">Expires</div>
-                      <div className="font-medium text-paper">{cardExpiry || 'MM/YY'}</div>
-                    </div>
-                  </div>
+            {/* 2. CONTACT SUMMARY */}
+            <div className="p-5 rounded-[12px] bg-white border border-[#D8D1C5] space-y-3 shadow-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-border">
+                <div className="flex items-center space-x-2 text-xs font-serif font-bold text-ink uppercase tracking-wider">
+                  <Mail className="w-4 h-4 text-[#963F24]" />
+                  <span>Contact Information</span>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => proceedToStep('passengers')}
+                  className="text-xs font-mono text-[#963F24] hover:underline font-semibold cursor-pointer"
+                >
+                  Edit
+                </button>
+              </div>
 
-                {/* CARD INPUT FIELDS */}
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1">Card Number</label>
-                    <input
-                      type="text"
-                      value={cardNumber}
-                      onChange={e => setCardNumber(e.target.value)}
-                      className="w-full p-2.5 rounded-lg border border-border text-xs font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
-                    />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="flex items-center space-x-2 text-ink">
+                  <Mail className="w-3.5 h-3.5 text-warm-gray" />
+                  <span className="font-mono">{passengers[0]?.email || 'traveler@aeriva.aero'}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-ink">
+                  <Phone className="w-3.5 h-3.5 text-warm-gray" />
+                  <span className="font-mono">{passengers[0]?.phone || '+91 98200 00000'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. TRAVEL DOCUMENT SUMMARY */}
+            <div className="p-5 rounded-[12px] bg-white border border-[#D8D1C5] space-y-3 shadow-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-border">
+                <div className="flex items-center space-x-2 text-xs font-serif font-bold text-ink uppercase tracking-wider">
+                  <FileText className="w-4 h-4 text-[#963F24]" />
+                  <span>Travel Document</span>
+                </div>
+                <span className="text-[10px] font-mono text-[#59604F] font-semibold uppercase">Verified</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-warm-gray block">Nationality</span>
+                  <span className="font-medium text-ink">{passengers[0]?.nationality || 'Indian'}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-warm-gray block">Passport / Travel ID</span>
+                  <span className="font-mono font-medium text-ink">{passengers[0]?.passportNumber || 'M84920194'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 4. PAYMENT SECTION */}
+            <div className="p-5 sm:p-6 rounded-[12px] bg-white border border-[#D8D1C5] space-y-5 shadow-xs">
+              
+              <div className="flex items-center justify-between pb-3 border-b border-border">
+                <div className="flex items-center space-x-2 text-xs font-serif font-bold text-ink uppercase tracking-wider">
+                  <Lock className="w-4 h-4 text-[#963F24]" />
+                  <span>Select Payment Method</span>
+                </div>
+                <div className="flex items-center space-x-2 text-[10px] font-mono text-warm-gray">
+                  <span>Simulation:</span>
+                  <button
+                    type="button"
+                    onClick={() => setSimulateOutcome(simulateOutcome === 'success' ? 'failure' : 'success')}
+                    className={`px-2 py-0.5 rounded-[4px] font-bold uppercase transition-colors cursor-pointer ${
+                      simulateOutcome === 'success'
+                        ? 'bg-[#EEF2EB] text-[#59604F] border border-[#59604F]/40'
+                        : 'bg-sand text-[#963F24] border border-[#963F24]'
+                    }`}
+                  >
+                    {simulateOutcome === 'success' ? 'Pass (Success)' : 'Fail (Failure)'}
+                  </button>
+                </div>
+              </div>
+
+              {/* PAYMENT METHOD TABS: CARD, UPI, NET BANKING, WALLET */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
+                {[
+                  { id: 'card', label: 'Card', icon: CreditCard },
+                  { id: 'upi', label: 'UPI / QR', icon: QrCode },
+                  { id: 'netbanking', label: 'Net Banking', icon: Building },
+                  { id: 'wallet', label: 'Wallet', icon: Wallet },
+                ].map(tab => {
+                  const IconComp = tab.icon;
+                  const isTabActive = paymentMethod === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setPaymentMethod(tab.id as PaymentMethod)}
+                      className={`py-3 px-2 rounded-[8px] border text-xs font-medium flex flex-col items-center justify-center space-y-1.5 transition-all cursor-pointer ${
+                        isTabActive
+                          ? 'bg-ink text-white border-ink shadow-sm'
+                          : 'bg-white text-ink border-[#D8D1C5] hover:bg-sand/30 hover:border-ink'
+                      }`}
+                    >
+                      <IconComp className="w-4 h-4" />
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* METHOD 1: CARD */}
+              {paymentMethod === 'card' && (
+                <div className="space-y-4 pt-2">
+                  {/* Visual Card Representation */}
+                  <div className="p-5 rounded-[12px] bg-[#171717] text-white border border-border shadow-md space-y-4">
+                    <div className="flex justify-between items-center text-xs font-mono text-sand">
+                      <span className="tracking-widest uppercase">AERIVA WORLD TRAVEL</span>
+                      <span>VISA PLATINUM</span>
+                    </div>
+                    <div className="font-mono text-lg tracking-widest text-white">
+                      {cardNumber || '•••• •••• •••• ••••'}
+                    </div>
+                    <div className="flex justify-between text-xs font-mono text-sand">
+                      <div>
+                        <span className="text-[9px] uppercase block text-warm-gray">Cardholder</span>
+                        <span>{cardHolder || 'TRAVELER'}</span>
+                      </div>
+                      <div>
+                        <span className="text-[9px] uppercase block text-warm-gray">Expires</span>
+                        <span>{cardExpiry || 'MM/YY'}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1">Cardholder Name</label>
+                  {/* Card Form Inputs */}
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+                    <div className="sm:col-span-12">
+                      <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">Card Number</label>
+                      <input
+                        type="text"
+                        value={cardNumber}
+                        onChange={e => setCardNumber(e.target.value)}
+                        className="w-full h-12 px-4 rounded-[8px] border border-[#D8D1C5] bg-white text-ink font-mono focus:outline-none focus:border-[#963F24]"
+                      />
+                    </div>
+                    <div className="sm:col-span-6">
+                      <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">Cardholder Name</label>
                       <input
                         type="text"
                         value={cardHolder}
-                        onChange={e => setCardHolder(e.target.value)}
-                        className="w-full p-2.5 rounded-lg border border-border text-xs uppercase bg-paper text-ink focus:outline-none focus:border-terracotta"
+                        onChange={e => setCardHolder(e.target.value.toUpperCase())}
+                        className="w-full h-12 px-4 rounded-[8px] border border-[#D8D1C5] bg-white text-ink uppercase focus:outline-none focus:border-[#963F24]"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1">Expiry</label>
-                        <input
-                          type="text"
-                          value={cardExpiry}
-                          onChange={e => setCardExpiry(e.target.value)}
-                          className="w-full p-2.5 rounded-lg border border-border text-xs font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1">CVV</label>
-                        <input
-                          type="password"
-                          maxLength={4}
-                          value={cardCvv}
-                          onChange={e => setCardCvv(e.target.value)}
-                          className="w-full p-2.5 rounded-lg border border-border text-xs font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
-                        />
-                      </div>
+                    <div className="sm:col-span-3">
+                      <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">Expiry</label>
+                      <input
+                        type="text"
+                        placeholder="MM/YY"
+                        value={cardExpiry}
+                        onChange={e => setCardExpiry(e.target.value)}
+                        className="w-full h-12 px-4 rounded-[8px] border border-[#D8D1C5] bg-white text-ink font-mono text-center focus:outline-none focus:border-[#963F24]"
+                      />
+                    </div>
+                    <div className="sm:col-span-3">
+                      <label className="block text-[11px] font-mono uppercase text-warm-gray mb-1">CVV</label>
+                      <input
+                        type="password"
+                        maxLength={4}
+                        placeholder="•••"
+                        value={cardCvv}
+                        onChange={e => setCardCvv(e.target.value)}
+                        className="w-full h-12 px-4 rounded-[8px] border border-[#D8D1C5] bg-white text-ink font-mono text-center focus:outline-none focus:border-[#963F24]"
+                      />
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* TAB CONTENT: UPI / QR CODE */}
-            {paymentMethod === 'upi' && (
-              <div className="p-6 rounded-xl border border-border bg-sand/20 text-center space-y-4">
-                <h4 className="text-sm font-serif font-medium text-ink">Scan UPI QR with Any App</h4>
-                
-                <div className="w-40 h-40 mx-auto p-3 rounded-xl bg-paper border border-border flex items-center justify-center shadow-sm">
-                  <div className="w-full h-full border-2 border-border p-2 flex flex-col items-center justify-center space-y-1">
-                    <QrCode className="w-24 h-24 text-ink" />
-                    <span className="text-[8px] font-mono text-warm-gray font-bold">AERIVA SECURE UPI</span>
+              {/* METHOD 2: UPI */}
+              {paymentMethod === 'upi' && (
+                <div className="space-y-4 pt-2">
+                  <div className="p-4 rounded-[8px] bg-sand/30 border border-border space-y-3">
+                    <label className="block text-[11px] font-mono uppercase text-warm-gray font-semibold">
+                      Enter UPI ID / VPA
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        value={upiId}
+                        onChange={e => setUpiId(e.target.value)}
+                        placeholder="username@bank"
+                        className="flex-1 h-12 px-4 rounded-[8px] border border-[#D8D1C5] bg-white text-ink font-mono text-xs focus:outline-none focus:border-[#963F24]"
+                      />
+                      <button
+                        type="button"
+                        className="h-12 px-4 rounded-[8px] bg-ink text-white font-mono text-xs font-semibold"
+                      >
+                        Verify
+                      </button>
+                    </div>
+                    <span className="text-[11px] font-mono text-[#59604F] flex items-center space-x-1">
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Verified: Alexander Morgan (HDFC Bank)</span>
+                    </span>
+                  </div>
+
+                  <div className="text-center py-4 border border-dashed border-border rounded-[8px] bg-white">
+                    <QrCode className="w-24 h-24 mx-auto text-ink mb-2" />
+                    <span className="text-[11px] font-mono text-warm-gray block">Scan QR with any UPI App (GPay, PhonePe, Paytm)</span>
                   </div>
                 </div>
+              )}
 
-                <div className="text-xs text-warm-gray font-sans">
-                  Compatible with Google Pay, PhonePe, Paytm, and BHIM
+              {/* METHOD 3: NET BANKING */}
+              {paymentMethod === 'netbanking' && (
+                <div className="space-y-3 pt-2">
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray font-semibold">
+                    Select Popular Bank
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {['HDFC', 'ICICI', 'SBI', 'Axis Bank', 'HSBC', 'Barclays'].map(bank => (
+                      <button
+                        key={bank}
+                        type="button"
+                        onClick={() => setSelectedBank(bank)}
+                        className={`p-3 rounded-[8px] border text-xs font-mono font-medium transition-all text-center cursor-pointer ${
+                          selectedBank === bank
+                            ? 'bg-ink text-white border-ink shadow-xs'
+                            : 'bg-white text-ink border-[#D8D1C5] hover:bg-sand/30'
+                        }`}
+                      >
+                        {bank}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+              )}
 
-                <div className="pt-3 border-t border-border flex items-center space-x-2">
+              {/* METHOD 4: WALLET */}
+              {paymentMethod === 'wallet' && (
+                <div className="space-y-3 pt-2">
+                  <label className="block text-[11px] font-mono uppercase text-warm-gray font-semibold">
+                    Select Digital Wallet
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    {['Apple Pay', 'Google Pay', 'Aeriva Miles Wallet'].map(w => (
+                      <div
+                        key={w}
+                        className="p-4 rounded-[8px] border border-[#D8D1C5] bg-sand/20 flex items-center justify-between cursor-pointer hover:border-ink"
+                      >
+                        <span className="font-medium text-ink">{w}</span>
+                        <div className="w-4 h-4 rounded-full border border-ink flex items-center justify-center">
+                          <div className="w-2 h-2 rounded-full bg-ink" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* PROMO COUPON CODE */}
+              <div className="pt-4 border-t border-border">
+                <div className="flex items-center space-x-2">
                   <input
                     type="text"
-                    value={upiId}
-                    onChange={e => setUpiId(e.target.value)}
-                    placeholder="Enter UPI ID (e.g. mobile@upi)"
-                    className="flex-1 p-2.5 rounded-lg border border-border text-xs font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
+                    placeholder="Enter Coupon (AERIVA10)"
+                    value={couponCode}
+                    onChange={e => setCouponCode(e.target.value.toUpperCase())}
+                    className="flex-1 h-11 px-4 rounded-[8px] border border-[#D8D1C5] bg-white text-ink text-xs font-mono uppercase focus:outline-none focus:border-[#963F24]"
                   />
-                  <button className="px-4 py-2.5 rounded-lg bg-ink text-paper text-xs font-mono hover:bg-terracotta transition-colors">
-                    Verify
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* TAB CONTENT: NET BANKING */}
-            {paymentMethod === 'netbanking' && (
-              <div className="space-y-3">
-                <label className="block text-xs font-mono uppercase text-warm-gray">Select Bank</label>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  {['HDFC Bank', 'ICICI Bank', 'State Bank of India', 'Axis Bank', 'Kotak Mahindra', 'Citibank'].map(bank => (
-                    <button
-                      key={bank}
-                      className="p-3 rounded-lg bg-paper border border-border text-left hover:border-ink text-ink transition-colors flex items-center justify-between"
-                    >
-                      <span className="font-medium">{bank}</span>
-                      <Building className="w-3.5 h-3.5 text-warm-gray" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* TAB CONTENT: WALLET */}
-            {paymentMethod === 'wallet' && (
-              <div className="space-y-2 text-xs">
-                {['Apple Pay', 'Google Pay', 'PayPal', 'Amazon Pay'].map(w => (
                   <button
-                    key={w}
-                    className="w-full p-3.5 rounded-lg bg-paper border border-border text-left hover:border-ink text-ink transition-colors flex items-center justify-between"
+                    type="button"
+                    onClick={handleApplyCoupon}
+                    className="h-11 px-5 rounded-[8px] bg-sand hover:bg-sand/80 text-ink font-mono font-semibold text-xs transition-colors cursor-pointer"
                   >
-                    <span className="font-medium">{w}</span>
-                    <Wallet className="w-4 h-4 text-terracotta" />
+                    Apply
                   </button>
-                ))}
+                </div>
+                {couponApplied && (
+                  <span className="text-[11px] font-mono text-[#59604F] mt-1.5 flex items-center space-x-1">
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Coupon AERIVA10 applied: 10% savings deducted!</span>
+                  </span>
+                )}
+                {couponError && (
+                  <span className="text-[11px] font-mono text-[#963F24] mt-1.5 block">
+                    {couponError}
+                  </span>
+                )}
               </div>
-            )}
 
-            {/* COUPON CODE INPUT */}
-            <div className="pt-4 border-t border-border">
-              <label className="block text-[11px] font-mono text-warm-gray uppercase mb-1.5 flex items-center space-x-1.5">
-                <Tag className="w-3.5 h-3.5 text-terracotta" />
-                <span>Promo Code (Use AERIVA10 for 10% Off)</span>
-              </label>
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  placeholder="Enter code (e.g. AERIVA10)"
-                  value={couponCode}
-                  onChange={e => setCouponCode(e.target.value)}
-                  className="flex-1 p-2.5 rounded-lg border border-border text-xs uppercase font-mono bg-paper text-ink focus:outline-none focus:border-terracotta"
-                />
-                <button
-                  type="button"
-                  onClick={handleApplyCoupon}
-                  className="px-4 py-2.5 rounded-lg bg-ink text-paper text-xs font-mono hover:bg-terracotta transition-colors"
-                >
-                  Apply
-                </button>
-              </div>
-              {couponApplied && (
-                <div className="text-[11px] text-olive mt-1.5 flex items-center space-x-1 font-mono">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>Promo code applied. 10% discount subtracted.</span>
-                </div>
-              )}
-              {couponError && (
-                <div className="text-[11px] text-terracotta mt-1.5 font-mono">
-                  {couponError}
-                </div>
-              )}
             </div>
+
           </div>
 
-          {/* RIGHT: STICKY BOOKING BREAKDOWN SUMMARY (Col 8-12) */}
-          <div className="lg:col-span-5">
-            <div className="p-6 rounded-xl bg-sand/30 border border-border space-y-5 sticky top-24">
+          {/* RIGHT: STICKY BOOKING SUMMARY (Col 8-12) */}
+          <div className="lg:col-span-5 sticky top-4">
+            <div className="bg-white rounded-[12px] p-6 border border-[#D8D1C5] shadow-sm space-y-5 text-ink">
               
-              <h3 className="text-xs font-mono uppercase tracking-wider text-warm-gray pb-3 border-b border-border flex items-center space-x-2">
-                <Plane className="w-4 h-4 text-terracotta rotate-90" />
-                <span>Itinerary Summary</span>
-              </h3>
+              <div className="flex items-center justify-between pb-3 border-b border-border">
+                <h3 className="font-serif font-bold text-lg text-ink">
+                  Itinerary Summary
+                </h3>
+                <span className="text-[10px] font-mono px-2.5 py-1 rounded-[4px] bg-sand font-bold text-[#963F24]">
+                  CONFIRMED FARE
+                </span>
+              </div>
 
-              {/* Route & Timing Snippet */}
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-warm-gray">Route:</span>
-                  <span className="font-serif font-medium text-ink">
-                    {selectedFlight.from.city} ➔ {selectedFlight.to.city}
-                  </span>
+              {/* ROUTE */}
+              <div className="space-y-1 text-xs">
+                <div className="text-[10px] font-mono text-warm-gray uppercase tracking-wider">Route</div>
+                <div className="font-serif font-medium text-base text-ink flex items-center space-x-2">
+                  <span>{selectedFlight.from.city} ({selectedFlight.from.code})</span>
+                  <Plane className="w-3.5 h-3.5 text-[#963F24] rotate-90" />
+                  <span>{selectedFlight.to.city} ({selectedFlight.to.code})</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-warm-gray">Airline:</span>
-                  <span className="font-mono text-ink">
-                    {selectedFlight.airline} ({selectedFlight.flightNumber})
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-warm-gray">Date:</span>
-                  <span className="text-ink font-mono">{selectedFlight.departureDate}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-warm-gray">Travelers:</span>
-                  <span className="text-ink">
-                    {passengers.length} {passengers.length === 1 ? 'Passenger' : 'Passengers'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-warm-gray">Fare Tier:</span>
-                  <span className="text-ink font-medium">{selectedFarePackage.name}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-warm-gray">Seat:</span>
-                  <span className="font-mono text-terracotta font-medium">
-                    {selectedSeats.length > 0 ? selectedSeats.map(s => s.id).join(', ') : 'Standard'}
-                  </span>
+                <div className="text-warm-gray font-mono text-[11px]">
+                  {selectedFlight.departureDate} &bull; {selectedFlight.duration} &bull; {selectedFlight.stops === 0 ? 'Non-stop' : `${selectedFlight.stops} Stop`}
                 </div>
               </div>
 
-              {/* ITEMIZED PRICE BREAKDOWN */}
-              <div className="pt-4 border-t border-border space-y-2 text-xs font-mono">
-                <div className="flex justify-between text-warm-gray">
-                  <span>Base Airfare ({passengers.length} pax):</span>
-                  <span>{formatPrice(baseFareINR, currency)}</span>
+              {/* FLIGHT */}
+              <div className="space-y-1 text-xs pt-3 border-t border-border">
+                <div className="text-[10px] font-mono text-warm-gray uppercase tracking-wider">Flight & Aircraft</div>
+                <div className="flex items-center space-x-2 font-medium text-ink">
+                  <span>{selectedFlight.airline}</span>
+                  <span className="font-mono text-xs font-bold text-[#963F24]">({selectedFlight.flightNumber})</span>
                 </div>
-
-                <div className="flex justify-between text-warm-gray">
-                  <span>Seat Assignment:</span>
-                  <span>{formatPrice(seatsTotalINR, currency)}</span>
+                <div className="text-warm-gray text-[11px] font-mono">
+                  {selectedFlight.aircraft} &bull; Departure {selectedFlight.departureTime}
                 </div>
+              </div>
 
-                <div className="flex justify-between text-warm-gray">
-                  <span>Airport Taxes & Fees:</span>
-                  <span>{formatPrice(taxesINR, currency)}</span>
+              {/* FARE */}
+              <div className="space-y-1 text-xs pt-3 border-t border-border">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-mono text-warm-gray uppercase tracking-wider">Fare Package</span>
+                  <span className="font-mono font-bold text-ink">{selectedFarePackage.name}</span>
                 </div>
+                <div className="flex justify-between text-warm-gray">
+                  <span>Base fare ({totalPax} {totalPax === 1 ? 'traveler' : 'travelers'}):</span>
+                  <span className="font-mono text-ink">{formatPrice(totalBaseFareINR, currency)}</span>
+                </div>
+              </div>
 
+              {/* SEAT */}
+              <div className="space-y-1.5 text-xs pt-3 border-t border-border">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-mono text-warm-gray uppercase tracking-wider">Seats Assigned</span>
+                  <span className="font-mono font-semibold text-ink">
+                    {selectedSeats.map(s => s.id).join(', ') || 'Complimentary'}
+                  </span>
+                </div>
+                <div className="flex justify-between text-warm-gray font-mono">
+                  <span>Seat Assignment Fees:</span>
+                  <span className="text-ink">{formatPrice(totalSeatCostINR, currency)}</span>
+                </div>
+              </div>
+
+              {/* TAXES */}
+              <div className="pt-3 border-t border-border space-y-1 text-xs font-mono">
+                <div className="flex justify-between text-warm-gray">
+                  <span>Airport Taxes & GST:</span>
+                  <span className="text-ink">{formatPrice(totalTaxesINR, currency)}</span>
+                </div>
                 {couponApplied && (
-                  <div className="flex justify-between text-olive font-medium">
-                    <span>Discount (10%):</span>
+                  <div className="flex justify-between text-[#59604F] font-semibold">
+                    <span>Promo Discount (10%):</span>
                     <span>-{formatPrice(discountINR, currency)}</span>
                   </div>
                 )}
+              </div>
 
-                {/* TOTAL AMOUNT DUE */}
-                <div className="pt-3 border-t border-border flex justify-between items-baseline">
-                  <div>
-                    <span className="text-sm font-serif font-medium text-ink block">Total Due</span>
-                    <span className="text-[10px] text-warm-gray">All taxes included</span>
-                  </div>
-                  <span className="text-2xl font-serif font-bold text-terracotta">
-                    {formatPrice(grandTotalINR, currency)}
-                  </span>
+              {/* TOTAL */}
+              <div className="pt-4 border-t-2 border-border flex justify-between items-center">
+                <div>
+                  <span className="text-[10px] font-mono text-warm-gray uppercase tracking-wider block">Grand Total</span>
+                  <span className="text-[11px] font-mono text-warm-gray">All inclusive price</span>
+                </div>
+                <div className="text-3xl font-serif font-bold text-[#963F24]">
+                  {formatPrice(grandTotalINR, currency)}
                 </div>
               </div>
 
-              {/* SUBMIT CTA */}
+              {/* PRIMARY CTA: CONFIRM & PAY */}
               <button
-                onClick={handlePayNow}
-                disabled={isProcessing}
-                className="w-full py-3.5 rounded-lg bg-terracotta hover:bg-terracotta-hover text-paper font-mono font-medium text-xs uppercase tracking-wider transition-colors flex items-center justify-center space-x-2 shadow-sm"
+                type="button"
+                onClick={handleConfirmAndPay}
+                className="w-full h-12 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center space-x-2 cursor-pointer"
               >
-                {isProcessing ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-paper/30 border-t-paper rounded-full animate-spin" />
-                    <span>Authorizing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Lock className="w-3.5 h-3.5" />
-                    <span>Pay {formatPrice(grandTotalINR, currency)}</span>
-                  </>
-                )}
+                <span>CONFIRM & PAY</span>
+                <ShieldCheck className="w-4 h-4" />
               </button>
 
-              <div className="text-center text-[10px] text-warm-gray font-sans">
-                Simulated secure demonstration checkout.
-              </div>
+              <button
+                type="button"
+                onClick={() => proceedToStep('passengers')}
+                className="w-full py-2 text-center text-xs font-mono text-warm-gray hover:text-ink transition-colors cursor-pointer"
+              >
+                ← Back to Passenger Information
+              </button>
+
             </div>
           </div>
+
         </div>
 
-        {/* BOTTOM BACK BUTTON */}
-        <div className="pt-3 border-t border-border flex items-center justify-between">
-          <button
-            onClick={() => proceedToStep('passengers')}
-            className="px-5 py-2.5 rounded-lg bg-paper border border-border text-ink hover:border-ink/50 font-mono text-xs uppercase flex items-center space-x-2 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Passengers</span>
-          </button>
-        </div>
       </div>
     </div>
   );

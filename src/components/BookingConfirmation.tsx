@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { formatPrice } from '../utils/currency';
+import { BookingProgress } from './BookingProgress';
 
 export const BookingConfirmation: React.FC = () => {
   const {
@@ -59,16 +60,21 @@ export const BookingConfirmation: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/25 overflow-y-auto">
-      <div className="bg-paper w-full max-w-4xl rounded-xl border border-border shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-10 my-auto relative text-ink">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
+      <div className="bg-white w-full max-w-4xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-10 my-auto relative text-[#171717]">
         
         {/* CLOSE BUTTON */}
         <button
           onClick={resetBooking}
-          className="absolute top-5 right-5 p-2 rounded-lg hover:bg-sand text-warm-gray hover:text-ink transition-colors"
+          className="absolute top-5 right-5 p-2 rounded-[8px] hover:bg-[#EFE9DE] text-[#6F6A61] hover:text-[#171717] transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
+
+        {/* BOOKING PROGRESS STEPPER */}
+        <div className="mb-6">
+          <BookingProgress currentStep="confirmation" />
+        </div>
 
         {/* SUCCESS CELEBRATION HEADER */}
         <div className="text-center space-y-3 pb-8 border-b border-border">
