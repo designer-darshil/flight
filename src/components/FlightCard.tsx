@@ -8,10 +8,12 @@ import {
   Plane,
   ArrowRight,
   Info,
+  Bookmark,
 } from 'lucide-react';
 import { Flight } from '../types';
 import { useBooking } from '../context/BookingContext';
 import { formatPrice } from '../utils/currency';
+import { SaveFlightModal } from './SaveFlightModal';
 
 interface FlightCardProps {
   flight: Flight;
@@ -21,6 +23,7 @@ interface FlightCardProps {
 export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = false }) => {
   const { currency, selectFlight, openDrawer } = useBooking();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
   return (
     <div
@@ -151,6 +154,15 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
 
           <div className="flex items-center space-x-3">
             <button
+              onClick={() => setIsSaveModalOpen(true)}
+              className="font-mono text-xs text-[#6F6A61] hover:text-[#963F24] font-medium flex items-center space-x-1 cursor-pointer transition-colors"
+              title="Save to itineraries"
+            >
+              <Bookmark className="w-3.5 h-3.5" />
+              <span>Save</span>
+            </button>
+
+            <button
               onClick={() => openDrawer(flight)}
               className="font-mono text-xs text-[#963F24] hover:underline font-semibold flex items-center space-x-1 cursor-pointer"
             >
@@ -203,6 +215,13 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
         )}
 
       </div>
+
+      {/* SAVE FLIGHT MODAL */}
+      <SaveFlightModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        flight={flight}
+      />
     </div>
   );
 };

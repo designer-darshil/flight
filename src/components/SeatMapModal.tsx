@@ -75,7 +75,7 @@ export const SeatMapModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
-      <div className="bg-[#F6F2EA] w-full max-w-6xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-4 sm:p-6 lg:p-8 my-auto relative flex flex-col max-h-[95vh] text-ink overflow-hidden">
+      <div className="bg-[#F6F2EA] w-full max-w-6xl rounded-[16px] border border-[#D8D1C5] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-4 sm:p-6 lg:p-8 my-auto relative flex flex-col max-h-[95vh] text-ink overflow-hidden">
         
         {/* BOOKING PROGRESS: FLIGHT -> FARE -> SEAT -> PASSENGER -> PAYMENT -> CONFIRMATION */}
         <div className="shrink-0">

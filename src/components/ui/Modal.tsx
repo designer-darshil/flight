@@ -56,7 +56,7 @@ export const Modal: React.FC<ModalProps> = ({
     >
       <div
         onClick={e => e.stopPropagation()}
-        className={`w-full ${maxWidthClasses} bg-white rounded-[16px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-5 sm:p-8 my-auto relative text-[#171717] transition-all transform animate-scaleIn`}
+        className={`w-full ${maxWidthClasses} bg-[#FFFFFF] rounded-[16px] border border-[#D8D1C5] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-5 sm:p-8 my-auto relative text-[#171717] transition-all transform animate-scaleIn`}
       >
         {/* CLOSE BUTTON */}
         {showCloseButton && (

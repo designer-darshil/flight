@@ -443,7 +443,7 @@ export const FlightResultsApp: React.FC = () => {
           {/* MOBILE BOTTOM SHEET FILTERS */}
           {mobileFilterOpen && (
             <div className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end bg-[rgba(23,23,23,0.25)]">
-              <div className="bg-white rounded-t-[12px] border-t border-x border-[#D8D1C5] shadow-[0_-20px_60px_rgba(23,23,23,0.12)] max-h-[85vh] overflow-y-auto p-6 space-y-6">
+              <div className="bg-[#FFFFFF] rounded-t-[16px] border-t border-x border-[#D8D1C5] shadow-[0_-24px_60px_rgba(23,23,23,0.10)] max-h-[85vh] overflow-y-auto p-6 space-y-6">
                 
                 {/* Drag Handle */}
                 <div className="w-12 h-1 rounded-full bg-[#D8D1C5] mx-auto -mt-1 mb-2" />

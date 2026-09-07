@@ -38,8 +38,8 @@ export const Hero: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/25 to-transparent" />
         
         {/* Subtle Warm Sun Flare & Atmospheric Haze */}
-        <div className="absolute -top-32 right-1/4 w-[600px] h-[600px] bg-amber-400/20 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] bg-terracotta/15 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute -top-32 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-amber-400/15 via-transparent to-transparent rounded-full pointer-events-none" />
+        <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] bg-gradient-to-br from-terracotta/10 via-transparent to-transparent rounded-full pointer-events-none" />
         
         {/* Subtle Film Grain */}
         <div className="absolute inset-0 film-grain pointer-events-none opacity-40" />

@@ -101,13 +101,13 @@ export const PaymentModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
-      <div className="bg-white w-full max-w-6xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-4 sm:p-6 lg:p-8 my-auto relative text-ink max-h-[95vh] overflow-y-auto">
+      <div className="bg-[#FFFFFF] w-full max-w-6xl rounded-[16px] border border-[#D8D1C5] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-4 sm:p-6 lg:p-8 my-auto relative text-ink max-h-[95vh] overflow-y-auto">
         
         {/* ==================================================
             PAYMENT STATE: PROCESSING
            ================================================== */}
         {paymentState === 'processing' && (
-          <div className="absolute inset-0 z-50 bg-white rounded-[12px] flex flex-col items-center justify-center p-8 text-center">
+          <div className="absolute inset-0 z-50 bg-[#FFFFFF] rounded-[16px] flex flex-col items-center justify-center p-8 text-center">
             {/* Animated Radar Pulse */}
             <div className="relative w-24 h-24 mb-6 flex items-center justify-center">
               <div className="absolute inset-0 rounded-full border border-[#963F24]/30 animate-ping opacity-60" />
@@ -137,26 +137,36 @@ export const PaymentModal: React.FC = () => {
             PAYMENT STATE: SUCCESS
            ================================================== */}
         {paymentState === 'success' && (
-          <div className="absolute inset-0 z-50 bg-white rounded-[12px] flex flex-col items-center justify-center p-8 text-center space-y-5">
+          <div className="absolute inset-0 z-50 bg-[#FFFFFF] rounded-[16px] flex flex-col items-center justify-center p-8 text-center space-y-5">
             <div className="w-16 h-16 rounded-full bg-[#EEF2EB] border-2 border-[#59604F] text-[#59604F] mx-auto flex items-center justify-center shadow-sm">
               <CheckCircle2 className="w-8 h-8" />
             </div>
 
             <div className="space-y-1.5">
               <div className="text-xs font-mono tracking-widest text-[#59604F] uppercase font-bold">
-                PAYMENT SUCCESSFUL
+                PAYMENT CONFIRMED &bull; TRANSACTION #TX994182
               </div>
-              <h3 className="text-3xl font-serif font-light text-ink">
-                Your journey is confirmed.
+              <h3 className="text-3xl sm:text-4xl font-serif font-light text-ink">
+                Your Payment Was Successful
               </h3>
               <p className="text-xs text-warm-gray max-w-md mx-auto font-sans">
-                Payment of <strong className="text-ink">{formatPrice(grandTotalINR, currency)}</strong> was authorized successfully via {paymentMethod.toUpperCase()}.
+                Payment received in full via {paymentMethod.toUpperCase()}. Final booking confirmation issued under reference <strong className="text-ink font-mono font-bold">ARV7K92</strong>.
               </p>
             </div>
 
-            <div className="p-4 rounded-[8px] bg-sand/40 border border-border inline-flex items-center space-x-3 text-xs font-mono">
-              <span className="text-warm-gray uppercase">Booking Reference:</span>
-              <span className="text-sm font-bold text-[#963F24] tracking-widest">AER-89421</span>
+            <div className="p-4 rounded-[8px] bg-sand/40 border border-border w-full max-w-md text-xs font-mono space-y-1 text-left">
+              <div className="flex justify-between">
+                <span className="text-warm-gray">Transaction Method</span>
+                <span className="font-bold text-ink uppercase">{paymentMethod}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-warm-gray">Total Paid</span>
+                <span className="font-bold text-[#963F24]">{formatPrice(grandTotalINR, currency)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-warm-gray">Bank Authorization</span>
+                <span className="text-ink">AUTH_009412</span>
+              </div>
             </div>
 
             <button
@@ -164,7 +174,7 @@ export const PaymentModal: React.FC = () => {
               onClick={handleFinishSuccess}
               className="px-8 py-3.5 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
             >
-              VIEW E-TICKET & BOARDING PASS
+              VIEW OFFICIAL CONFIRMATION & BOARDING PASS
             </button>
           </div>
         )}
@@ -173,7 +183,7 @@ export const PaymentModal: React.FC = () => {
             PAYMENT STATE: FAILURE
            ================================================== */}
         {paymentState === 'failure' && (
-          <div className="absolute inset-0 z-50 bg-white rounded-[12px] flex flex-col items-center justify-center p-8 text-center space-y-5">
+          <div className="absolute inset-0 z-50 bg-[#FFFFFF] rounded-[16px] flex flex-col items-center justify-center p-8 text-center space-y-5">
             <div className="w-16 h-16 rounded-full bg-sand/80 border-2 border-[#963F24] text-[#963F24] mx-auto flex items-center justify-center shadow-sm">
               <AlertTriangle className="w-8 h-8" />
             </div>

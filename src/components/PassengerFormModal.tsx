@@ -171,7 +171,7 @@ export const PassengerFormModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
-      <div className="bg-white w-full max-w-4xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-ink">
+      <div className="bg-[#FFFFFF] w-full max-w-4xl rounded-[16px] border border-[#D8D1C5] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-6 sm:p-8 my-auto relative text-ink">
         
         {/* BOOKING PROGRESS: FLIGHT -> FARE -> SEAT -> PASSENGER -> PAYMENT -> CONFIRMATION */}
         <BookingProgress currentStep="passengers" onStepClick={proceedToStep} />

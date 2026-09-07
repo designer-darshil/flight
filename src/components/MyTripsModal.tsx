@@ -9,6 +9,7 @@ import {
 import { useBooking } from '../context/BookingContext';
 import { formatPrice } from '../utils/currency';
 import { BoardingPass } from './BoardingPass';
+import { CancellationModal } from './CancellationModal';
 import { Booking } from '../types';
 
 export const MyTripsModal: React.FC = () => {
@@ -23,6 +24,7 @@ export const MyTripsModal: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'upcoming' | 'completed' | 'cancelled'>('upcoming');
   const [selectedTripDetails, setSelectedTripDetails] = useState<Booking | null>(null);
+  const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null);
 
   if (!isMyTripsOpen) return null;
 
@@ -34,7 +36,7 @@ export const MyTripsModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
-      <div className="bg-[#FFFFFF] w-full max-w-5xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative flex flex-col max-h-[90vh] text-[#171717]">
+      <div className="bg-[#FFFFFF] w-full max-w-5xl rounded-[16px] border border-[#D8D1C5] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-6 sm:p-8 my-auto relative flex flex-col max-h-[90vh] text-[#171717]">
         
         {/* HEADER */}
         <div className="flex items-center justify-between pb-5 border-b border-[#D8D1C5] shrink-0">
@@ -245,7 +247,7 @@ export const MyTripsModal: React.FC = () => {
 
                       {booking.status === 'Confirmed' && (
                         <button
-                          onClick={() => cancelBooking(booking.id)}
+                          onClick={() => setBookingToCancel(booking)}
                           className="px-3 py-1.5 rounded-[8px] bg-[#EFE9DE] hover:bg-[#D8D1C5] text-[#6F6A61] hover:text-[#171717] border border-[#D8D1C5] transition-colors"
                         >
                           Cancel
@@ -283,7 +285,7 @@ export const MyTripsModal: React.FC = () => {
       {/* TRIP DETAILS MODAL OVERLAY */}
       {selectedTripDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
-          <div className="bg-[#FFFFFF] w-full max-w-2xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-[#171717] space-y-6">
+          <div className="bg-[#FFFFFF] w-full max-w-2xl rounded-[16px] border border-[#D8D1C5] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-6 sm:p-8 my-auto relative text-[#171717] space-y-6">
             
             <div className="flex items-center justify-between pb-4 border-b border-[#D8D1C5]">
               <div>
@@ -311,7 +313,7 @@ export const MyTripsModal: React.FC = () => {
                 cabinClass={selectedTripDetails.farePackage.name}
                 gate="B12"
                 boardingTime="45m Prior"
-                showAnimation={true}
+                showAnimation={false}
               />
             </div>
 
@@ -323,7 +325,7 @@ export const MyTripsModal: React.FC = () => {
                 }}
                 className="h-11 px-5 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-[#FFFFFF] font-semibold uppercase tracking-wider transition-colors shadow-sm"
               >
-                OPEN DIGITAL PASS
+                VIEW BOARDING PASS
               </button>
               <button
                 onClick={() => setSelectedTripDetails(null)}
@@ -336,6 +338,14 @@ export const MyTripsModal: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* CANCELLATION MODAL */}
+      <CancellationModal
+        isOpen={!!bookingToCancel}
+        onClose={() => setBookingToCancel(null)}
+        booking={bookingToCancel}
+        onConfirm={cancelBooking}
+      />
 
     </div>
   );

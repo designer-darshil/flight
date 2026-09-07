@@ -162,7 +162,7 @@ export const Navbar: React.FC = () => {
             </button>
 
             {currencyDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-28 bg-white border border-warm-gray-border shadow-paper-elevated py-1.5 z-50 text-ink">
+              <div className="absolute right-0 mt-2 w-28 bg-[#FFFFFF] border border-[#D8D1C5] rounded-[8px] shadow-[0_12px_32px_rgba(23,23,23,0.08)] py-1.5 z-50 text-ink">
                 {currencies.map(c => (
                   <button
                     key={c}
@@ -170,8 +170,8 @@ export const Navbar: React.FC = () => {
                       setCurrency(c);
                       setCurrencyDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 text-xs font-mono flex items-center justify-between hover:bg-sand/40 ${
-                      currency === c ? 'text-terracotta font-bold' : 'text-ink/80'
+                    className={`w-full text-left px-3 py-1.5 text-xs font-mono flex items-center justify-between hover:bg-[#EFE9DE]/50 ${
+                      currency === c ? 'text-[#963F24] font-bold' : 'text-ink/80'
                     }`}
                   >
                     <span>{c}</span>
@@ -196,7 +196,7 @@ export const Navbar: React.FC = () => {
             </button>
 
             {langDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-32 bg-white border border-warm-gray-border shadow-paper-elevated py-1.5 z-50 text-ink">
+              <div className="absolute right-0 mt-2 w-36 bg-[#FFFFFF] border border-[#D8D1C5] rounded-[8px] shadow-[0_12px_32px_rgba(23,23,23,0.08)] py-1.5 z-50 text-ink">
                 {languages.map(l => (
                   <button
                     key={l.code}
@@ -204,8 +204,8 @@ export const Navbar: React.FC = () => {
                       setSelectedLang(l.code);
                       setLangDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between hover:bg-sand/40 ${
-                      selectedLang === l.code ? 'text-terracotta font-bold' : 'text-ink/80'
+                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between hover:bg-[#EFE9DE]/50 ${
+                      selectedLang === l.code ? 'text-[#963F24] font-bold' : 'text-ink/80'
                     }`}
                   >
                     <span>{l.name}</span>

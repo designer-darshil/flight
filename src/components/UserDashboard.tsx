@@ -1821,7 +1821,7 @@ export const UserDashboard: React.FC = () => {
       {/* TRIP DETAILS MODAL: FLIGHT, PASSENGERS, SEAT, BAGGAGE, DOCUMENTS, BOARDING PASS */}
       {selectedTripDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
-          <div className="bg-[#FFFFFF] w-full max-w-3xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-[#171717] space-y-6">
+          <div className="bg-[#FFFFFF] w-full max-w-3xl rounded-[16px] border border-[#D8D1C5] shadow-[0_24px_60px_rgba(23,23,23,0.10)] p-6 sm:p-8 my-auto relative text-[#171717] space-y-6">
             
             {/* MODAL HEADER */}
             <div className="flex items-center justify-between pb-4 border-b border-[#D8D1C5]">

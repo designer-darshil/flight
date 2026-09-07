@@ -285,7 +285,7 @@ export const JourneyGlobe3D: React.FC = () => {
             <div className="relative w-full max-w-[620px] h-[480px] sm:h-[540px] cursor-grab active:cursor-grabbing">
               
               {/* Soft warm shadow below globe */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-72 h-12 bg-black/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-72 h-8 bg-gradient-to-r from-transparent via-black/10 to-transparent rounded-full pointer-events-none" />
 
               {/* Canvas mount */}
               <div ref={mountRef} className="w-full h-full" />

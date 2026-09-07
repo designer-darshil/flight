@@ -13,20 +13,20 @@ export const FeatureShowcase: React.FC = () => {
   const { setIsFlightStatusOpen, setIsBoardingPassOpen } = useBooking();
 
   return (
-    <section id="features-section" className="py-28 bg-white text-slate-900 overflow-hidden">
+    <section id="features-section" className="py-28 bg-[#FFFFFF] text-[#171717] overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
         
         {/* HEADER */}
         <div className="max-w-xl space-y-4 mb-16">
-          <div className="text-xs font-mono uppercase tracking-widestlabel text-aeriva-blue font-bold">
+          <div className="text-xs font-mono uppercase tracking-widest text-[#963F24] font-bold">
             06 / INTELLIGENT CAPABILITIES
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-tightest leading-none text-slate-900">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-light tracking-tight leading-none text-[#171717]">
             EVERYTHING <br />
             YOU NEED <br />
             TO GO.
           </h2>
-          <p className="text-base text-slate-500 font-normal">
+          <p className="text-base text-[#6F6A61] font-normal">
             Every layer of AERIVA is designed to eliminate aviation friction, from predictive pricing algorithms to digital passes.
           </p>
         </div>
@@ -35,13 +35,13 @@ export const FeatureShowcase: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
           
           {/* FEATURE 1: SMART SEARCH (Col 1-7, Large tile with mini UI preview) */}
-          <div className="md:col-span-7 rounded-3xl p-8 bg-slate-50 border border-slate-200/80 shadow-sm flex flex-col justify-between space-y-6">
+          <div className="md:col-span-7 rounded-[16px] p-8 bg-[#F6F2EA] border border-[#D8D1C5] shadow-xs flex flex-col justify-between space-y-6">
             <div>
-              <div className="w-10 h-10 rounded-xl bg-aeriva-blue text-white flex items-center justify-center mb-4 shadow-sm">
+              <div className="w-10 h-10 rounded-[8px] bg-[#963F24] text-white flex items-center justify-center mb-4 shadow-xs">
                 <Search className="w-5 h-5" />
               </div>
-              <h3 className="text-2xl font-display font-black text-slate-900">SMART SEARCH</h3>
-              <p className="text-xs text-slate-500 max-w-md mt-1">
+              <h3 className="text-2xl font-serif font-medium text-[#171717]">SMART SEARCH</h3>
+              <p className="text-xs text-[#6F6A61] max-w-md mt-1 font-sans">
                 Direct global airline inventory scanning across 450+ carriers with millisecond response times.
               </p>
             </div>
