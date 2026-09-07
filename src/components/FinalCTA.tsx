@@ -40,13 +40,13 @@ export const FinalCTA: React.FC = () => {
         </div>
 
         {/* Editorial Headline */}
-        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-light text-ink tracking-tight leading-[1.08] mb-6">
-          Where will you <br className="hidden sm:inline" />
-          <span className="italic font-normal text-terracotta">go next?</span>
+        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-ink leading-[0.95] mb-6 uppercase">
+          WHERE WILL<br />
+          YOU GO NEXT?
         </h2>
 
         {/* Subtext */}
-        <p className="max-w-xl mx-auto text-base sm:text-xl font-serif text-warm-gray font-light leading-relaxed mb-10">
+        <p className="max-w-xl mx-auto text-base sm:text-lg font-sans text-warm-gray font-light leading-relaxed mb-10">
           The world is wide and unhurried. Search, compare, and reserve the journey you deserve in effortless moments.
         </p>
 
@@ -54,10 +54,10 @@ export const FinalCTA: React.FC = () => {
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
           <button
             onClick={handleSearchAction}
-            className="px-8 py-4 rounded-xl bg-terracotta text-paper font-mono text-xs uppercase tracking-widest font-semibold hover:bg-terracotta/90 transition-all shadow-lg hover:shadow-xl flex items-center gap-3 group"
+            className="h-12 px-8 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] active:bg-[#682915] text-white font-sans text-xs uppercase tracking-widest font-semibold transition-all shadow-sm hover:shadow-md flex items-center gap-2.5 cursor-pointer select-none"
           >
-            <span>Search Your Next Flight</span>
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <span>SEARCH FLIGHTS</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
 
           <button

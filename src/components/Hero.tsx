@@ -76,11 +76,11 @@ export const Hero: React.FC = () => {
             Find better routes, better fares, and unforgettable places — all in one seamless booking experience.
           </p>
 
-          {/* Buttons: Terracotta + Minimal Outlined White */}
+          {/* Buttons: Primary Accessible Accent + Minimal Outlined White */}
           <div className="flex flex-wrap items-center gap-4 pt-3">
             <button
               onClick={handleSearchClick}
-              className="px-7 py-3.5 bg-terracotta hover:bg-terracotta-dark text-white font-sans font-semibold text-xs tracking-wider uppercase transition-all duration-200 flex items-center space-x-2.5 shadow-terracotta"
+              className="h-12 px-8 bg-[#963F24] hover:bg-[#7E331B] active:bg-[#682915] text-white font-sans font-semibold text-xs tracking-widest uppercase transition-all duration-200 flex items-center space-x-2.5 rounded-[8px] shadow-sm hover:shadow-md cursor-pointer select-none"
             >
               <span>SEARCH FLIGHTS</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -88,7 +88,7 @@ export const Hero: React.FC = () => {
 
             <button
               onClick={handleExploreClick}
-              className="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/30 font-sans font-medium text-xs tracking-wider uppercase transition-all duration-200 flex items-center space-x-2.5"
+              className="h-12 px-7 bg-white/10 hover:bg-white/20 text-white border border-white/30 font-sans font-medium text-xs tracking-widest uppercase transition-all duration-200 flex items-center space-x-2.5 rounded-[8px] cursor-pointer select-none"
             >
               <Compass className="w-3.5 h-3.5 text-sand-100" />
               <span>EXPLORE DESTINATIONS</span>

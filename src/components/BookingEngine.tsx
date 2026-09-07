@@ -71,7 +71,7 @@ export const BookingEngine: React.FC = () => {
   return (
     <div
       id="booking-panel"
-      className="w-full max-w-[1320px] mx-auto bg-white border border-warm-gray-border shadow-paper-elevated p-6 sm:p-8 text-ink select-none relative z-30"
+      className="w-full max-w-[1320px] mx-auto bg-white border border-border rounded-[12px] shadow-[0_12px_32px_rgba(23,23,23,0.08)] p-6 sm:p-8 text-ink select-none relative z-30"
     >
       {/* 1. TABS ROW: ROUND TRIP, ONE WAY, MULTI CITY + CABIN CLASS */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-warm-gray-border/60">
@@ -366,7 +366,7 @@ export const BookingEngine: React.FC = () => {
           type="button"
           onClick={searchFlights}
           disabled={isSearching}
-          className="w-full sm:w-auto px-10 py-4 bg-terracotta hover:bg-terracotta-dark text-white font-sans font-bold text-xs tracking-wider uppercase transition-all duration-200 flex items-center justify-center space-x-2.5 shadow-terracotta"
+          className="w-full sm:w-auto h-12 px-8 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs tracking-wider uppercase transition-all duration-200 flex items-center justify-center space-x-2.5 shadow-sm hover:shadow-md cursor-pointer disabled:opacity-50"
         >
           {isSearching ? (
             <span>SEARCHING FLIGHTS...</span>

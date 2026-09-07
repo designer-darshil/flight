@@ -53,7 +53,7 @@ export const TripDashboardSection: React.FC<TripDashboardSectionProps> = ({
           
           {/* Main Active Flight Card */}
           <div className="lg:col-span-8 bg-paper rounded-2xl border border-border p-8 sm:p-10 shadow-xl flex flex-col justify-between relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-sand/30 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-sand/40 to-transparent pointer-events-none -mr-20 -mt-20 rounded-full" />
 
             {/* Card Header */}
             <div>
