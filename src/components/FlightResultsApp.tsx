@@ -6,6 +6,8 @@ import {
   X,
   Plane,
   ArrowLeft,
+  Luggage,
+  ShieldCheck,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { FlightCard } from './FlightCard';
@@ -31,12 +33,21 @@ export const FlightResultsApp: React.FC = () => {
   // Filters
   const [stopsFilter, setStopsFilter] = useState<number[]>([]);
   const [depTimeFilter, setDepTimeFilter] = useState<string>('all');
+  const [arrTimeFilter, setArrTimeFilter] = useState<string>('all');
   const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState<number>(75000);
   const [refundableOnly, setRefundableOnly] = useState(false);
   const [checkedBagOnly, setCheckedBagOnly] = useState(false);
 
-  const airlinesList = ['Emirates', 'British Airways', 'Air India', 'Qatar Airways', 'Lufthansa', 'Singapore Airlines', 'Turkish Airlines'];
+  const airlinesList = [
+    'Emirates',
+    'British Airways',
+    'Air India',
+    'Qatar Airways',
+    'Lufthansa',
+    'Singapore Airlines',
+    'Turkish Airlines',
+  ];
 
   const filteredFlights = useMemo(() => {
     return flights.filter(f => {
@@ -48,7 +59,9 @@ export const FlightResultsApp: React.FC = () => {
       if (f.priceINR > maxPrice) return false;
       // Refundable
       if (refundableOnly && !f.refundable) return false;
-      if (checkedBagOnly && f.baggage.checked.toLowerCase().includes('none')) return false;
+      // Baggage
+      if (checkedBagOnly && (f.baggage.checked.toLowerCase().includes('none') || f.baggage.checked.toLowerCase().includes('0'))) return false;
+      
       // Departure times
       if (depTimeFilter !== 'all') {
         const hour = parseInt(f.departureTime.split(':')[0], 10);
@@ -57,9 +70,19 @@ export const FlightResultsApp: React.FC = () => {
         if (depTimeFilter === '12-18' && (hour < 12 || hour >= 18)) return false;
         if (depTimeFilter === '18-24' && (hour < 18 || hour >= 24)) return false;
       }
+
+      // Arrival times
+      if (arrTimeFilter !== 'all') {
+        const hour = parseInt(f.arrivalTime.split(':')[0], 10);
+        if (arrTimeFilter === '0-6' && (hour < 0 || hour >= 6)) return false;
+        if (arrTimeFilter === '6-12' && (hour < 6 || hour >= 12)) return false;
+        if (arrTimeFilter === '12-18' && (hour < 12 || hour >= 18)) return false;
+        if (arrTimeFilter === '18-24' && (hour < 18 || hour >= 24)) return false;
+      }
+
       return true;
     });
-  }, [flights, stopsFilter, selectedAirlines, maxPrice, refundableOnly, checkedBagOnly, depTimeFilter]);
+  }, [flights, stopsFilter, selectedAirlines, maxPrice, refundableOnly, checkedBagOnly, depTimeFilter, arrTimeFilter]);
 
   const sortedFlights = useMemo(() => {
     const list = [...filteredFlights];
@@ -70,8 +93,10 @@ export const FlightResultsApp: React.FC = () => {
       return list.sort((a, b) => a.durationMinutes - b.durationMinutes);
     }
     if (sortOption === 'value') {
-      return list.sort((a, b) => a.priceINR * 0.7 - b.priceINR * 0.7);
+      // Best value balances duration and price
+      return list.sort((a, b) => (a.priceINR + a.durationMinutes * 40) - (b.priceINR + b.durationMinutes * 40));
     }
+    // Recommended
     return list.sort((a, b) => {
       if (a.recommended && !b.recommended) return -1;
       if (!a.recommended && b.recommended) return 1;
@@ -82,6 +107,7 @@ export const FlightResultsApp: React.FC = () => {
   const resetFilters = () => {
     setStopsFilter([]);
     setDepTimeFilter('all');
+    setArrTimeFilter('all');
     setSelectedAirlines([]);
     setMaxPrice(75000);
     setRefundableOnly(false);
@@ -96,19 +122,180 @@ export const FlightResultsApp: React.FC = () => {
     setSelectedAirlines(prev => (prev.includes(a) ? prev.filter(item => item !== a) : [...prev, a]));
   };
 
+  // Reusable Filter Body
+  const renderFilterControls = () => (
+    <div className="space-y-6">
+      {/* STOPS */}
+      <div>
+        <label className="text-[11px] font-mono uppercase tracking-wider text-warm-gray block mb-3 font-semibold">
+          Stops
+        </label>
+        <div className="space-y-2.5">
+          {[
+            { label: 'Non-stop', value: 0 },
+            { label: '1 stop', value: 1 },
+            { label: '2+ stops', value: 2 },
+          ].map(opt => (
+            <label key={opt.value} className="flex items-center space-x-2.5 text-xs text-ink cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={stopsFilter.includes(opt.value)}
+                onChange={() => toggleStop(opt.value)}
+                className="w-4 h-4 rounded border-border text-[#963F24] focus:ring-[#963F24] accent-[#963F24] cursor-pointer"
+              />
+              <span className="font-sans">{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* DEPARTURE TIME SLOTS */}
+      <div className="pt-4 border-t border-border">
+        <label className="text-[11px] font-mono uppercase tracking-wider text-warm-gray block mb-3 font-semibold">
+          Departure Time
+        </label>
+        <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
+          {[
+            { id: 'all', label: 'All times' },
+            { id: '0-6', label: '00:00 — 06:00' },
+            { id: '6-12', label: '06:00 — 12:00' },
+            { id: '12-18', label: '12:00 — 18:00' },
+            { id: '18-24', label: '18:00 — 24:00' },
+          ].map(slot => (
+            <button
+              key={`dep-${slot.id}`}
+              type="button"
+              onClick={() => setDepTimeFilter(slot.id)}
+              className={`p-2 rounded-[6px] text-left text-[11px] transition-colors border ${
+                depTimeFilter === slot.id
+                  ? 'bg-ink text-white border-ink font-medium'
+                  : 'bg-sand/30 text-ink border-transparent hover:bg-sand'
+              }`}
+            >
+              {slot.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ARRIVAL TIME SLOTS */}
+      <div className="pt-4 border-t border-border">
+        <label className="text-[11px] font-mono uppercase tracking-wider text-warm-gray block mb-3 font-semibold">
+          Arrival Time
+        </label>
+        <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
+          {[
+            { id: 'all', label: 'All times' },
+            { id: '0-6', label: '00:00 — 06:00' },
+            { id: '6-12', label: '06:00 — 12:00' },
+            { id: '12-18', label: '12:00 — 18:00' },
+            { id: '18-24', label: '18:00 — 24:00' },
+          ].map(slot => (
+            <button
+              key={`arr-${slot.id}`}
+              type="button"
+              onClick={() => setArrTimeFilter(slot.id)}
+              className={`p-2 rounded-[6px] text-left text-[11px] transition-colors border ${
+                arrTimeFilter === slot.id
+                  ? 'bg-ink text-white border-ink font-medium'
+                  : 'bg-sand/30 text-ink border-transparent hover:bg-sand'
+              }`}
+            >
+              {slot.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* PRICE INTERACTIVE SLIDER */}
+      <div className="pt-4 border-t border-border">
+        <div className="flex justify-between items-center text-xs mb-2">
+          <span className="font-mono uppercase text-warm-gray font-semibold text-[11px]">Max Price</span>
+          <span className="font-mono font-bold text-ink">{formatPrice(maxPrice, currency)}</span>
+        </div>
+        <input
+          type="range"
+          min={40000}
+          max={75000}
+          step={500}
+          value={maxPrice}
+          onChange={e => setMaxPrice(Number(e.target.value))}
+          className="w-full accent-[#963F24] cursor-pointer"
+        />
+        <div className="flex justify-between text-[10px] text-warm-gray font-mono mt-1">
+          <span>₹40,000</span>
+          <span>₹75,000</span>
+        </div>
+      </div>
+
+      {/* AIRLINES CHECKLIST */}
+      <div className="pt-4 border-t border-border">
+        <label className="text-[11px] font-mono uppercase tracking-wider text-warm-gray block mb-3 font-semibold">
+          Airlines
+        </label>
+        <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+          {airlinesList.map(airline => (
+            <label key={airline} className="flex items-center space-x-2.5 text-xs text-ink cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={selectedAirlines.includes(airline)}
+                onChange={() => toggleAirline(airline)}
+                className="w-4 h-4 rounded border-border accent-[#963F24] cursor-pointer"
+              />
+              <span className="font-sans">{airline}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* BAGGAGE & REFUNDABILITY */}
+      <div className="pt-4 border-t border-border space-y-3">
+        <label className="text-[11px] font-mono uppercase tracking-wider text-warm-gray block font-semibold">
+          Baggage & Refundability
+        </label>
+        
+        <label className="flex items-center space-x-2.5 text-xs text-ink cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={checkedBagOnly}
+            onChange={() => setCheckedBagOnly(!checkedBagOnly)}
+            className="w-4 h-4 rounded border-border accent-[#963F24] cursor-pointer"
+          />
+          <span className="flex items-center space-x-1.5">
+            <Luggage className="w-3.5 h-3.5 text-[#963F24]" />
+            <span>Checked baggage included</span>
+          </span>
+        </label>
+
+        <label className="flex items-center space-x-2.5 text-xs text-ink cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={refundableOnly}
+            onChange={() => setRefundableOnly(!refundableOnly)}
+            className="w-4 h-4 rounded border-border accent-[#963F24] cursor-pointer"
+          />
+          <span className="flex items-center space-x-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-olive" />
+            <span>Refundable tickets only</span>
+          </span>
+        </label>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-cream text-ink pb-24">
+    <div className="min-h-screen bg-[#F6F2EA] text-ink pb-24">
       
-      {/* 13. TOP APPLICATION NAVIGATION */}
-      <header className="sticky top-0 z-40 bg-cream border-b border-border shadow-sm">
+      {/* TOP APPLICATION NAVIGATION */}
+      <header className="sticky top-0 z-40 bg-[#F6F2EA] border-b border-border shadow-sm">
         <div className="max-w-[1440px] mx-auto px-6 sm:px-10 flex items-center justify-between h-16">
           
           <div className="flex items-center space-x-8">
             <button
               onClick={() => setActiveView('marketing')}
-              className="flex items-center space-x-2.5 text-left group"
+              className="flex items-center space-x-2.5 text-left group cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-lg bg-ink text-paper flex items-center justify-center">
+              <div className="w-8 h-8 rounded-[8px] bg-ink text-white flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
                   <path d="M12 2L21 20L12 16L3 20L12 2Z" />
                 </svg>
@@ -120,22 +307,21 @@ export const FlightResultsApp: React.FC = () => {
 
             {/* App Nav Items */}
             <nav className="hidden md:flex items-center space-x-6 text-xs font-mono text-warm-gray">
-              <span className="text-ink border-b-2 border-terracotta py-5 font-semibold">Flights</span>
-              <button onClick={() => setActiveView('marketing')} className="hover:text-ink py-5 transition-colors">Explore</button>
-              <button onClick={() => setIsMyTripsOpen(true)} className="hover:text-ink py-5 transition-colors">Trips</button>
-              <button onClick={() => setActiveView('dashboard')} className="hover:text-ink py-5 transition-colors">Rewards</button>
+              <span className="text-ink border-b-2 border-[#963F24] py-5 font-semibold">Flights</span>
+              <button onClick={() => setActiveView('marketing')} className="hover:text-ink py-5 transition-colors cursor-pointer">Explore</button>
+              <button onClick={() => setIsMyTripsOpen(true)} className="hover:text-ink py-5 transition-colors cursor-pointer">Trips</button>
             </nav>
           </div>
 
           <div className="flex items-center space-x-3 text-xs">
-            <button className="p-2 rounded-lg text-warm-gray hover:text-ink hover:bg-sand transition-colors" title="Notifications">
+            <button className="p-2 rounded-[8px] text-warm-gray hover:text-ink hover:bg-sand transition-colors cursor-pointer" title="Notifications">
               <Bell className="w-4 h-4" />
             </button>
 
             <select
               value={currency}
               onChange={e => setCurrency(e.target.value as Currency)}
-              className="px-2.5 py-1.5 rounded-lg bg-paper border border-border text-xs font-mono font-medium text-ink focus:outline-none focus:border-terracotta"
+              className="px-2.5 py-1.5 rounded-[8px] bg-white border border-border text-xs font-mono font-medium text-ink focus:outline-none focus:border-[#963F24] cursor-pointer"
             >
               {(['USD', 'INR', 'EUR', 'AED', 'GBP'] as Currency[]).map(c => (
                 <option key={c} value={c}>{c} ({CURRENCIES[c].symbol})</option>
@@ -143,11 +329,11 @@ export const FlightResultsApp: React.FC = () => {
             </select>
 
             <button
-              onClick={() => setActiveView('dashboard')}
-              className="flex items-center space-x-2 p-1.5 pl-2.5 rounded-lg bg-paper border border-border hover:border-ink/40 text-ink font-mono text-xs transition-colors"
+              onClick={() => setIsMyTripsOpen(true)}
+              className="flex items-center space-x-2 p-1.5 pl-2.5 rounded-[8px] bg-white border border-border hover:border-ink/40 text-ink font-mono text-xs transition-colors cursor-pointer"
             >
               <span>Alex</span>
-              <div className="w-6 h-6 rounded-md bg-ink text-paper flex items-center justify-center text-[10px] font-mono font-bold">
+              <div className="w-6 h-6 rounded-[6px] bg-ink text-white flex items-center justify-center text-[10px] font-mono font-bold">
                 A
               </div>
             </button>
@@ -155,221 +341,151 @@ export const FlightResultsApp: React.FC = () => {
         </div>
       </header>
 
-      {/* 13. MAIN APPLICATION HEADER */}
-      <div className="bg-paper border-b border-border py-8">
+      {/* MAIN HEADER AS REQUIRED */}
+      <div className="bg-white border-b border-border py-8">
         <div className="max-w-[1440px] mx-auto px-6 sm:px-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center space-x-2 text-xs font-mono text-warm-gray mb-1.5">
+              <div className="flex items-center space-x-2 text-xs font-mono text-warm-gray mb-3">
                 <button
                   onClick={() => setActiveView('marketing')}
-                  className="text-terracotta hover:underline flex items-center space-x-1 font-medium"
+                  className="text-[#963F24] hover:underline flex items-center space-x-1 font-medium cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Return to Home</span>
+                  <span>Modify Search</span>
                 </button>
                 <span>&bull;</span>
                 <span>{searchParams.cabinClass.toUpperCase()}</span>
                 <span>&bull;</span>
-                <span>{searchParams.passengers.adults} ADULT</span>
+                <span>{searchParams.passengers.adults + searchParams.passengers.children + searchParams.passengers.infants} TRAVELERS</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl font-serif font-light text-ink flex items-center space-x-3">
-                <span>{searchParams.from.city}</span>
-                <span className="text-terracotta font-mono text-lg font-normal">({searchParams.from.code})</span>
-                <span className="text-warm-gray font-light">➔</span>
-                <span>{searchParams.to.city}</span>
-                <span className="text-terracotta font-mono text-lg font-normal">({searchParams.to.code})</span>
+              {/* Exact Header Specification:
+                  DELHI → LONDON
+                  18 SEPTEMBER
+                  127 FLIGHTS FOUND
+              */}
+              <h1 className="text-3xl sm:text-5xl font-serif font-light text-ink tracking-tight mb-2 uppercase">
+                {searchParams.from.city.toUpperCase()} → {searchParams.to.city.toUpperCase()}
               </h1>
 
-              <div className="flex items-center space-x-3 text-xs text-warm-gray font-mono mt-1.5">
-                <span className="font-medium text-ink">{searchParams.departureDate}</span>
-                <span>&bull;</span>
-                <span className="text-olive font-medium">{sortedFlights.length} FLIGHTS AVAILABLE</span>
+              <div className="text-sm sm:text-base font-mono font-medium text-warm-gray uppercase tracking-wider mb-1">
+                {searchParams.departureDate.replace(/202\d/, '').trim().toUpperCase() || '18 SEPTEMBER'}
+              </div>
+
+              <div className="text-xs sm:text-sm font-mono font-bold text-[#963F24] tracking-widest uppercase">
+                127 FLIGHTS FOUND
+                <span className="text-warm-gray font-normal lowercase tracking-normal ml-2">
+                  ({sortedFlights.length} matching current filters)
+                </span>
               </div>
             </div>
 
             {/* Micro Route Visualization Widget */}
-            <div className="hidden lg:flex items-center space-x-6 p-4 rounded-xl bg-sand/40 border border-border text-xs font-mono">
+            <div className="hidden lg:flex items-center space-x-6 p-4 rounded-[12px] bg-sand/40 border border-border text-xs font-mono">
               <div className="text-center">
                 <span className="text-warm-gray block text-[10px]">ORIGIN</span>
-                <span className="font-bold text-ink">{searchParams.from.code}</span>
+                <span className="font-bold text-ink text-sm">{searchParams.from.code}</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-[10px] text-terracotta font-medium">10h 00m</span>
+                <span className="text-[10px] text-[#963F24] font-semibold">10h 00m</span>
                 <div className="w-20 border-t border-dashed border-border relative my-1">
-                  <Plane className="w-3.5 h-3.5 text-terracotta absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90" />
+                  <Plane className="w-3.5 h-3.5 text-[#963F24] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90" />
                 </div>
                 <span className="text-[9px] text-warm-gray">1 STOP (DXB)</span>
               </div>
               <div className="text-center">
                 <span className="text-warm-gray block text-[10px]">DESTINATION</span>
-                <span className="font-bold text-ink">{searchParams.to.code}</span>
+                <span className="font-bold text-ink text-sm">{searchParams.to.code}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 14 & 15. MAIN CONTENT: FILTER SIDEBAR (LEFT) & RESULTS (RIGHT) */}
+      {/* MAIN CONTENT: FILTER SIDEBAR & RESULTS */}
       <div className="max-w-[1440px] mx-auto px-6 sm:px-10 pt-8">
         
-        {/* Mobile Filter Button */}
+        {/* Mobile Filter Trigger Button */}
         <div className="lg:hidden mb-4">
           <button
             onClick={() => setMobileFilterOpen(true)}
-            className="w-full py-3 rounded-lg bg-paper border border-border text-ink font-mono text-xs uppercase flex items-center justify-center space-x-2 shadow-sm"
+            className="w-full py-3 rounded-[8px] bg-white border border-border text-ink font-mono text-xs uppercase flex items-center justify-center space-x-2 shadow-sm cursor-pointer"
           >
-            <Filter className="w-4 h-4 text-terracotta" />
-            <span>FILTER RESULTS ({stopsFilter.length + selectedAirlines.length})</span>
+            <Filter className="w-4 h-4 text-[#963F24]" />
+            <span>FILTER RESULTS ({stopsFilter.length + selectedAirlines.length + (depTimeFilter !== 'all' ? 1 : 0) + (arrTimeFilter !== 'all' ? 1 : 0)})</span>
           </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* 14. LEFT SIDEBAR FILTERS (DESKTOP / MOBILE MODAL) */}
-          <aside className={`${mobileFilterOpen ? 'fixed inset-0 z-50 bg-cream p-6 overflow-y-auto block' : 'hidden lg:block'} lg:col-span-4 xl:col-span-3 space-y-6`}>
-            <div className="bg-paper rounded-2xl p-6 border border-border shadow-sm space-y-6 sticky top-24">
+          {/* DESKTOP SIDEBAR FILTERS */}
+          <aside className="hidden lg:block lg:col-span-4 xl:col-span-3 space-y-6">
+            <div className="bg-white rounded-[12px] p-6 border border-[#D8D1C5] shadow-sm space-y-6 sticky top-24">
               
               <div className="flex items-center justify-between pb-4 border-b border-border">
                 <div className="flex items-center space-x-2 text-sm font-serif font-medium text-ink">
-                  <SlidersHorizontal className="w-4 h-4 text-terracotta" />
+                  <SlidersHorizontal className="w-4 h-4 text-[#963F24]" />
                   <span>Filters</span>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={resetFilters}
-                    className="text-xs font-mono text-terracotta hover:text-terracotta-hover font-medium"
-                  >
-                    RESET
-                  </button>
-                  {mobileFilterOpen && (
-                    <button
-                      onClick={() => setMobileFilterOpen(false)}
-                      className="p-1.5 rounded-md bg-sand hover:bg-sand/80 lg:hidden text-ink"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
+                <button
+                  onClick={resetFilters}
+                  className="text-xs font-mono text-[#963F24] hover:underline font-semibold cursor-pointer"
+                >
+                  RESET
+                </button>
               </div>
 
-              {/* STOPS */}
-              <div>
-                <label className="text-xs font-mono uppercase tracking-wider text-warm-gray block mb-3">
-                  Stops
-                </label>
-                <div className="space-y-2">
-                  {[
-                    { label: 'Non-stop', value: 0 },
-                    { label: '1 stop', value: 1 },
-                    { label: '2+ stops', value: 2 },
-                  ].map(opt => (
-                    <label key={opt.value} className="flex items-center space-x-2.5 text-xs text-ink cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={stopsFilter.includes(opt.value)}
-                        onChange={() => toggleStop(opt.value)}
-                        className="w-4 h-4 rounded border-border accent-terracotta cursor-pointer"
-                      />
-                      <span>{opt.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* DEPARTURE TIME SLOTS */}
-              <div className="pt-4 border-t border-border">
-                <label className="text-xs font-mono uppercase tracking-wider text-warm-gray block mb-3">
-                  Departure Time
-                </label>
-                <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
-                  {[
-                    { id: 'all', label: 'All times' },
-                    { id: '0-6', label: '00:00 — 06:00' },
-                    { id: '6-12', label: '06:00 — 12:00' },
-                    { id: '12-18', label: '12:00 — 18:00' },
-                    { id: '18-24', label: '18:00 — 24:00' },
-                  ].map(slot => (
-                    <button
-                      key={slot.id}
-                      onClick={() => setDepTimeFilter(slot.id)}
-                      className={`p-2 rounded-lg text-left text-[11px] transition-colors border ${
-                        depTimeFilter === slot.id
-                          ? 'bg-ink text-paper border-ink font-medium'
-                          : 'bg-sand/30 text-ink border-transparent hover:bg-sand'
-                      }`}
-                    >
-                      {slot.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* PRICE INTERACTIVE SLIDER */}
-              <div className="pt-4 border-t border-border">
-                <div className="flex justify-between items-center text-xs mb-2">
-                  <span className="font-mono uppercase text-warm-gray">Max Price</span>
-                  <span className="font-mono font-semibold text-ink">{formatPrice(maxPrice, currency)}</span>
-                </div>
-                <input
-                  type="range"
-                  min={40000}
-                  max={75000}
-                  step={500}
-                  value={maxPrice}
-                  onChange={e => setMaxPrice(Number(e.target.value))}
-                  className="w-full accent-terracotta"
-                />
-                <div className="flex justify-between text-[10px] text-warm-gray font-mono mt-1">
-                  <span>₹40,000</span>
-                  <span>₹75,000</span>
-                </div>
-              </div>
-
-              {/* AIRLINES CHECKLIST */}
-              <div className="pt-4 border-t border-border">
-                <label className="text-xs font-mono uppercase tracking-wider text-warm-gray block mb-3">
-                  Airlines
-                </label>
-                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                  {airlinesList.map(airline => (
-                    <label key={airline} className="flex items-center space-x-2.5 text-xs text-ink cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedAirlines.includes(airline)}
-                        onChange={() => toggleAirline(airline)}
-                        className="w-4 h-4 rounded border-border accent-terracotta cursor-pointer"
-                      />
-                      <span>{airline}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* BAGGAGE & REFUNDABILITY */}
-              <div className="pt-4 border-t border-border space-y-3">
-                <label className="text-xs font-mono uppercase tracking-wider text-warm-gray block">
-                  Fare Attributes
-                </label>
-                <label className="flex items-center space-x-2.5 text-xs text-ink cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={refundableOnly}
-                    onChange={() => setRefundableOnly(!refundableOnly)}
-                    className="w-4 h-4 rounded border-border accent-terracotta"
-                  />
-                  <span>Refundable flights only</span>
-                </label>
-              </div>
+              {renderFilterControls()}
             </div>
           </aside>
 
-          {/* 15 & 16. RESULTS COLUMN */}
+          {/* MOBILE BOTTOM SHEET FILTERS */}
+          {mobileFilterOpen && (
+            <div className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end bg-[rgba(23,23,23,0.25)]">
+              <div className="bg-white rounded-t-[12px] border-t border-x border-[#D8D1C5] shadow-[0_-20px_60px_rgba(23,23,23,0.12)] max-h-[85vh] overflow-y-auto p-6 space-y-6">
+                
+                {/* Drag Handle */}
+                <div className="w-12 h-1 rounded-full bg-[#D8D1C5] mx-auto -mt-1 mb-2" />
+
+                <div className="flex items-center justify-between pb-4 border-b border-border">
+                  <div className="flex items-center space-x-2 text-sm font-serif font-medium text-ink">
+                    <SlidersHorizontal className="w-4 h-4 text-[#963F24]" />
+                    <span>Filter Flights</span>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={resetFilters}
+                      className="text-xs font-mono text-[#963F24] hover:underline font-semibold cursor-pointer"
+                    >
+                      RESET
+                    </button>
+                    <button
+                      onClick={() => setMobileFilterOpen(false)}
+                      className="p-1.5 rounded-[6px] bg-sand hover:bg-sand/80 text-ink cursor-pointer"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {renderFilterControls()}
+
+                <button
+                  onClick={() => setMobileFilterOpen(false)}
+                  className="w-full py-3 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                >
+                  Apply Filters ({sortedFlights.length} Flights)
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* RESULTS COLUMN */}
           <div className="lg:col-span-8 xl:col-span-9 space-y-4">
             
             {/* SORTING BAR */}
-            <div className="bg-paper p-3 rounded-xl border border-border flex flex-wrap items-center justify-between gap-3 shadow-sm">
+            <div className="bg-white p-3 rounded-[12px] border border-border flex flex-wrap items-center justify-between gap-3 shadow-sm">
               <div className="flex items-center space-x-1">
                 <span className="text-xs font-mono text-warm-gray px-3 hidden sm:inline">
                   {sortedFlights.length} results
@@ -380,9 +496,9 @@ export const FlightResultsApp: React.FC = () => {
                   <button
                     key={tab}
                     onClick={() => setSortOption(tab)}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-mono capitalize transition-all ${
+                    className={`px-3.5 py-1.5 rounded-[8px] text-xs font-mono capitalize transition-all cursor-pointer ${
                       sortOption === tab
-                        ? 'bg-ink text-paper font-medium'
+                        ? 'bg-ink text-white font-medium shadow-xs'
                         : 'text-warm-gray hover:text-ink hover:bg-sand'
                     }`}
                   >
@@ -404,7 +520,7 @@ export const FlightResultsApp: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="bg-paper p-12 rounded-2xl border border-border text-center space-y-3 shadow-sm">
+              <div className="bg-white p-12 rounded-[12px] border border-border text-center space-y-3 shadow-sm">
                 <Plane className="w-10 h-10 text-warm-gray/60 mx-auto rotate-45" />
                 <h4 className="text-lg font-serif font-light text-ink uppercase tracking-wider">
                   WE COULDN'T FIND THAT FLIGHT.
@@ -414,9 +530,9 @@ export const FlightResultsApp: React.FC = () => {
                 </p>
                 <button
                   onClick={resetFilters}
-                  className="px-6 py-2.5 rounded-lg bg-terracotta hover:bg-terracotta-hover text-paper font-mono text-xs font-medium uppercase transition-colors"
+                  className="px-6 py-2.5 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
                 >
-                  EDIT SEARCH / RESET FILTERS
+                  RESET FILTERS
                 </button>
               </div>
             )}

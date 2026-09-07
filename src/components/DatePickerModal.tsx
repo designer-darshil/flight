@@ -58,13 +58,13 @@ export const DatePickerModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/25 overflow-y-auto">
-      <div className="bg-paper w-full max-w-3xl rounded-xl border border-border shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-ink">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
+      <div className="bg-white w-full max-w-3xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-ink">
         
         {/* HEADER */}
         <div className="flex items-center justify-between pb-4 border-b border-border">
           <div className="flex items-center space-x-2.5">
-            <CalendarIcon className="w-5 h-5 text-terracotta" />
+            <CalendarIcon className="w-5 h-5 text-[#963F24]" />
             <div>
               <h3 className="text-lg font-serif font-medium text-ink">Select Travel Dates</h3>
               <p className="text-xs text-warm-gray font-serif">Estimated round-trip fares indicated beneath dates</p>
@@ -72,14 +72,14 @@ export const DatePickerModal: React.FC = () => {
           </div>
           <button
             onClick={() => setIsDatePickerOpen(false)}
-            className="p-2 rounded-lg hover:bg-sand text-warm-gray hover:text-ink transition-colors"
+            className="p-2 rounded-[8px] hover:bg-sand text-warm-gray hover:text-ink transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* SELECTED RANGE PILLS */}
-        <div className="flex items-center space-x-4 my-5 p-3.5 rounded-xl bg-sand/40 border border-border text-xs font-mono">
+        <div className="flex items-center space-x-4 my-5 p-3.5 rounded-[8px] bg-sand/40 border border-border text-xs font-mono">
           <div className="flex-1">
             <span className="text-[10px] uppercase text-warm-gray block">Departure</span>
             <span className="text-ink font-semibold text-sm">{depDate} Sep 2026</span>
@@ -87,7 +87,7 @@ export const DatePickerModal: React.FC = () => {
           <div className="text-warm-gray">➔</div>
           <div className="flex-1 text-right">
             <span className="text-[10px] uppercase text-warm-gray block">Return</span>
-            <span className="text-terracotta font-semibold text-sm">{retDate} Sep 2026</span>
+            <span className="text-[#963F24] font-semibold text-sm">{retDate} Sep 2026</span>
           </div>
         </div>
 
@@ -120,16 +120,16 @@ export const DatePickerModal: React.FC = () => {
                     onClick={() => handleDateClick(d)}
                     onMouseEnter={() => setHoverDate(d)}
                     onMouseLeave={() => setHoverDate(null)}
-                    className={`h-11 rounded-lg text-xs flex flex-col items-center justify-center transition-colors ${
+                    className={`h-11 rounded-[6px] text-xs flex flex-col items-center justify-center transition-colors ${
                       isSelected
-                        ? 'bg-terracotta text-paper font-medium shadow-sm'
+                        ? 'bg-[#963F24] text-white font-bold shadow-sm'
                         : inRange
                         ? 'bg-sand/70 text-ink font-medium'
                         : 'text-ink hover:bg-sand/60'
                     }`}
                   >
                     <span className="text-xs">{d}</span>
-                    <span className={`text-[8px] font-mono ${isSelected ? 'text-paper' : 'text-warm-gray'}`}>
+                    <span className={`text-[8px] font-mono ${isSelected ? 'text-white' : 'text-warm-gray'}`}>
                       {price || '—'}
                     </span>
                   </button>
@@ -157,7 +157,7 @@ export const DatePickerModal: React.FC = () => {
                 <button
                   key={`oct-${d}`}
                   onClick={() => setRetDate(30 + d)}
-                  className="h-11 rounded-lg text-xs text-ink hover:bg-sand/60 flex flex-col items-center justify-center transition-colors"
+                  className="h-11 rounded-[6px] text-xs text-ink hover:bg-sand/60 flex flex-col items-center justify-center transition-colors"
                 >
                   <span className="text-xs">{d}</span>
                   <span className="text-[8px] font-mono text-warm-gray">₹44K</span>
@@ -174,7 +174,7 @@ export const DatePickerModal: React.FC = () => {
           </div>
           <button
             onClick={handleApply}
-            className="px-6 py-2.5 rounded-lg bg-terracotta hover:bg-terracotta-hover text-paper font-medium uppercase tracking-wider transition-colors shadow-sm"
+            className="px-6 py-2.5 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-medium uppercase tracking-wider transition-colors shadow-sm"
           >
             Apply Dates
           </button>

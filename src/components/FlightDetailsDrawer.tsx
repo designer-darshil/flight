@@ -20,14 +20,14 @@ export const FlightDetailsDrawer: React.FC = () => {
   if (!isDrawerOpen || !drawerFlight) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-ink/20 transition-opacity">
-      <div className="w-full max-w-[500px] h-full bg-paper text-ink shadow-[-20px_0_60px_rgba(23,23,23,0.08)] flex flex-col justify-between overflow-y-auto animate-slideInRight border-l border-border">
+    <div className="fixed inset-0 z-50 flex justify-end bg-[rgba(23,23,23,0.25)] transition-opacity">
+      <div className="w-full max-w-[500px] h-full bg-white text-ink shadow-[-20px_0_60px_rgba(23,23,23,0.08)] flex flex-col justify-between overflow-y-auto animate-slideInRight border-l border-[#D8D1C5]">
         
         {/* DRAWER TOP BAR */}
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-sm"
+              className="w-10 h-10 rounded-[8px] flex items-center justify-center font-bold text-white text-xs shadow-sm"
               style={{ backgroundColor: drawerFlight.accentColor }}
             >
               {drawerFlight.logoText}
@@ -44,7 +44,7 @@ export const FlightDetailsDrawer: React.FC = () => {
 
           <button
             onClick={closeDrawer}
-            className="p-2 rounded-lg hover:bg-sand text-warm-gray hover:text-ink transition-colors"
+            className="p-2 rounded-[8px] hover:bg-sand text-warm-gray hover:text-ink transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -54,16 +54,16 @@ export const FlightDetailsDrawer: React.FC = () => {
         <div className="flex border-b border-border px-6 gap-6 text-xs font-mono">
           {[
             { id: 'overview', label: 'Overview' },
-            { id: 'fare', label: 'Fare Rules' },
+            { id: 'fare', label: 'Fare' },
             { id: 'baggage', label: 'Baggage' },
-            { id: 'policy', label: 'Cancellation' },
+            { id: 'policy', label: 'Policy' },
           ].map(t => (
             <button
               key={t.id}
               onClick={() => setActiveTab(t.id as any)}
               className={`py-3.5 border-b-2 transition-colors uppercase tracking-wider ${
                 activeTab === t.id
-                  ? 'border-terracotta text-terracotta font-medium'
+                  ? 'border-[#963F24] text-[#963F24] font-bold'
                   : 'border-transparent text-warm-gray hover:text-ink'
               }`}
             >
@@ -219,7 +219,7 @@ export const FlightDetailsDrawer: React.FC = () => {
               closeDrawer();
               selectFlight(drawerFlight);
             }}
-            className="px-6 py-3 rounded-lg bg-terracotta hover:bg-terracotta-hover text-paper font-mono font-medium text-xs tracking-wider uppercase transition-colors flex items-center space-x-2 shadow-sm"
+            className="px-6 py-3 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs tracking-wider uppercase transition-colors flex items-center space-x-2 shadow-sm cursor-pointer"
           >
             <span>CHOOSE THIS FLIGHT</span>
             <ArrowRight className="w-4 h-4" />

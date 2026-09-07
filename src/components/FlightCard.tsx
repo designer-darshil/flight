@@ -24,10 +24,10 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
 
   return (
     <div
-      className={`rounded-2xl border transition-all duration-300 relative overflow-hidden bg-paper text-ink ${
+      className={`rounded-[12px] border transition-all duration-300 relative overflow-hidden bg-white text-ink ${
         isSelected
-          ? 'border-terracotta shadow-md ring-1 ring-terracotta/30'
-          : 'border-border shadow-sm hover:shadow-md hover:border-ink/40'
+          ? 'border-[#963F24] shadow-md ring-1 ring-[#963F24]/30'
+          : 'border-[#D8D1C5] shadow-sm hover:shadow-md hover:border-ink/40'
       }`}
     >
       <div className="p-6 sm:p-7">
@@ -36,7 +36,7 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
           <div className="flex items-center space-x-3">
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-sm"
+              className="w-10 h-10 rounded-[8px] flex items-center justify-center font-bold text-white text-xs shadow-sm"
               style={{ backgroundColor: flight.accentColor }}
             >
               {flight.logoText}
@@ -56,13 +56,13 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
             {flight.tags?.map(tag => (
               <span
                 key={tag}
-                className="text-[10px] uppercase font-mono font-medium px-2.5 py-1 rounded-md bg-sand text-warm-gray border border-border"
+                className="text-[10px] uppercase font-mono font-medium px-2.5 py-1 rounded-[6px] bg-sand text-warm-gray border border-border"
               >
                 {tag}
               </span>
             ))}
             {flight.refundable && (
-              <span className="text-[10px] font-mono font-semibold text-olive bg-olive/10 px-2.5 py-1 rounded-md border border-olive/20 flex items-center space-x-1">
+              <span className="text-[10px] font-mono font-semibold text-olive bg-olive/10 px-2.5 py-1 rounded-[6px] border border-olive/20 flex items-center space-x-1">
                 <ShieldCheck className="w-3 h-3" />
                 <span>Refundable</span>
               </span>
@@ -78,7 +78,7 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
             <div className="text-3xl font-serif font-semibold text-ink">
               {flight.departureTime}
             </div>
-            <div className="text-sm font-mono font-bold text-terracotta">
+            <div className="text-sm font-mono font-bold text-[#963F24]">
               {flight.from.code}
             </div>
             <div className="text-xs text-warm-gray truncate">
@@ -92,9 +92,9 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
               {flight.duration}
             </span>
             <div className="w-full flex items-center relative my-1">
-              <div className="w-2.5 h-2.5 rounded-full border-2 border-ink bg-paper" />
+              <div className="w-2.5 h-2.5 rounded-full border-2 border-ink bg-white" />
               <div className="flex-1 border-t-2 border-dashed border-border relative mx-1">
-                <Plane className="w-3.5 h-3.5 text-terracotta absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90" />
+                <Plane className="w-3.5 h-3.5 text-[#963F24] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90" />
               </div>
               <div className="w-2.5 h-2.5 rounded-full border-2 border-ink bg-ink" />
             </div>
@@ -113,7 +113,7 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
             <div className="text-3xl font-serif font-semibold text-ink">
               {flight.arrivalTime}
             </div>
-            <div className="text-sm font-mono font-bold text-terracotta">
+            <div className="text-sm font-mono font-bold text-[#963F24]">
               {flight.to.code}
             </div>
             <div className="text-xs text-warm-gray truncate">
@@ -129,7 +129,7 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
             </div>
             <button
               onClick={() => selectFlight(flight)}
-              className="mt-2 w-full md:w-auto px-5 py-2.5 rounded-lg bg-terracotta hover:bg-terracotta-hover text-white font-mono font-medium text-xs tracking-wider uppercase transition-colors shadow-sm"
+              className="mt-2 w-full md:w-auto h-10 px-5 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs tracking-wider uppercase transition-colors shadow-sm flex items-center justify-center cursor-pointer"
             >
               SELECT FLIGHT
             </button>
@@ -139,11 +139,11 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
         {/* METADATA STRIP: BAGGAGE & DETAILS TOGGLE */}
         <div className="mt-5 pt-4 border-t border-border flex flex-wrap items-center justify-between gap-3 text-xs text-warm-gray">
           <div className="flex items-center space-x-4">
-            <span className="flex items-center space-x-1 font-mono">
-              <Luggage className="w-3.5 h-3.5 text-warm-gray" />
-              <span>Baggage: <strong className="text-ink font-medium">{flight.baggage.checked}</strong></span>
+            <span className="flex items-center space-x-1.5 font-mono">
+              <Luggage className="w-3.5 h-3.5 text-[#963F24]" />
+              <span>Baggage: <strong className="text-ink font-medium">{flight.baggage.cabin} cabin · {flight.baggage.checked} checked</strong></span>
             </span>
-            <span className="flex items-center space-x-1 font-mono">
+            <span className="hidden sm:flex items-center space-x-1 font-mono">
               <Wifi className="w-3.5 h-3.5 text-warm-gray" />
               <span>Wi-Fi Available</span>
             </span>
@@ -152,15 +152,15 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
           <div className="flex items-center space-x-3">
             <button
               onClick={() => openDrawer(flight)}
-              className="font-mono text-xs text-terracotta hover:text-terracotta-hover font-medium flex items-center space-x-1"
+              className="font-mono text-xs text-[#963F24] hover:underline font-semibold flex items-center space-x-1 cursor-pointer"
             >
               <Info className="w-3.5 h-3.5" />
-              <span>Flight Details Drawer</span>
+              <span>Flight Details</span>
             </button>
 
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="font-mono text-xs text-ink hover:text-terracotta font-medium flex items-center space-x-1 bg-sand px-3 py-1 rounded-md transition-colors"
+              className="font-mono text-xs text-ink hover:text-[#963F24] font-medium flex items-center space-x-1 bg-sand px-3 py-1 rounded-[6px] transition-colors cursor-pointer"
             >
               <span>{isExpanded ? 'Less' : 'Quick Specs'}</span>
               {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}

@@ -31,8 +31,8 @@ export const SearchLoading: React.FC = () => {
 
         {/* Headline and Progress Text */}
         <div className="space-y-2">
-          <div className="text-xs font-mono uppercase tracking-[0.25em] text-terracotta font-medium">
-            SEARCHING GLOBAL AIRSPACE
+          <div className="text-xs font-mono uppercase tracking-[0.25em] text-[#963F24] font-bold">
+            SEARCHING THE GLOBAL NETWORK
           </div>
           <div className="text-lg font-serif font-light text-ink min-h-[28px] transition-all">
             {searchProgressText}

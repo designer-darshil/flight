@@ -49,18 +49,23 @@ export const BookingEngine: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const recentAirports = AIRPORTS.filter(a => ['DEL', 'DXB', 'LHR'].includes(a.code));
+  const popularAirports = AIRPORTS.filter(a => ['HND', 'SIN', 'JFK', 'CDG'].includes(a.code));
+
   const filteredFrom = AIRPORTS.filter(
     a =>
       a.city.toLowerCase().includes(fromQuery.toLowerCase()) ||
       a.code.toLowerCase().includes(fromQuery.toLowerCase()) ||
-      a.name.toLowerCase().includes(fromQuery.toLowerCase())
+      a.name.toLowerCase().includes(fromQuery.toLowerCase()) ||
+      a.country.toLowerCase().includes(fromQuery.toLowerCase())
   );
 
   const filteredTo = AIRPORTS.filter(
     a =>
       a.city.toLowerCase().includes(toQuery.toLowerCase()) ||
       a.code.toLowerCase().includes(toQuery.toLowerCase()) ||
-      a.name.toLowerCase().includes(toQuery.toLowerCase())
+      a.name.toLowerCase().includes(toQuery.toLowerCase()) ||
+      a.country.toLowerCase().includes(toQuery.toLowerCase())
   );
 
   const totalPax =
@@ -129,35 +134,123 @@ export const BookingEngine: React.FC = () => {
             </div>
           </button>
 
-          {/* FROM DROPDOWN */}
+          {/* FROM DROPDOWN / AIRPORT SELECTOR POPOVER */}
           {fromOpen && (
-            <div className="absolute left-0 top-full mt-2 w-80 bg-paper border border-border rounded-xl shadow-[0_12px_32px_rgba(23,23,23,0.08)] p-3 z-50">
-              <input
-                type="text"
-                placeholder="Search airport or city..."
-                value={fromQuery}
-                onChange={e => setFromQuery(e.target.value)}
-                autoFocus
-                className="w-full p-2.5 text-xs bg-sand/30 border border-border text-ink mb-2 focus:outline-none focus:border-terracotta"
-              />
-              <div className="max-h-56 overflow-y-auto space-y-1">
-                {filteredFrom.map(a => (
-                  <button
-                    key={a.code}
-                    type="button"
-                    onClick={() => {
-                      setSearchParams(prev => ({ ...prev, from: a }));
-                      setFromOpen(false);
-                    }}
-                    className="w-full p-2 text-left text-xs hover:bg-sand/40 flex items-center justify-between"
-                  >
-                    <div>
-                      <span className="font-bold text-ink">{a.city}</span>
-                      <span className="text-[11px] text-warm-gray block truncate">{a.name}</span>
+            <div className="absolute left-0 top-full mt-2 w-[340px] sm:w-[400px] bg-white border border-border rounded-[12px] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-4 z-50 text-ink">
+              {/* Search bar */}
+              <div className="relative mb-3">
+                <Search className="w-3.5 h-3.5 text-warm-gray absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search city, airport, code, country..."
+                  value={fromQuery}
+                  onChange={e => setFromQuery(e.target.value)}
+                  autoFocus
+                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-sand/30 border border-border rounded-[8px] text-ink focus:outline-none focus:border-[#963F24] font-sans"
+                />
+              </div>
+
+              <div className="max-h-72 overflow-y-auto divide-y divide-border/40 pr-1">
+                {fromQuery.trim() === '' ? (
+                  <>
+                    {/* Recent Searches */}
+                    <div className="pb-3">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-warm-gray mb-2 px-1">
+                        Recent Searches
+                      </div>
+                      <div className="space-y-1">
+                        {recentAirports.map(a => (
+                          <button
+                            key={`from-recent-${a.code}`}
+                            type="button"
+                            onClick={() => {
+                              setSearchParams(prev => ({ ...prev, from: a }));
+                              setFromOpen(false);
+                            }}
+                            className="w-full p-2.5 text-left rounded-[8px] hover:bg-sand/50 transition-colors flex items-center justify-between group"
+                          >
+                            <div className="min-w-0 pr-2">
+                              <div className="flex items-center space-x-1.5">
+                                <span className="font-bold text-ink text-xs">{a.city}</span>
+                                <span className="text-[11px] text-warm-gray font-normal">· {a.country}</span>
+                              </div>
+                              <span className="text-[11px] text-warm-gray block truncate mt-0.5">{a.name}</span>
+                            </div>
+                            <span className="font-mono text-xs font-bold text-[#963F24] bg-sand/80 px-2 py-0.5 rounded-[4px] shrink-0">
+                              {a.code}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <span className="font-mono text-xs font-semibold text-terracotta">{a.code}</span>
-                  </button>
-                ))}
+
+                    {/* Popular Airports */}
+                    <div className="pt-3">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-warm-gray mb-2 px-1">
+                        Popular Airports
+                      </div>
+                      <div className="space-y-1">
+                        {popularAirports.map(a => (
+                          <button
+                            key={`from-pop-${a.code}`}
+                            type="button"
+                            onClick={() => {
+                              setSearchParams(prev => ({ ...prev, from: a }));
+                              setFromOpen(false);
+                            }}
+                            className="w-full p-2.5 text-left rounded-[8px] hover:bg-sand/50 transition-colors flex items-center justify-between group"
+                          >
+                            <div className="min-w-0 pr-2">
+                              <div className="flex items-center space-x-1.5">
+                                <span className="font-bold text-ink text-xs">{a.city}</span>
+                                <span className="text-[11px] text-warm-gray font-normal">· {a.country}</span>
+                              </div>
+                              <span className="text-[11px] text-warm-gray block truncate mt-0.5">{a.name}</span>
+                            </div>
+                            <span className="font-mono text-xs font-bold text-[#963F24] bg-sand/80 px-2 py-0.5 rounded-[4px] shrink-0">
+                              {a.code}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  /* Filtered Airports */
+                  <div className="py-1 space-y-1">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-warm-gray mb-2 px-1">
+                      Matching Airports ({filteredFrom.length})
+                    </div>
+                    {filteredFrom.length > 0 ? (
+                      filteredFrom.map(a => (
+                        <button
+                          key={`from-match-${a.code}`}
+                          type="button"
+                          onClick={() => {
+                            setSearchParams(prev => ({ ...prev, from: a }));
+                            setFromOpen(false);
+                          }}
+                          className="w-full p-2.5 text-left rounded-[8px] hover:bg-sand/50 transition-colors flex items-center justify-between group"
+                        >
+                          <div className="min-w-0 pr-2">
+                            <div className="flex items-center space-x-1.5">
+                              <span className="font-bold text-ink text-xs">{a.city}</span>
+                              <span className="text-[11px] text-warm-gray font-normal">· {a.country}</span>
+                            </div>
+                            <span className="text-[11px] text-warm-gray block truncate mt-0.5">{a.name}</span>
+                          </div>
+                          <span className="font-mono text-xs font-bold text-[#963F24] bg-sand/80 px-2 py-0.5 rounded-[4px] shrink-0">
+                            {a.code}
+                          </span>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-xs text-warm-gray font-mono">
+                        No airports match "{fromQuery}"
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -193,41 +286,129 @@ export const BookingEngine: React.FC = () => {
               {searchParams.to.city}
             </div>
             <div className="text-xs font-mono text-warm-gray flex items-center space-x-1.5 mt-0.5">
-              <span className="text-terracotta font-semibold">{searchParams.to.code}</span>
+              <span className="text-[#963F24] font-semibold">{searchParams.to.code}</span>
               <span>·</span>
               <span className="truncate">{searchParams.to.name}</span>
             </div>
           </button>
 
-          {/* TO DROPDOWN */}
+          {/* TO DROPDOWN / AIRPORT SELECTOR POPOVER */}
           {toOpen && (
-            <div className="absolute left-0 top-full mt-2 w-80 bg-paper border border-border rounded-xl shadow-[0_12px_32px_rgba(23,23,23,0.08)] p-3 z-50">
-              <input
-                type="text"
-                placeholder="Search destination airport..."
-                value={toQuery}
-                onChange={e => setToQuery(e.target.value)}
-                autoFocus
-                className="w-full p-2.5 text-xs bg-sand/30 border border-border text-ink mb-2 focus:outline-none focus:border-terracotta"
-              />
-              <div className="max-h-56 overflow-y-auto space-y-1">
-                {filteredTo.map(a => (
-                  <button
-                    key={a.code}
-                    type="button"
-                    onClick={() => {
-                      setSearchParams(prev => ({ ...prev, to: a }));
-                      setToOpen(false);
-                    }}
-                    className="w-full p-2 text-left text-xs hover:bg-sand/40 flex items-center justify-between"
-                  >
-                    <div>
-                      <span className="font-bold text-ink">{a.city}</span>
-                      <span className="text-[11px] text-warm-gray block truncate">{a.name}</span>
+            <div className="absolute left-0 top-full mt-2 w-[340px] sm:w-[400px] bg-white border border-border rounded-[12px] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-4 z-50 text-ink">
+              {/* Search bar */}
+              <div className="relative mb-3">
+                <Search className="w-3.5 h-3.5 text-warm-gray absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search city, airport, code, country..."
+                  value={toQuery}
+                  onChange={e => setToQuery(e.target.value)}
+                  autoFocus
+                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-sand/30 border border-border rounded-[8px] text-ink focus:outline-none focus:border-[#963F24] font-sans"
+                />
+              </div>
+
+              <div className="max-h-72 overflow-y-auto divide-y divide-border/40 pr-1">
+                {toQuery.trim() === '' ? (
+                  <>
+                    {/* Recent Searches */}
+                    <div className="pb-3">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-warm-gray mb-2 px-1">
+                        Recent Searches
+                      </div>
+                      <div className="space-y-1">
+                        {recentAirports.map(a => (
+                          <button
+                            key={`to-recent-${a.code}`}
+                            type="button"
+                            onClick={() => {
+                              setSearchParams(prev => ({ ...prev, to: a }));
+                              setToOpen(false);
+                            }}
+                            className="w-full p-2.5 text-left rounded-[8px] hover:bg-sand/50 transition-colors flex items-center justify-between group"
+                          >
+                            <div className="min-w-0 pr-2">
+                              <div className="flex items-center space-x-1.5">
+                                <span className="font-bold text-ink text-xs">{a.city}</span>
+                                <span className="text-[11px] text-warm-gray font-normal">· {a.country}</span>
+                              </div>
+                              <span className="text-[11px] text-warm-gray block truncate mt-0.5">{a.name}</span>
+                            </div>
+                            <span className="font-mono text-xs font-bold text-[#963F24] bg-sand/80 px-2 py-0.5 rounded-[4px] shrink-0">
+                              {a.code}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <span className="font-mono text-xs font-semibold text-terracotta">{a.code}</span>
-                  </button>
-                ))}
+
+                    {/* Popular Airports */}
+                    <div className="pt-3">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-warm-gray mb-2 px-1">
+                        Popular Airports
+                      </div>
+                      <div className="space-y-1">
+                        {popularAirports.map(a => (
+                          <button
+                            key={`to-pop-${a.code}`}
+                            type="button"
+                            onClick={() => {
+                              setSearchParams(prev => ({ ...prev, to: a }));
+                              setToOpen(false);
+                            }}
+                            className="w-full p-2.5 text-left rounded-[8px] hover:bg-sand/50 transition-colors flex items-center justify-between group"
+                          >
+                            <div className="min-w-0 pr-2">
+                              <div className="flex items-center space-x-1.5">
+                                <span className="font-bold text-ink text-xs">{a.city}</span>
+                                <span className="text-[11px] text-warm-gray font-normal">· {a.country}</span>
+                              </div>
+                              <span className="text-[11px] text-warm-gray block truncate mt-0.5">{a.name}</span>
+                            </div>
+                            <span className="font-mono text-xs font-bold text-[#963F24] bg-sand/80 px-2 py-0.5 rounded-[4px] shrink-0">
+                              {a.code}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  /* Filtered Airports */
+                  <div className="py-1 space-y-1">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-warm-gray mb-2 px-1">
+                      Matching Airports ({filteredTo.length})
+                    </div>
+                    {filteredTo.length > 0 ? (
+                      filteredTo.map(a => (
+                        <button
+                          key={`to-match-${a.code}`}
+                          type="button"
+                          onClick={() => {
+                            setSearchParams(prev => ({ ...prev, to: a }));
+                            setToOpen(false);
+                          }}
+                          className="w-full p-2.5 text-left rounded-[8px] hover:bg-sand/50 transition-colors flex items-center justify-between group"
+                        >
+                          <div className="min-w-0 pr-2">
+                            <div className="flex items-center space-x-1.5">
+                              <span className="font-bold text-ink text-xs">{a.city}</span>
+                              <span className="text-[11px] text-warm-gray font-normal">· {a.country}</span>
+                            </div>
+                            <span className="text-[11px] text-warm-gray block truncate mt-0.5">{a.name}</span>
+                          </div>
+                          <span className="font-mono text-xs font-bold text-[#963F24] bg-sand/80 px-2 py-0.5 rounded-[4px] shrink-0">
+                            {a.code}
+                          </span>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-xs text-warm-gray font-mono">
+                        No airports match "{toQuery}"
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -255,7 +436,7 @@ export const BookingEngine: React.FC = () => {
                 <div>
                   <span className="text-[10px] font-mono text-warm-gray block">RETURN</span>
                   <span className="text-base sm:text-lg font-display font-bold text-ink">
-                    {searchParams.returnDate || '26 Sep'}
+                    {searchParams.returnDate || '26 Sep 2026'}
                   </span>
                 </div>
               </>
@@ -278,7 +459,7 @@ export const BookingEngine: React.FC = () => {
             className="w-full text-left"
           >
             <div className="text-lg sm:text-xl font-display font-bold text-ink truncate">
-              {totalPax} {totalPax === 1 ? 'Adult' : 'Travelers'}
+              {totalPax} {totalPax === 1 ? 'Traveler' : 'Travelers'}
             </div>
             <div className="text-xs font-mono text-warm-gray mt-0.5 flex items-center justify-between">
               <span>{searchParams.cabinClass}</span>
@@ -286,15 +467,17 @@ export const BookingEngine: React.FC = () => {
             </div>
           </button>
 
-          {/* PASSENGERS POPOVER */}
+          {/* PASSENGERS POPOVER (Adults, Children, Infants with quantity controls) */}
           {passengerOpen && (
-            <div className="absolute right-0 top-full mt-2 w-72 bg-paper border border-border rounded-xl shadow-[0_12px_32px_rgba(23,23,23,0.08)] p-4 z-50 space-y-4">
+            <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-border rounded-[12px] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-4 z-50 space-y-4 text-ink">
+              
+              {/* Adults Control */}
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-xs font-bold text-ink">Adults</div>
-                  <div className="text-[10px] text-warm-gray">Age 12+</div>
+                  <div className="text-[10px] text-warm-gray font-mono">Age 12+</div>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2.5">
                   <button
                     type="button"
                     disabled={searchParams.passengers.adults <= 1}
@@ -304,22 +487,101 @@ export const BookingEngine: React.FC = () => {
                         passengers: { ...prev.passengers, adults: Math.max(1, prev.passengers.adults - 1) },
                       }))
                     }
-                    className="w-7 h-7 border border-border text-ink disabled:opacity-30 hover:border-ink"
+                    className="w-8 h-8 rounded-[6px] border border-border text-ink hover:border-ink disabled:opacity-30 disabled:hover:border-border font-mono font-bold flex items-center justify-center transition-colors"
                   >
                     -
                   </button>
-                  <span className="font-mono text-xs font-bold w-4 text-center">
+                  <span className="font-mono text-xs font-bold w-5 text-center">
                     {searchParams.passengers.adults}
                   </span>
                   <button
                     type="button"
+                    disabled={totalPax >= 9}
                     onClick={() =>
                       setSearchParams(prev => ({
                         ...prev,
                         passengers: { ...prev.passengers, adults: prev.passengers.adults + 1 },
                       }))
                     }
-                    className="w-7 h-7 border border-border text-ink hover:border-ink"
+                    className="w-8 h-8 rounded-[6px] border border-border text-ink hover:border-ink disabled:opacity-30 font-mono font-bold flex items-center justify-center transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Children Control */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-ink">Children</div>
+                  <div className="text-[10px] text-warm-gray font-mono">Age 2–11</div>
+                </div>
+                <div className="flex items-center space-x-2.5">
+                  <button
+                    type="button"
+                    disabled={searchParams.passengers.children <= 0}
+                    onClick={() =>
+                      setSearchParams(prev => ({
+                        ...prev,
+                        passengers: { ...prev.passengers, children: Math.max(0, prev.passengers.children - 1) },
+                      }))
+                    }
+                    className="w-8 h-8 rounded-[6px] border border-border text-ink hover:border-ink disabled:opacity-30 disabled:hover:border-border font-mono font-bold flex items-center justify-center transition-colors"
+                  >
+                    -
+                  </button>
+                  <span className="font-mono text-xs font-bold w-5 text-center">
+                    {searchParams.passengers.children}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={totalPax >= 9}
+                    onClick={() =>
+                      setSearchParams(prev => ({
+                        ...prev,
+                        passengers: { ...prev.passengers, children: prev.passengers.children + 1 },
+                      }))
+                    }
+                    className="w-8 h-8 rounded-[6px] border border-border text-ink hover:border-ink disabled:opacity-30 font-mono font-bold flex items-center justify-center transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Infants Control */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-ink">Infants</div>
+                  <div className="text-[10px] text-warm-gray font-mono">Under 2</div>
+                </div>
+                <div className="flex items-center space-x-2.5">
+                  <button
+                    type="button"
+                    disabled={searchParams.passengers.infants <= 0}
+                    onClick={() =>
+                      setSearchParams(prev => ({
+                        ...prev,
+                        passengers: { ...prev.passengers, infants: Math.max(0, prev.passengers.infants - 1) },
+                      }))
+                    }
+                    className="w-8 h-8 rounded-[6px] border border-border text-ink hover:border-ink disabled:opacity-30 disabled:hover:border-border font-mono font-bold flex items-center justify-center transition-colors"
+                  >
+                    -
+                  </button>
+                  <span className="font-mono text-xs font-bold w-5 text-center">
+                    {searchParams.passengers.infants}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={totalPax >= 9}
+                    onClick={() =>
+                      setSearchParams(prev => ({
+                        ...prev,
+                        passengers: { ...prev.passengers, infants: prev.passengers.infants + 1 },
+                      }))
+                    }
+                    className="w-8 h-8 rounded-[6px] border border-border text-ink hover:border-ink disabled:opacity-30 font-mono font-bold flex items-center justify-center transition-colors"
                   >
                     +
                   </button>
@@ -328,8 +590,8 @@ export const BookingEngine: React.FC = () => {
 
               {/* Cabin Class Selection */}
               <div className="pt-3 border-t border-border/60">
-                <label className="text-[10px] font-mono uppercase text-warm-gray block mb-2">Cabin Class</label>
-                <div className="grid grid-cols-2 gap-1.5 text-xs">
+                <label className="text-[10px] font-mono uppercase tracking-wider text-warm-gray block mb-2">Cabin Class</label>
+                <div className="grid grid-cols-2 gap-1.5 text-xs font-sans">
                   {(['Economy', 'Premium Economy', 'Business', 'First'] as CabinClass[]).map(c => (
                     <button
                       key={c}
@@ -337,10 +599,10 @@ export const BookingEngine: React.FC = () => {
                       onClick={() => {
                         setSearchParams(prev => ({ ...prev, cabinClass: c }));
                       }}
-                      className={`p-1.5 text-left text-xs border ${
+                      className={`p-2 text-left rounded-[6px] text-xs border transition-colors ${
                         searchParams.cabinClass === c
-                          ? 'border-terracotta bg-terracotta/5 text-terracotta font-bold'
-                          : 'border-border text-ink/80 hover:border-ink'
+                          ? 'border-[#963F24] bg-[#963F24]/5 text-[#963F24] font-bold'
+                          : 'border-border text-ink hover:border-ink'
                       }`}
                     >
                       {c}
@@ -348,10 +610,18 @@ export const BookingEngine: React.FC = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Done button */}
+              <button
+                type="button"
+                onClick={() => setPassengerOpen(false)}
+                className="w-full py-2 bg-[#963F24] hover:bg-[#7E331B] text-white rounded-[6px] text-xs font-mono font-semibold uppercase tracking-wider transition-colors"
+              >
+                Apply Travelers
+              </button>
             </div>
           )}
         </div>
-
       </div>
 
       {/* 3. CTA FOOTER: MUTED TERRACOTTA ACCENT */}
