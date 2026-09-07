@@ -20,8 +20,8 @@ export const FlightDetailsDrawer: React.FC = () => {
   if (!isDrawerOpen || !drawerFlight) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-ink/40 backdrop-blur-sm transition-opacity">
-      <div className="w-full max-w-xl h-full bg-paper text-ink shadow-2xl flex flex-col justify-between overflow-y-auto animate-slideInRight border-l border-border">
+    <div className="fixed inset-0 z-50 flex justify-end bg-ink/20 transition-opacity">
+      <div className="w-full max-w-[500px] h-full bg-paper text-ink shadow-[-20px_0_60px_rgba(23,23,23,0.08)] flex flex-col justify-between overflow-y-auto animate-slideInRight border-l border-border">
         
         {/* DRAWER TOP BAR */}
         <div className="p-6 border-b border-border flex items-center justify-between">

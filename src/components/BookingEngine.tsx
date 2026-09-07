@@ -131,14 +131,14 @@ export const BookingEngine: React.FC = () => {
 
           {/* FROM DROPDOWN */}
           {fromOpen && (
-            <div className="absolute left-0 top-full mt-2 w-80 bg-white border border-warm-gray-border shadow-paper-elevated p-3 z-50">
+            <div className="absolute left-0 top-full mt-2 w-80 bg-paper border border-border rounded-xl shadow-[0_12px_32px_rgba(23,23,23,0.08)] p-3 z-50">
               <input
                 type="text"
                 placeholder="Search airport or city..."
                 value={fromQuery}
                 onChange={e => setFromQuery(e.target.value)}
                 autoFocus
-                className="w-full p-2.5 text-xs bg-sand/30 border border-warm-gray-border text-ink mb-2 focus:outline-none focus:border-terracotta"
+                className="w-full p-2.5 text-xs bg-sand/30 border border-border text-ink mb-2 focus:outline-none focus:border-terracotta"
               />
               <div className="max-h-56 overflow-y-auto space-y-1">
                 {filteredFrom.map(a => (
@@ -169,14 +169,14 @@ export const BookingEngine: React.FC = () => {
             type="button"
             onClick={swapAirports}
             title="Swap Origin and Destination"
-            className="w-8 h-8 rounded-full bg-white border border-warm-gray-border text-warm-gray hover:text-ink hover:border-ink flex items-center justify-center transition-all shadow-sm"
+            className="w-8 h-8 rounded-full bg-white border border-border text-warm-gray hover:text-ink hover:border-ink flex items-center justify-center transition-all shadow-sm"
           >
             <ArrowLeftRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* TO FIELD (Col 4-6) */}
-        <div ref={toRef} className="md:col-span-3 relative p-4 border-b md:border-b-0 md:border-r border-warm-gray-border/60 hover:bg-sand/20 transition-colors md:pl-6">
+        <div ref={toRef} className="md:col-span-3 relative p-4 border-b md:border-b-0 md:border-r border-border/60 hover:bg-sand/20 transition-colors md:pl-6">
           <label className="block text-[10px] font-mono tracking-widest uppercase text-warm-gray mb-1">
             TO
           </label>
@@ -201,14 +201,14 @@ export const BookingEngine: React.FC = () => {
 
           {/* TO DROPDOWN */}
           {toOpen && (
-            <div className="absolute left-0 top-full mt-2 w-80 bg-white border border-warm-gray-border shadow-paper-elevated p-3 z-50">
+            <div className="absolute left-0 top-full mt-2 w-80 bg-paper border border-border rounded-xl shadow-[0_12px_32px_rgba(23,23,23,0.08)] p-3 z-50">
               <input
                 type="text"
                 placeholder="Search destination airport..."
                 value={toQuery}
                 onChange={e => setToQuery(e.target.value)}
                 autoFocus
-                className="w-full p-2.5 text-xs bg-sand/30 border border-warm-gray-border text-ink mb-2 focus:outline-none focus:border-terracotta"
+                className="w-full p-2.5 text-xs bg-sand/30 border border-border text-ink mb-2 focus:outline-none focus:border-terracotta"
               />
               <div className="max-h-56 overflow-y-auto space-y-1">
                 {filteredTo.map(a => (
@@ -236,7 +236,7 @@ export const BookingEngine: React.FC = () => {
         {/* DATES FIELD: DEPART & RETURN (Col 7-9) */}
         <div
           onClick={() => setIsDatePickerOpen(true)}
-          className="md:col-span-3 p-4 border-b md:border-b-0 md:border-r border-warm-gray-border/60 hover:bg-sand/20 transition-colors cursor-pointer"
+          className="md:col-span-3 p-4 border-b md:border-b-0 md:border-r border-border/60 hover:bg-sand/20 transition-colors cursor-pointer"
         >
           <div className="flex items-center justify-between text-[10px] font-mono tracking-widest uppercase text-warm-gray mb-1">
             <span>DATES</span>
@@ -288,7 +288,7 @@ export const BookingEngine: React.FC = () => {
 
           {/* PASSENGERS POPOVER */}
           {passengerOpen && (
-            <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-warm-gray-border shadow-paper-elevated p-4 z-50 space-y-4">
+            <div className="absolute right-0 top-full mt-2 w-72 bg-paper border border-border rounded-xl shadow-[0_12px_32px_rgba(23,23,23,0.08)] p-4 z-50 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-xs font-bold text-ink">Adults</div>
@@ -304,7 +304,7 @@ export const BookingEngine: React.FC = () => {
                         passengers: { ...prev.passengers, adults: Math.max(1, prev.passengers.adults - 1) },
                       }))
                     }
-                    className="w-7 h-7 border border-warm-gray-border text-ink disabled:opacity-30 hover:border-ink"
+                    className="w-7 h-7 border border-border text-ink disabled:opacity-30 hover:border-ink"
                   >
                     -
                   </button>
@@ -319,7 +319,7 @@ export const BookingEngine: React.FC = () => {
                         passengers: { ...prev.passengers, adults: prev.passengers.adults + 1 },
                       }))
                     }
-                    className="w-7 h-7 border border-warm-gray-border text-ink hover:border-ink"
+                    className="w-7 h-7 border border-border text-ink hover:border-ink"
                   >
                     +
                   </button>
@@ -327,7 +327,7 @@ export const BookingEngine: React.FC = () => {
               </div>
 
               {/* Cabin Class Selection */}
-              <div className="pt-3 border-t border-warm-gray-border/60">
+              <div className="pt-3 border-t border-border/60">
                 <label className="text-[10px] font-mono uppercase text-warm-gray block mb-2">Cabin Class</label>
                 <div className="grid grid-cols-2 gap-1.5 text-xs">
                   {(['Economy', 'Premium Economy', 'Business', 'First'] as CabinClass[]).map(c => (
@@ -340,7 +340,7 @@ export const BookingEngine: React.FC = () => {
                       className={`p-1.5 text-left text-xs border ${
                         searchParams.cabinClass === c
                           ? 'border-terracotta bg-terracotta/5 text-terracotta font-bold'
-                          : 'border-warm-gray-border text-ink/80 hover:border-ink'
+                          : 'border-border text-ink/80 hover:border-ink'
                       }`}
                     >
                       {c}

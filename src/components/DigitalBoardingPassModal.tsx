@@ -48,7 +48,7 @@ export const DigitalBoardingPassModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-ink/40 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-ink/25 overflow-y-auto">
       <div className="w-full max-w-xl my-auto relative">
         
         {/* CLOSE BUTTON */}
@@ -60,11 +60,11 @@ export const DigitalBoardingPassModal: React.FC = () => {
         </button>
 
         {/* SIGNATURE TACTILE DIGITAL BOARDING PASS */}
-        <div className="rounded-2xl bg-paper border border-border shadow-2xl overflow-hidden text-ink relative">
+        <div className="rounded-xl bg-paper border border-border shadow-[0_20px_60px_rgba(23,23,23,0.12)] overflow-hidden text-ink relative">
           
           {/* Perforated Notch Cutouts */}
-          <div className="hidden sm:block absolute top-[280px] -left-3 w-6 h-6 rounded-full bg-ink/40 border-r border-border z-10 shadow-inner" />
-          <div className="hidden sm:block absolute top-[280px] -right-3 w-6 h-6 rounded-full bg-ink/40 border-l border-border z-10 shadow-inner" />
+          <div className="hidden sm:block absolute top-[280px] -left-3 w-6 h-6 rounded-full bg-ink/25 border-r border-border z-10" />
+          <div className="hidden sm:block absolute top-[280px] -right-3 w-6 h-6 rounded-full bg-ink/25 border-l border-border z-10" />
           <div className="hidden sm:block absolute top-[292px] left-3 right-3 border-b border-dashed border-border" />
 
           {/* Pass Header */}

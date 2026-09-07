@@ -88,7 +88,7 @@ export const Hero: React.FC = () => {
 
             <button
               onClick={handleExploreClick}
-              className="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm font-sans font-medium text-xs tracking-wider uppercase transition-all duration-200 flex items-center space-x-2.5"
+              className="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/30 font-sans font-medium text-xs tracking-wider uppercase transition-all duration-200 flex items-center space-x-2.5"
             >
               <Compass className="w-3.5 h-3.5 text-sand-100" />
               <span>EXPLORE DESTINATIONS</span>

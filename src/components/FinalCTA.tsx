@@ -34,7 +34,7 @@ export const FinalCTA: React.FC = () => {
 
       <div className="max-w-4xl mx-auto relative z-10 text-center">
         {/* Subtle Pill */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-paper/90 backdrop-blur-md border border-border text-xs uppercase tracking-[0.25em] font-mono text-warm-gray mb-8 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-paper border border-border text-xs uppercase tracking-[0.25em] font-mono text-warm-gray mb-8 shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-terracotta" />
           <span>Your Horizon Awaits</span>
         </div>
@@ -62,7 +62,7 @@ export const FinalCTA: React.FC = () => {
 
           <button
             onClick={handleQuickExplore}
-            className="px-8 py-4 rounded-xl bg-paper/95 backdrop-blur-md border border-border hover:border-ink/50 text-ink font-mono text-xs uppercase tracking-widest font-semibold transition-all shadow-sm hover:shadow-md flex items-center gap-2.5"
+            className="px-8 py-4 rounded-xl bg-paper border border-border hover:border-ink/50 text-ink font-mono text-xs uppercase tracking-widest font-semibold transition-all shadow-sm hover:shadow-md flex items-center gap-2.5"
           >
             <Compass className="w-4 h-4 text-terracotta" />
             <span>Explore Global Routes</span>

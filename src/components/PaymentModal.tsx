@@ -74,12 +74,12 @@ export const PaymentModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/40 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-paper w-full max-w-5xl rounded-2xl border border-border shadow-2xl p-6 sm:p-8 my-auto relative text-ink">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/25 overflow-y-auto">
+      <div className="bg-paper w-full max-w-5xl rounded-xl border border-border shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-ink">
         
         {/* PROCESSING OVERLAY */}
         {isProcessing && (
-          <div className="absolute inset-0 z-50 bg-cream/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center rounded-2xl">
+          <div className="absolute inset-0 z-50 bg-cream flex flex-col items-center justify-center p-8 text-center rounded-xl">
             <div className="relative w-20 h-20 mb-6">
               <div className="absolute inset-0 rounded-full border-2 border-terracotta/20 animate-ping" />
               <div className="absolute inset-2 rounded-full border-2 border-terracotta border-t-transparent animate-spin" />

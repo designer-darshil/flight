@@ -100,7 +100,7 @@ export const FlightResultsApp: React.FC = () => {
     <div className="min-h-screen bg-cream text-ink pb-24">
       
       {/* 13. TOP APPLICATION NAVIGATION */}
-      <header className="sticky top-0 z-40 bg-cream/90 backdrop-blur-md border-b border-border shadow-sm">
+      <header className="sticky top-0 z-40 bg-cream border-b border-border shadow-sm">
         <div className="max-w-[1440px] mx-auto px-6 sm:px-10 flex items-center justify-between h-16">
           
           <div className="flex items-center space-x-8">

@@ -8,7 +8,7 @@ export const SearchLoading: React.FC = () => {
   if (!isSearching) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-cream/95 backdrop-blur-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-cream">
       <div className="text-center space-y-6 max-w-md px-6">
         
         {/* Animated radar pulse with aircraft icon */}

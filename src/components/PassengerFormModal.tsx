@@ -87,8 +87,8 @@ export const PassengerFormModal: React.FC = () => {
   if (!selectedFlight) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/40 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-paper w-full max-w-4xl rounded-2xl border border-border shadow-2xl p-6 sm:p-8 my-auto relative text-ink">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/25 overflow-y-auto">
+      <div className="bg-paper w-full max-w-4xl rounded-xl border border-border shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-ink">
         
         {/* HEADER */}
         <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-border">

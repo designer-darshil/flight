@@ -67,13 +67,13 @@ export const TravelMoments: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-black/20" />
                 
                 {/* Floating Timestamp Badge */}
-                <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-paper/90 backdrop-blur-md border border-border/60 text-ink text-xs font-mono font-semibold tracking-wider flex items-center gap-1.5 shadow-sm">
+                <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-paper border border-border text-ink text-xs font-mono font-semibold tracking-wider flex items-center gap-1.5 shadow-sm">
                   <Sparkles className="w-3 h-3 text-terracotta" />
                   <span>{moment.time}</span>
                 </div>
 
                 {/* Tag */}
-                <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-ink/70 backdrop-blur-md text-paper text-[10px] font-mono tracking-widest uppercase">
+                <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-ink text-paper text-[10px] font-mono tracking-widest uppercase">
                   {moment.tag}
                 </div>
 

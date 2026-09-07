@@ -56,7 +56,7 @@ export const DestinationExplorer: React.FC = () => {
 
             {/* Badge Top Left */}
             <div className="absolute top-6 left-6 z-10">
-              <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-ink text-[10px] font-mono tracking-widest uppercase font-bold">
+              <span className="px-3 py-1 bg-white border border-warm-gray-border/60 text-ink text-[10px] font-mono tracking-widest uppercase font-bold shadow-sm">
                 FEATURED DESTINATION
               </span>
             </div>

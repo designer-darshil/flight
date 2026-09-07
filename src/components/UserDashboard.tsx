@@ -24,7 +24,7 @@ export const UserDashboard: React.FC = () => {
     <div className="min-h-screen bg-cream text-ink pb-24">
       
       {/* Top Application Bar */}
-      <header className="bg-cream/90 backdrop-blur-md border-b border-border shadow-sm sticky top-0 z-30">
+      <header className="bg-cream border-b border-border shadow-sm sticky top-0 z-30">
         <div className="max-w-[1440px] mx-auto px-6 sm:px-10 flex items-center justify-between h-16">
           <div className="flex items-center space-x-6">
             <button
