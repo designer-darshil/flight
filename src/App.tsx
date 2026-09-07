@@ -29,6 +29,7 @@ import { PaymentModal } from './components/PaymentModal';
 import { BookingConfirmation } from './components/BookingConfirmation';
 import { FlightStatusModal } from './components/FlightStatusModal';
 import { MyTripsModal } from './components/MyTripsModal';
+import { AuthModal } from './components/AuthModal';
 import { DesignFoundationShowcase } from './components/DesignFoundationShowcase';
 import { ComponentLibraryShowcase } from './components/ComponentLibraryShowcase';
 import { Sparkles, Layers } from 'lucide-react';
@@ -144,9 +145,10 @@ const MainContent: React.FC = () => {
       {currentStep === 'payment' && <PaymentModal />}
       {currentStep === 'confirmation' && <BookingConfirmation />}
 
-      {/* DEDICATED TRACKER & MY TRIPS MODALS */}
+      {/* DEDICATED TRACKER, MY TRIPS & AUTH MODALS */}
       {isFlightStatusOpen && <FlightStatusModal />}
       {isMyTripsOpen && <MyTripsModal />}
+      <AuthModal />
 
       {/* PHASE 01 & PHASE 02 DESIGN SYSTEM INSPECTOR */}
       <div className="fixed bottom-5 left-5 z-40 flex items-center gap-2">

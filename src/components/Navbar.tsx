@@ -16,6 +16,9 @@ export const Navbar: React.FC = () => {
     myBookings,
     setIsMyTripsOpen,
     setActiveView,
+    setIsAuthModalOpen,
+    setAuthMode,
+    isLoggedIn,
   } = useBooking();
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -213,16 +216,33 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Sign In Button */}
-          <button
-            onClick={() => setActiveView('dashboard')}
-            className={`font-semibold tracking-wider uppercase transition-colors px-2 py-1.5 flex items-center space-x-1.5 ${
-              isScrolled ? 'text-ink/80 hover:text-ink' : 'text-white/90 hover:text-white'
-            }`}
-          >
-            <User className="w-3.5 h-3.5 opacity-70" />
-            <span>Sign In</span>
-          </button>
+          {/* Sign In / Account Button */}
+          {isLoggedIn ? (
+            <button
+              onClick={() => setActiveView('dashboard')}
+              className={`font-semibold tracking-wider uppercase transition-colors px-2.5 py-1 rounded-[6px] flex items-center space-x-2 ${
+                isScrolled ? 'bg-[#EFE9DE] text-[#171717] hover:bg-[#D8D1C5]' : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+            >
+              <div className="w-5 h-5 rounded-full bg-[#963F24] text-white flex items-center justify-center text-[10px] font-bold">
+                AM
+              </div>
+              <span className="font-mono text-xs">Alex M.</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setAuthMode('login');
+                setIsAuthModalOpen(true);
+              }}
+              className={`font-semibold tracking-wider uppercase transition-colors px-2 py-1.5 flex items-center space-x-1.5 ${
+                isScrolled ? 'text-ink/80 hover:text-ink' : 'text-white/90 hover:text-white'
+              }`}
+            >
+              <User className="w-3.5 h-3.5 opacity-70" />
+              <span>Sign In</span>
+            </button>
+          )}
 
           {/* Small Outlined CTA: BOOK A FLIGHT */}
           <button
@@ -282,15 +302,31 @@ export const Navbar: React.FC = () => {
             >
               Trips
             </button>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setActiveView('dashboard');
-              }}
-              className="block w-full text-left py-2 hover:text-terracotta"
-            >
-              Sign In
-            </button>
+            {isLoggedIn ? (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setActiveView('dashboard');
+                }}
+                className="w-full text-left py-2 hover:text-terracotta flex items-center space-x-2"
+              >
+                <div className="w-5 h-5 rounded-full bg-[#963F24] text-white flex items-center justify-center text-[10px] font-bold">
+                  AM
+                </div>
+                <span>Alex Morgan (Profile)</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setAuthMode('login');
+                  setIsAuthModalOpen(true);
+                }}
+                className="block w-full text-left py-2 hover:text-terracotta"
+              >
+                Sign In
+              </button>
+            )}
           </div>
 
           <div className="pt-4 border-t border-warm-gray-border">

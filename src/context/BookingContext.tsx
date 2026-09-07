@@ -46,6 +46,12 @@ interface BookingContextType {
   setIsFlightStatusOpen: (open: boolean) => void;
   isDatePickerOpen: boolean;
   setIsDatePickerOpen: (open: boolean) => void;
+  isAuthModalOpen: boolean;
+  setIsAuthModalOpen: (open: boolean) => void;
+  authMode: 'login' | 'signup';
+  setAuthMode: (mode: 'login' | 'signup') => void;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (loggedIn: boolean) => void;
   searchFlights: () => void;
   selectFlight: (flight: Flight) => void;
   setFareTier: (tier: FareTier) => void;
@@ -172,6 +178,9 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [isMyTripsOpen, setIsMyTripsOpen] = useState(false);
   const [isFlightStatusOpen, setIsFlightStatusOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const selectedFarePackage =
     AERIVA_FARE_PACKAGES.find(p => p.id === selectedFareTier) || AERIVA_FARE_PACKAGES[1];
@@ -386,6 +395,12 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setIsFlightStatusOpen,
         isDatePickerOpen,
         setIsDatePickerOpen,
+        isAuthModalOpen,
+        setIsAuthModalOpen,
+        authMode,
+        setAuthMode,
+        isLoggedIn,
+        setIsLoggedIn,
         searchFlights,
         selectFlight,
         setFareTier,
