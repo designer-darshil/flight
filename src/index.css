@@ -4,80 +4,83 @@
 
 @layer base {
   body {
-    background-color: #040817;
-    color: #f1f5f9;
+    background-color: #F6F2EA;
+    color: #171717;
+    font-family: "Instrument Sans", Manrope, system-ui, sans-serif;
   }
 }
 
-/* Custom Glassmorphism Styles */
+/* Warm Luxury Editorial Paper Panels */
+.paper-card {
+  background: #FFFFFF;
+  border: 1px solid #D8D1C5;
+  box-shadow: 0 4px 20px -2px rgba(23, 23, 23, 0.04), 0 1px 2px rgba(23, 23, 23, 0.03);
+}
+
+.paper-card-elevated {
+  background: #FFFFFF;
+  border: 1px solid #D8D1C5;
+  box-shadow: 0 20px 40px -15px rgba(23, 23, 23, 0.08), 0 4px 10px -2px rgba(23, 23, 23, 0.03);
+}
+
+.paper-input {
+  background: #FFFFFF;
+  border: 1px solid #D8D1C5;
+  color: #171717;
+  transition: all 0.2s ease;
+}
+
+.paper-input:focus {
+  outline: none;
+  border-color: #C96B45;
+  box-shadow: 0 0 0 2px rgba(201, 107, 69, 0.15);
+}
+
+/* Backward-compatibility aliases for existing modals */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-}
-
-.glass-panel-interactive {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.glass-panel-interactive:hover {
-  background: rgba(30, 41, 59, 0.75);
-  border-color: rgba(56, 189, 248, 0.3);
-  box-shadow: 0 12px 40px -10px rgba(6, 182, 212, 0.25);
-  transform: translateY(-2px);
+  background: #FFFFFF;
+  border: 1px solid #D8D1C5;
+  box-shadow: 0 20px 40px -15px rgba(23, 23, 23, 0.12);
 }
 
 .glass-input {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(8px);
-  color: #ffffff;
-  transition: all 0.2s ease;
+  background: #FAF8F4;
+  border: 1px solid #D8D1C5;
+  color: #171717;
 }
 
 .glass-input:focus {
   outline: none;
-  border-color: #38bdf8;
-  box-shadow: 0 0 15px -3px rgba(56, 189, 248, 0.35);
-  background: rgba(30, 41, 59, 0.85);
+  border-color: #C96B45;
+  box-shadow: 0 0 0 2px rgba(201, 107, 69, 0.15);
+  background: #FFFFFF;
 }
 
-/* Custom Scrollbar */
+/* Editorial Film Grain & Atmosphere */
+.film-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* Editorial Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #070b19;
+  background: #F6F2EA;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #D8D1C5;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #6F6A61;
 }
 
-/* Glowing text and borders */
-.text-glow-cyan {
-  text-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
-}
-
-.text-glow-blue {
-  text-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
-}
-
-/* Perspective utilities for 3D card tilt */
+/* Perspective utilities for 3D */
 .perspective-1000 {
   perspective: 1000px;
 }
@@ -88,24 +91,4 @@
 
 .backface-hidden {
   backface-visibility: hidden;
-}
-
-/* Pulsing radar effect */
-@keyframes radar-pulse {
-  0% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
-}
-
-.animate-radar {
-  animation: radar-pulse 3s infinite ease-in-out;
 }

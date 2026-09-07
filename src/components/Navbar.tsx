@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
   Globe,
-  Coins,
   Menu,
   X,
   ChevronDown,
-  HelpCircle,
   User,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { Currency } from '../types';
-import { CURRENCIES } from '../utils/currency';
 
 export const Navbar: React.FC = () => {
   const {
@@ -18,7 +15,6 @@ export const Navbar: React.FC = () => {
     setCurrency,
     myBookings,
     setIsMyTripsOpen,
-    setIsFlightStatusOpen,
     setActiveView,
   } = useBooking();
 
@@ -30,7 +26,7 @@ export const Navbar: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 40);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -56,113 +52,114 @@ export const Navbar: React.FC = () => {
     }, 50);
   };
 
+  const handleBookFlightClick = () => {
+    setActiveView('marketing');
+    const el = document.getElementById('booking-panel');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-aeriva-navy/90 backdrop-blur-xl border-b border-white/10 shadow-2xl py-3.5'
-          : 'bg-transparent py-5'
+          ? 'bg-cream/95 backdrop-blur-md border-b border-warm-gray-border/60 shadow-sm py-4 text-ink'
+          : 'bg-gradient-to-b from-black/60 via-black/20 to-transparent py-6 text-white'
       }`}
     >
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between">
+      <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-16 flex items-center justify-between">
         
-        {/* ORIGINAL AVIATION LOGOMARK: AERIVA GEOMETRIC SUPERSONIC DELTA WING */}
+        {/* BRAND LOGO: AERIVA */}
         <div
           onClick={() => {
             setActiveView('marketing');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="flex items-center space-x-3.5 cursor-pointer group select-none"
+          className="flex items-center space-x-3 cursor-pointer select-none group"
         >
-          {/* Custom vector delta wing symbol */}
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-aeriva-blue via-blue-500 to-cyan-400 p-[1px] shadow-glow-blue">
-            <div className="w-full h-full bg-aeriva-navy rounded-[11px] flex items-center justify-center transition-transform group-hover:scale-95">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5 text-cyan-400 group-hover:text-white transition-colors"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polygon points="12 2 2 22 12 17 22 22 12 2" fill="rgba(6, 182, 212, 0.15)" />
-              </svg>
-            </div>
+          {/* Minimalist vector delta mark */}
+          <div className={`w-8 h-8 flex items-center justify-center transition-transform group-hover:scale-105 ${
+            isScrolled ? 'text-terracotta' : 'text-white'
+          }`}>
+            <svg
+              viewBox="0 0 24 24"
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polygon points="12 2 2 22 12 17 22 22 12 2" fill="currentColor" fillOpacity="0.15" />
+            </svg>
           </div>
 
-          <div className="flex flex-col">
-            <span className="text-2xl font-display font-black tracking-tightest text-white">
+          <div className="flex flex-col text-left">
+            <span className={`text-2xl font-display font-black tracking-tightest leading-none ${
+              isScrolled ? 'text-ink' : 'text-white'
+            }`}>
               AERIVA
-            </span>
-            <span className="text-[8.5px] uppercase font-mono tracking-widestlabel text-cyan-400 -mt-1 font-semibold">
-              FLIGHT NETWORK
             </span>
           </div>
         </div>
 
-        {/* DESKTOP NAVIGATION LINKS */}
-        <nav className="hidden lg:flex items-center space-x-1 font-medium text-[13px] text-slate-300">
+        {/* CENTER EDITORIAL NAVIGATION */}
+        <nav className="hidden md:flex items-center space-x-8 text-xs font-sans tracking-wider uppercase font-semibold">
           <button
-            onClick={() => scrollToSection('booking-engine-section')}
-            className="px-3.5 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-colors"
+            onClick={() => scrollToSection('booking-panel')}
+            className={`transition-colors ${
+              isScrolled ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
+            }`}
           >
             Flights
           </button>
-
           <button
-            onClick={() => scrollToSection('explore-section')}
-            className="px-3.5 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-colors"
+            onClick={() => scrollToSection('destination-showcase')}
+            className={`transition-colors ${
+              isScrolled ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
+            }`}
           >
             Explore
           </button>
-
           <button
-            onClick={() => scrollToSection('deals-section')}
-            className="px-3.5 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-colors"
+            onClick={() => scrollToSection('smart-deals-section')}
+            className={`transition-colors ${
+              isScrolled ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
+            }`}
           >
             Deals
           </button>
-
-          <button
-            onClick={() => setIsFlightStatusOpen(true)}
-            className="px-3.5 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-colors"
-          >
-            Flight Status
-          </button>
-
           <button
             onClick={() => setIsMyTripsOpen(true)}
-            className="px-3.5 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-colors relative flex items-center space-x-1.5"
+            className={`transition-colors flex items-center space-x-1.5 ${
+              isScrolled ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
+            }`}
           >
-            <span>My Trips</span>
+            <span>Trips</span>
             {myBookings.length > 0 && (
-              <span className="w-4 h-4 rounded-full bg-cyan-400 text-slate-950 font-bold text-[10px] flex items-center justify-center">
-                {myBookings.length}
-              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-terracotta" />
             )}
           </button>
         </nav>
 
-        {/* SECONDARY CONTROLS & CTA BUTTONS */}
-        <div className="hidden md:flex items-center space-x-3 text-xs">
+        {/* RIGHT CONTROLS: USD, EN, SIGN IN, OUTLINED CTA */}
+        <div className="hidden lg:flex items-center space-x-5 text-xs font-sans">
           
           {/* Currency Switcher */}
           <div className="relative">
             <button
-              onClick={() => {
-                setCurrencyDropdownOpen(!currencyDropdownOpen);
-                setLangDropdownOpen(false);
-              }}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/25 text-slate-300 transition-colors font-mono"
+              onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
+              className={`flex items-center space-x-1 font-mono uppercase tracking-wider py-1.5 px-2 transition-colors ${
+                isScrolled ? 'text-ink/70 hover:text-ink' : 'text-white/80 hover:text-white'
+              }`}
             >
-              <Coins className="w-3.5 h-3.5 text-cyan-400" />
               <span>{currency}</span>
-              <ChevronDown className="w-3 h-3 text-slate-400" />
+              <ChevronDown className="w-3 h-3 opacity-60" />
             </button>
 
             {currencyDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-32 rounded-xl bg-aeriva-charcoal border border-white/10 shadow-2xl p-1.5 z-50">
+              <div className="absolute right-0 mt-2 w-28 bg-white border border-warm-gray-border shadow-paper-elevated py-1.5 z-50 text-ink">
                 {currencies.map(c => (
                   <button
                     key={c}
@@ -170,36 +167,33 @@ export const Navbar: React.FC = () => {
                       setCurrency(c);
                       setCurrencyDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between transition-colors ${
-                      currency === c
-                        ? 'bg-aeriva-blue/20 text-cyan-300 font-semibold'
-                        : 'text-slate-300 hover:bg-white/5'
+                    className={`w-full text-left px-3 py-1.5 text-xs font-mono flex items-center justify-between hover:bg-sand/40 ${
+                      currency === c ? 'text-terracotta font-bold' : 'text-ink/80'
                     }`}
                   >
                     <span>{c}</span>
-                    <span className="text-slate-400">{CURRENCIES[c].symbol}</span>
+                    {currency === c && <span>✓</span>}
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Language Switcher */}
+          {/* Language Selector */}
           <div className="relative">
             <button
-              onClick={() => {
-                setLangDropdownOpen(!langDropdownOpen);
-                setCurrencyDropdownOpen(false);
-              }}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/25 text-slate-300 transition-colors font-mono"
+              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+              className={`flex items-center space-x-1 font-mono uppercase tracking-wider py-1.5 px-2 transition-colors ${
+                isScrolled ? 'text-ink/70 hover:text-ink' : 'text-white/80 hover:text-white'
+              }`}
             >
-              <Globe className="w-3.5 h-3.5 text-blue-400" />
+              <Globe className="w-3 h-3 opacity-70 mr-0.5" />
               <span>{selectedLang}</span>
-              <ChevronDown className="w-3 h-3 text-slate-400" />
+              <ChevronDown className="w-3 h-3 opacity-60" />
             </button>
 
             {langDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-36 rounded-xl bg-aeriva-charcoal border border-white/10 shadow-2xl p-1.5 z-50">
+              <div className="absolute right-0 mt-2 w-32 bg-white border border-warm-gray-border shadow-paper-elevated py-1.5 z-50 text-ink">
                 {languages.map(l => (
                   <button
                     key={l.code}
@@ -207,115 +201,107 @@ export const Navbar: React.FC = () => {
                       setSelectedLang(l.code);
                       setLangDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between transition-colors ${
-                      selectedLang === l.code
-                        ? 'bg-aeriva-blue/20 text-cyan-300 font-semibold'
-                        : 'text-slate-300 hover:bg-white/5'
+                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between hover:bg-sand/40 ${
+                      selectedLang === l.code ? 'text-terracotta font-bold' : 'text-ink/80'
                     }`}
                   >
                     <span>{l.name}</span>
-                    <span className="text-slate-400 font-mono text-[10px]">{l.code}</span>
+                    {selectedLang === l.code && <span>✓</span>}
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Help link */}
-          <button
-            onClick={() => scrollToSection('features-section')}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-            title="Help & Support"
-          >
-            <HelpCircle className="w-4 h-4" />
-          </button>
-
-          {/* SIGN IN BUTTON */}
+          {/* Sign In Button */}
           <button
             onClick={() => setActiveView('dashboard')}
-            className="px-4 py-2 rounded-xl text-slate-200 hover:text-white font-semibold text-xs transition-colors flex items-center space-x-1.5"
+            className={`font-semibold tracking-wider uppercase transition-colors px-2 py-1.5 flex items-center space-x-1.5 ${
+              isScrolled ? 'text-ink/80 hover:text-ink' : 'text-white/90 hover:text-white'
+            }`}
           >
-            <User className="w-3.5 h-3.5 text-slate-400" />
-            <span>SIGN IN</span>
+            <User className="w-3.5 h-3.5 opacity-70" />
+            <span>Sign In</span>
           </button>
 
-          {/* PRIMARY BUTTON: BOOK A FLIGHT */}
+          {/* Small Outlined CTA: BOOK A FLIGHT */}
           <button
-            onClick={() => scrollToSection('booking-engine-section')}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-aeriva-blue to-cyan-500 text-white font-bold text-xs tracking-wider uppercase shadow-glow-blue hover:shadow-glow-cyan transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
+            onClick={handleBookFlightClick}
+            className={`px-4 py-2 border text-xs tracking-wider uppercase font-semibold transition-all duration-200 ${
+              isScrolled
+                ? 'border-ink text-ink hover:bg-ink hover:text-white'
+                : 'border-white text-white hover:bg-white hover:text-ink'
+            }`}
           >
             BOOK A FLIGHT
           </button>
         </div>
 
-        {/* MOBILE MENU TOGGLE */}
-        <div className="flex md:hidden items-center space-x-2">
+        {/* Mobile Menu Button */}
+        <div className="md:hidden flex items-center space-x-2">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-300"
+            className={`p-2 transition-colors ${
+              isScrolled ? 'text-ink' : 'text-white'
+            }`}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+
       </div>
 
-      {/* MOBILE MENU DROPDOWN */}
+      {/* MOBILE DROPDOWN */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-3 mx-4 p-5 rounded-2xl bg-aeriva-charcoal border border-white/15 shadow-2xl space-y-3">
-          <button
-            onClick={() => scrollToSection('booking-engine-section')}
-            className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:text-white"
-          >
-            Flights
-          </button>
-          <button
-            onClick={() => scrollToSection('explore-section')}
-            className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:text-white"
-          >
-            Explore Destinations
-          </button>
-          <button
-            onClick={() => scrollToSection('deals-section')}
-            className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:text-white"
-          >
-            Flight Deals
-          </button>
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              setIsFlightStatusOpen(true);
-            }}
-            className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:text-white"
-          >
-            Flight Status
-          </button>
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              setIsMyTripsOpen(true);
-            }}
-            className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:text-white flex items-center justify-between"
-          >
-            <span>My Trips</span>
-            <span className="w-4 h-4 rounded-full bg-cyan-400 text-slate-950 font-bold text-[10px] flex items-center justify-center">
-              {myBookings.length}
-            </span>
-          </button>
-          <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+        <div className="md:hidden bg-cream border-b border-warm-gray-border px-6 py-6 space-y-4 shadow-paper-elevated text-ink">
+          <div className="space-y-3 font-sans uppercase font-bold text-sm tracking-wider">
+            <button
+              onClick={() => scrollToSection('booking-panel')}
+              className="block w-full text-left py-2 hover:text-terracotta"
+            >
+              Flights
+            </button>
+            <button
+              onClick={() => scrollToSection('destination-showcase')}
+              className="block w-full text-left py-2 hover:text-terracotta"
+            >
+              Explore
+            </button>
+            <button
+              onClick={() => scrollToSection('smart-deals-section')}
+              className="block w-full text-left py-2 hover:text-terracotta"
+            >
+              Deals
+            </button>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setIsMyTripsOpen(true);
+              }}
+              className="block w-full text-left py-2 hover:text-terracotta"
+            >
+              Trips
+            </button>
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 setActiveView('dashboard');
               }}
-              className="px-4 py-2 rounded-xl bg-white/10 text-white font-semibold text-xs"
+              className="block w-full text-left py-2 hover:text-terracotta"
             >
               Sign In
             </button>
+          </div>
+
+          <div className="pt-4 border-t border-warm-gray-border">
             <button
-              onClick={() => scrollToSection('booking-engine-section')}
-              className="px-5 py-2 rounded-xl bg-aeriva-blue text-white font-bold text-xs"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleBookFlightClick();
+              }}
+              className="w-full py-3 bg-terracotta text-white font-bold text-xs uppercase tracking-wider text-center"
             >
-              Book Flight
+              BOOK A FLIGHT
             </button>
           </div>
         </div>

@@ -1,143 +1,220 @@
 import React from 'react';
-import { ArrowRight, Sun } from 'lucide-react';
-import { AERIVA_DESTINATIONS } from '../data/aerivaContent';
+import { ArrowRight } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
-import { formatPrice } from '../utils/currency';
 import { AIRPORTS } from '../data/airports';
 
 export const DestinationExplorer: React.FC = () => {
-  const { currency, setSearchParams } = useBooking();
-
-  const heroDest = AERIVA_DESTINATIONS.find(d => d.isHero) || AERIVA_DESTINATIONS[0];
-  const secondaryDests = AERIVA_DESTINATIONS.filter(d => !d.isHero);
+  const { setSearchParams } = useBooking();
 
   const handleSelectDest = (code: string) => {
     const target = AIRPORTS.find(a => a.code === code);
     if (target) {
       setSearchParams(prev => ({ ...prev, to: target }));
     }
-    const el = document.getElementById('booking-engine-section');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    const el = document.getElementById('booking-panel');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   return (
-    <section id="explore-section" className="py-28 bg-white text-slate-900 overflow-hidden">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+    <section id="destination-showcase" className="py-28 px-6 sm:px-12 lg:px-16 bg-cream text-ink overflow-hidden">
+      <div className="max-w-[1440px] mx-auto">
         
-        {/* EDITORIAL HEADER */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div className="space-y-4 max-w-2xl">
-            <div className="text-xs font-mono uppercase tracking-widestlabel text-aeriva-blue font-bold">
-              04 / GLOBAL DISCOVERY
-            </div>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-tightest leading-none text-slate-900">
-              GO SOMEWHERE <br />
-              WORTH REMEMBERING.
-            </h2>
-            <p className="text-base text-slate-500 font-normal max-w-md">
-              Explore places that match the way you want to travel with direct flights and guaranteed baseline fares.
-            </p>
+        {/* SECTION HEADER: HUGE EDITORIAL TYPOGRAPHY */}
+        <div className="max-w-3xl mb-16 text-left space-y-4">
+          <div className="flex items-center space-x-3">
+            <span className="w-6 h-[1.5px] bg-terracotta" />
+            <span className="text-xs font-mono tracking-widest uppercase text-warm-gray font-semibold">
+              02 / CURATED ESCAPES
+            </span>
           </div>
 
-          <div className="text-xs font-mono text-slate-400">
-            Real-time pricing updated 8m ago
-          </div>
+          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-ink leading-[0.95]">
+            WHERE WILL<br />
+            YOU GO NEXT?
+          </h2>
+
+          <p className="text-sm sm:text-base text-warm-gray font-sans max-w-xl leading-relaxed pt-2">
+            From quick city breaks to once-in-a-lifetime journeys, discover destinations worth the distance.
+          </p>
         </div>
 
-        {/* ASYMMETRIC EDITORIAL GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        {/* EDITORIAL ASYMMETRIC COLLAGE (Magazined Layout) */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
           
-          {/* MAIN HERO DESTINATION: TOKYO (Col 1-7) */}
+          {/* 1. HUGE HERO TILE: TOKYO (Col 1-7, Tall & Immersive) */}
           <div
-            onClick={() => handleSelectDest(heroDest.code)}
-            className="lg:col-span-7 rounded-3xl overflow-hidden relative cursor-pointer group min-h-[480px] lg:min-h-[580px] flex flex-col justify-between p-8 sm:p-10 shadow-lg shadow-slate-200/80 transition-all duration-500 hover:shadow-2xl"
+            onClick={() => handleSelectDest('HND')}
+            className="md:col-span-7 group relative min-h-[520px] lg:min-h-[640px] overflow-hidden cursor-pointer border border-warm-gray-border/80 shadow-paper hover:shadow-paper-elevated transition-all duration-500 bg-sand"
           >
-            {/* Background Zoom Image */}
             <img
-              src={heroDest.image}
-              alt={heroDest.name}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              loading="lazy"
+              src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1600&q=85"
+              alt="Tokyo, Japan cityscape at dusk with warm lanterns"
+              className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.92] group-hover:brightness-100"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-85 group-hover:opacity-80 transition-opacity" />
+            {/* Gradient Scrim */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
 
-            {/* Top Badge */}
-            <div className="relative z-10 flex items-center justify-between">
-              <span className="px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white font-mono text-xs font-bold">
-                {heroDest.tag}
-              </span>
-              <span className="px-3 py-1 rounded-full bg-slate-950/60 backdrop-blur-md text-slate-200 text-xs font-mono flex items-center space-x-1.5">
-                <Sun className="w-3 h-3 text-amber-400" />
-                <span>{heroDest.weather}</span>
+            {/* Badge Top Left */}
+            <div className="absolute top-6 left-6 z-10">
+              <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-ink text-[10px] font-mono tracking-widest uppercase font-bold">
+                FEATURED DESTINATION
               </span>
             </div>
 
-            {/* Bottom Content */}
-            <div className="relative z-10 space-y-4">
-              <div className="transform group-hover:-translate-y-1 transition-transform duration-300">
-                <div className="text-4xl sm:text-5xl lg:text-6xl font-display font-black text-white">
-                  {heroDest.name.toUpperCase()}
+            {/* Text Overlay Bottom */}
+            <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-10 z-10 text-white transform transition-transform duration-300 group-hover:-translate-y-1">
+              <span className="text-xs font-mono tracking-widest uppercase text-terracotta-light block mb-1">
+                JAPAN · ASIA PACIFIC
+              </span>
+              <div className="flex items-baseline justify-between">
+                <div>
+                  <h3 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-tight leading-none text-white">
+                    TOKYO
+                  </h3>
+                  <p className="text-xs text-sand-100/80 font-sans mt-2 max-w-sm">
+                    Neon-lit alleys, Michelin sushi counters, and tranquil shrines nestled between gleaming towers.
+                  </p>
                 </div>
-                <p className="text-sm text-slate-200 max-w-lg mt-2 font-normal line-clamp-2">
-                  {heroDest.description}
-                </p>
+                <div className="text-right shrink-0 ml-4">
+                  <span className="text-[10px] font-mono uppercase text-sand-100/70 block">DIRECT FROM</span>
+                  <span className="text-xl sm:text-2xl font-display font-bold text-white">₹42,900</span>
+                </div>
               </div>
 
-              <div className="pt-4 border-t border-white/20 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-mono text-slate-300 block">Starting from</span>
-                  <span className="text-3xl font-display font-black text-white">
-                    {formatPrice(heroDest.startingPriceINR, currency)}
-                  </span>
-                </div>
-
-                <div className="px-5 py-3 rounded-2xl bg-white text-slate-950 font-bold text-xs flex items-center space-x-2 group-hover:bg-cyan-400 transition-colors shadow-lg">
-                  <span>BOOK FLIGHT</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </div>
+              <div className="mt-4 pt-4 border-t border-white/20 flex items-center justify-between text-xs font-sans font-semibold text-sand-100 group-hover:text-white">
+                <span className="tracking-wider uppercase">Book Flight Route (DEL ➔ HND)</span>
+                <span className="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center transform group-hover:translate-x-1 transition-transform">
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </span>
               </div>
             </div>
           </div>
 
-          {/* SECONDARY DESTINATIONS (Col 8-12): 2x2 GRID */}
-          <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {secondaryDests.slice(0, 4).map(dest => (
-              <div
-                key={dest.id}
-                onClick={() => handleSelectDest(dest.code)}
-                className="rounded-3xl overflow-hidden relative cursor-pointer group min-h-[260px] p-6 flex flex-col justify-between shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-              >
-                <img
-                  src={dest.image}
-                  alt={dest.name}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent opacity-85" />
+          {/* RIGHT ASYMMETRIC COLUMN (Col 8-12): 2 Staggered Tiles */}
+          <div className="md:col-span-5 grid grid-cols-1 gap-6">
+            
+            {/* 2. LISBON (Horizontal Landscape) */}
+            <div
+              onClick={() => handleSelectDest('LIS')}
+              className="group relative min-h-[290px] overflow-hidden cursor-pointer border border-warm-gray-border/80 shadow-paper hover:shadow-paper-elevated transition-all duration-500 bg-sand"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1509840841025-9088ba78a826?auto=format&fit=crop&w=1000&q=85"
+                alt="Lisbon Portugal coastal hills with yellow tram"
+                className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.92] group-hover:brightness-100"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
 
-                <div className="relative z-10 flex justify-between items-start">
-                  <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold backdrop-blur-sm">
-                    {dest.code}
-                  </span>
-                  <span className="text-[10px] text-slate-300 font-mono">{dest.weather}</span>
-                </div>
-
-                <div className="relative z-10">
-                  <div className="text-2xl font-display font-black text-white group-hover:text-cyan-300 transition-colors">
-                    {dest.name}
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-10 text-white">
+                <span className="text-[10px] font-mono tracking-widest uppercase text-sand-100/70 block mb-0.5">
+                  PORTUGAL
+                </span>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <h3 className="text-2xl sm:text-3xl font-display font-black text-white">
+                      LISBON
+                    </h3>
+                    <span className="text-xs text-sand-100/80 font-sans block">From ₹38,400</span>
                   </div>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/20">
-                    <span className="text-xs font-mono font-bold text-white">
-                      {formatPrice(dest.startingPriceINR, currency)}
-                    </span>
-                    <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
+                  <div className="w-7 h-7 rounded-full border border-white/40 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                    <ArrowRight className="w-3 h-3 text-white" />
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* 3. DUBAI (Horizontal with Golden Architecture) */}
+            <div
+              onClick={() => handleSelectDest('DXB')}
+              className="group relative min-h-[290px] overflow-hidden cursor-pointer border border-warm-gray-border/80 shadow-paper hover:shadow-paper-elevated transition-all duration-500 bg-sand"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1000&q=85"
+                alt="Dubai architecture at golden hour"
+                className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.92] group-hover:brightness-100"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-10 text-white">
+                <span className="text-[10px] font-mono tracking-widest uppercase text-terracotta-light block mb-0.5">
+                  UNITED ARAB EMIRATES
+                </span>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <h3 className="text-2xl sm:text-3xl font-display font-black text-white">
+                      DUBAI
+                    </h3>
+                    <span className="text-xs text-sand-100/80 font-sans block">From ₹18,200</span>
+                  </div>
+                  <div className="w-7 h-7 rounded-full border border-white/40 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                    <ArrowRight className="w-3 h-3 text-white" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* LOWER ROW: 3 ASYMMETRIC TILES (Paris, Bali, New York) */}
+          <div className="md:col-span-4 group relative min-h-[320px] overflow-hidden cursor-pointer border border-warm-gray-border/80 shadow-paper hover:shadow-paper-elevated transition-all duration-500 bg-sand">
+            <img
+              src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1000&q=85"
+              alt="Paris street cafe atmosphere"
+              className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.92] group-hover:brightness-100"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 z-10 text-white">
+              <span className="text-[10px] font-mono tracking-widest uppercase text-sand-100/70 block">FRANCE</span>
+              <div className="flex items-end justify-between">
+                <div>
+                  <h3 className="text-2xl font-display font-black text-white">PARIS</h3>
+                  <span className="text-xs text-sand-100/80">From ₹44,500</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </div>
+
+          <div className="md:col-span-4 group relative min-h-[320px] overflow-hidden cursor-pointer border border-warm-gray-border/80 shadow-paper hover:shadow-paper-elevated transition-all duration-500 bg-sand">
+            <img
+              src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=85"
+              alt="Bali tropical terrace sunrise"
+              className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.92] group-hover:brightness-100"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 z-10 text-white">
+              <span className="text-[10px] font-mono tracking-widest uppercase text-sand-100/70 block">INDONESIA</span>
+              <div className="flex items-end justify-between">
+                <div>
+                  <h3 className="text-2xl font-display font-black text-white">BALI</h3>
+                  <span className="text-xs text-sand-100/80">From ₹29,800</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </div>
+
+          <div className="md:col-span-4 group relative min-h-[320px] overflow-hidden cursor-pointer border border-warm-gray-border/80 shadow-paper hover:shadow-paper-elevated transition-all duration-500 bg-sand">
+            <img
+              src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=1000&q=85"
+              alt="New York skyline at dusk"
+              className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.92] group-hover:brightness-100"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 z-10 text-white">
+              <span className="text-[10px] font-mono tracking-widest uppercase text-sand-100/70 block">UNITED STATES</span>
+              <div className="flex items-end justify-between">
+                <div>
+                  <h3 className="text-2xl font-display font-black text-white">NEW YORK</h3>
+                  <span className="text-xs text-sand-100/80">From ₹58,900</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
           </div>
 
         </div>
+
       </div>
     </section>
   );

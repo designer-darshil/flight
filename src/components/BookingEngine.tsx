@@ -4,11 +4,9 @@ import {
   Calendar,
   Search,
   ChevronDown,
-  Check,
-  Sparkles,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
-import { Airport, TripType, CabinClass } from '../types';
+import { TripType, CabinClass } from '../types';
 import { AIRPORTS } from '../data/airports';
 
 export const BookingEngine: React.FC = () => {
@@ -70,394 +68,315 @@ export const BookingEngine: React.FC = () => {
     searchParams.passengers.children +
     searchParams.passengers.infants;
 
-  const cabinClasses: CabinClass[] = ['Economy', 'Premium Economy', 'Business', 'First'];
-
-  const handleSelectAirport = (type: 'from' | 'to', airport: Airport) => {
-    setSearchParams(prev => ({
-      ...prev,
-      [type]: airport,
-    }));
-    if (type === 'from') {
-      setFromOpen(false);
-      setFromQuery('');
-    } else {
-      setToOpen(false);
-      setToQuery('');
-    }
-  };
-
-  const updateCount = (key: 'adults' | 'children' | 'infants', delta: number) => {
-    setSearchParams(prev => {
-      const val = Math.max(key === 'adults' ? 1 : 0, prev.passengers[key] + delta);
-      return {
-        ...prev,
-        passengers: {
-          ...prev.passengers,
-          [key]: val,
-        },
-      };
-    });
-  };
-
   return (
-    <div id="booking-engine-section" className="relative z-20 max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 -mt-10 sm:-mt-16">
-      
-      {/* LARGE PREMIUM BOOKING PANEL */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/20 shadow-2xl backdrop-blur-2xl relative overflow-hidden bg-aeriva-charcoal/90">
+    <div
+      id="booking-panel"
+      className="w-full max-w-[1320px] mx-auto bg-white border border-warm-gray-border shadow-paper-elevated p-6 sm:p-8 text-ink select-none relative z-30"
+    >
+      {/* 1. TABS ROW: ROUND TRIP, ONE WAY, MULTI CITY + CABIN CLASS */}
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-warm-gray-border/60">
+        <div className="flex items-center space-x-6 sm:space-x-8 text-xs font-sans tracking-wider uppercase font-semibold">
+          {(['round', 'oneway', 'multicity'] as TripType[]).map(type => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => setSearchParams(prev => ({ ...prev, tripType: type }))}
+              className={`pb-2 relative transition-colors ${
+                searchParams.tripType === type
+                  ? 'text-ink font-bold'
+                  : 'text-warm-gray hover:text-ink'
+              }`}
+            >
+              <span>{type === 'round' ? 'ROUND TRIP' : type === 'oneway' ? 'ONE WAY' : 'MULTI CITY'}</span>
+              {searchParams.tripType === type && (
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-terracotta" />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Quick class indicator */}
+        <div className="text-xs font-mono uppercase text-warm-gray flex items-center space-x-2">
+          <span>CABIN:</span>
+          <span className="text-ink font-bold">{searchParams.cabinClass}</span>
+        </div>
+      </div>
+
+      {/* 2. PHYSICAL FIELDS GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-0 pt-6 items-stretch border-b border-warm-gray-border/40">
         
-        {/* Subtle decorative glow */}
-        <div className="absolute top-0 right-1/3 w-96 h-96 bg-aeriva-blue/10 rounded-full blur-3xl pointer-events-none -z-10" />
+        {/* FROM FIELD (Col 1-3) */}
+        <div ref={fromRef} className="md:col-span-3 relative p-4 border-b md:border-b-0 md:border-r border-warm-gray-border/60 hover:bg-sand/20 transition-colors">
+          <label className="block text-[10px] font-mono tracking-widest uppercase text-warm-gray mb-1">
+            FROM
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              setFromOpen(!fromOpen);
+              setToOpen(false);
+              setPassengerOpen(false);
+            }}
+            className="w-full text-left"
+          >
+            <div className="text-xl sm:text-2xl font-display font-bold text-ink truncate">
+              {searchParams.from.city}
+            </div>
+            <div className="text-xs font-mono text-warm-gray flex items-center space-x-1.5 mt-0.5">
+              <span className="text-terracotta font-semibold">{searchParams.from.code}</span>
+              <span>·</span>
+              <span className="truncate">{searchParams.from.name}</span>
+            </div>
+          </button>
 
-        {/* TABS: ROUND TRIP / ONE WAY / MULTI CITY */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10">
-          <div className="flex items-center space-x-1 p-1 bg-black/40 rounded-2xl border border-white/10">
-            {(['round', 'oneway', 'multicity'] as TripType[]).map(type => (
-              <button
-                key={type}
-                onClick={() => setSearchParams(prev => ({ ...prev, tripType: type }))}
-                className={`px-5 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 ${
-                  searchParams.tripType === type
-                    ? 'bg-gradient-to-r from-aerova-blue to-cyan-500 text-white shadow-glow-blue'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {type === 'round' && 'ROUND TRIP'}
-                {type === 'oneway' && 'ONE WAY'}
-                {type === 'multicity' && 'MULTI CITY'}
-              </button>
-            ))}
+          {/* FROM DROPDOWN */}
+          {fromOpen && (
+            <div className="absolute left-0 top-full mt-2 w-80 bg-white border border-warm-gray-border shadow-paper-elevated p-3 z-50">
+              <input
+                type="text"
+                placeholder="Search airport or city..."
+                value={fromQuery}
+                onChange={e => setFromQuery(e.target.value)}
+                autoFocus
+                className="w-full p-2.5 text-xs bg-sand/30 border border-warm-gray-border text-ink mb-2 focus:outline-none focus:border-terracotta"
+              />
+              <div className="max-h-56 overflow-y-auto space-y-1">
+                {filteredFrom.map(a => (
+                  <button
+                    key={a.code}
+                    type="button"
+                    onClick={() => {
+                      setSearchParams(prev => ({ ...prev, from: a }));
+                      setFromOpen(false);
+                    }}
+                    className="w-full p-2 text-left text-xs hover:bg-sand/40 flex items-center justify-between"
+                  >
+                    <div>
+                      <span className="font-bold text-ink">{a.city}</span>
+                      <span className="text-[11px] text-warm-gray block truncate">{a.name}</span>
+                    </div>
+                    <span className="font-mono text-xs font-semibold text-terracotta">{a.code}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* SWAP AIRPORTS BUTTON (Floating center icon) */}
+        <div className="hidden md:flex absolute left-[25%] -translate-x-1/2 top-1/2 -translate-y-1/2 z-20">
+          <button
+            type="button"
+            onClick={swapAirports}
+            title="Swap Origin and Destination"
+            className="w-8 h-8 rounded-full bg-white border border-warm-gray-border text-warm-gray hover:text-ink hover:border-ink flex items-center justify-center transition-all shadow-sm"
+          >
+            <ArrowLeftRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* TO FIELD (Col 4-6) */}
+        <div ref={toRef} className="md:col-span-3 relative p-4 border-b md:border-b-0 md:border-r border-warm-gray-border/60 hover:bg-sand/20 transition-colors md:pl-6">
+          <label className="block text-[10px] font-mono tracking-widest uppercase text-warm-gray mb-1">
+            TO
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              setToOpen(!toOpen);
+              setFromOpen(false);
+              setPassengerOpen(false);
+            }}
+            className="w-full text-left"
+          >
+            <div className="text-xl sm:text-2xl font-display font-bold text-ink truncate">
+              {searchParams.to.city}
+            </div>
+            <div className="text-xs font-mono text-warm-gray flex items-center space-x-1.5 mt-0.5">
+              <span className="text-terracotta font-semibold">{searchParams.to.code}</span>
+              <span>·</span>
+              <span className="truncate">{searchParams.to.name}</span>
+            </div>
+          </button>
+
+          {/* TO DROPDOWN */}
+          {toOpen && (
+            <div className="absolute left-0 top-full mt-2 w-80 bg-white border border-warm-gray-border shadow-paper-elevated p-3 z-50">
+              <input
+                type="text"
+                placeholder="Search destination airport..."
+                value={toQuery}
+                onChange={e => setToQuery(e.target.value)}
+                autoFocus
+                className="w-full p-2.5 text-xs bg-sand/30 border border-warm-gray-border text-ink mb-2 focus:outline-none focus:border-terracotta"
+              />
+              <div className="max-h-56 overflow-y-auto space-y-1">
+                {filteredTo.map(a => (
+                  <button
+                    key={a.code}
+                    type="button"
+                    onClick={() => {
+                      setSearchParams(prev => ({ ...prev, to: a }));
+                      setToOpen(false);
+                    }}
+                    className="w-full p-2 text-left text-xs hover:bg-sand/40 flex items-center justify-between"
+                  >
+                    <div>
+                      <span className="font-bold text-ink">{a.city}</span>
+                      <span className="text-[11px] text-warm-gray block truncate">{a.name}</span>
+                    </div>
+                    <span className="font-mono text-xs font-semibold text-terracotta">{a.code}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* DATES FIELD: DEPART & RETURN (Col 7-9) */}
+        <div
+          onClick={() => setIsDatePickerOpen(true)}
+          className="md:col-span-3 p-4 border-b md:border-b-0 md:border-r border-warm-gray-border/60 hover:bg-sand/20 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center justify-between text-[10px] font-mono tracking-widest uppercase text-warm-gray mb-1">
+            <span>DATES</span>
+            <Calendar className="w-3 h-3 text-warm-gray" />
           </div>
-
-          <div className="hidden sm:flex items-center space-x-3 text-xs text-slate-400 font-mono">
-            <span className="flex items-center space-x-1.5 text-cyan-400">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Real-Time GDS Direct Carrier Rates</span>
-            </span>
+          <div className="flex items-center space-x-3">
+            <div>
+              <span className="text-[10px] font-mono text-warm-gray block">DEPART</span>
+              <span className="text-base sm:text-lg font-display font-bold text-ink">
+                {searchParams.departureDate}
+              </span>
+            </div>
+            {searchParams.tripType === 'round' && (
+              <>
+                <span className="text-warm-gray-border font-light text-lg">/</span>
+                <div>
+                  <span className="text-[10px] font-mono text-warm-gray block">RETURN</span>
+                  <span className="text-base sm:text-lg font-display font-bold text-ink">
+                    {searchParams.returnDate || '26 Sep'}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
-        {/* SEARCH FIELDS GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-6 items-center">
-          
-          {/* FROM AIRPORT (Col 1-3) */}
-          <div ref={fromRef} className="relative lg:col-span-3">
-            <label className="block text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-1.5">
-              FROM
-            </label>
-            <div
-              onClick={() => setFromOpen(!fromOpen)}
-              className="glass-input p-4 rounded-2xl cursor-pointer hover:border-cyan-400/50 flex items-center justify-between group transition-all"
-            >
-              <div>
-                <div className="text-2xl font-bold font-display text-white flex items-center space-x-2">
-                  <span>{searchParams.from.city}</span>
-                  <span className="text-cyan-400 font-mono text-base font-semibold">({searchParams.from.code})</span>
-                </div>
-                <div className="text-xs text-slate-300 truncate max-w-[200px] mt-0.5">
-                  {searchParams.from.name}
-                </div>
-              </div>
-              <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-cyan-400 transition-colors" />
+        {/* PASSENGERS & CABIN (Col 10-12) */}
+        <div ref={passengerRef} className="md:col-span-3 relative p-4 hover:bg-sand/20 transition-colors">
+          <label className="block text-[10px] font-mono tracking-widest uppercase text-warm-gray mb-1">
+            PASSENGERS & CABIN
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              setPassengerOpen(!passengerOpen);
+              setFromOpen(false);
+              setToOpen(false);
+            }}
+            className="w-full text-left"
+          >
+            <div className="text-lg sm:text-xl font-display font-bold text-ink truncate">
+              {totalPax} {totalPax === 1 ? 'Adult' : 'Travelers'}
             </div>
-
-            {/* FROM AUTOCOMPLETE DROPDOWN */}
-            {fromOpen && (
-              <div className="absolute top-full left-0 mt-2 w-80 rounded-2xl bg-aeriva-charcoal border border-white/20 shadow-2xl p-3 z-50 backdrop-blur-xl">
-                <input
-                  type="text"
-                  placeholder="Search city or airport code (DEL, DXB)..."
-                  value={fromQuery}
-                  onChange={e => setFromQuery(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs placeholder-slate-400 mb-2 focus:outline-none focus:border-cyan-400"
-                  autoFocus
-                />
-                
-                <div className="text-[10px] font-mono uppercase text-slate-400 px-2 py-1">Popular Hubs</div>
-                <div className="max-h-60 overflow-y-auto space-y-1">
-                  {filteredFrom.map(a => (
-                    <button
-                      key={a.code}
-                      onClick={() => handleSelectAirport('from', a)}
-                      className={`w-full text-left p-2.5 rounded-xl flex items-center justify-between text-xs transition-colors ${
-                        searchParams.from.code === a.code
-                          ? 'bg-aeriva-blue/20 text-cyan-300 font-bold border border-cyan-500/30'
-                          : 'text-slate-300 hover:bg-white/5'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        <span className="text-base">{a.flag}</span>
-                        <div>
-                          <div className="font-bold text-white flex items-center space-x-1.5">
-                            <span>{a.city}</span>
-                            <span className="text-cyan-400 font-mono text-[11px]">({a.code})</span>
-                          </div>
-                          <div className="text-[10px] text-slate-400 truncate max-w-[180px]">{a.name}</div>
-                        </div>
-                      </div>
-                      {searchParams.from.code === a.code && <Check className="w-4 h-4 text-cyan-400" />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* SWAP BUTTON (Col Center) */}
-          <div className="flex justify-center -my-2 lg:my-0 lg:col-span-1">
-            <button
-              onClick={swapAirports}
-              title="Swap Departure and Arrival"
-              className="w-11 h-11 rounded-full bg-slate-800/90 border border-white/15 hover:border-cyan-400 text-slate-300 hover:text-cyan-400 flex items-center justify-center transition-all duration-300 hover:rotate-180 hover:shadow-glow-cyan"
-            >
-              <ArrowLeftRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* TO AIRPORT (Col 4-6) */}
-          <div ref={toRef} className="relative lg:col-span-3">
-            <label className="block text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-1.5">
-              TO
-            </label>
-            <div
-              onClick={() => setToOpen(!toOpen)}
-              className="glass-input p-4 rounded-2xl cursor-pointer hover:border-cyan-400/50 flex items-center justify-between group transition-all"
-            >
-              <div>
-                <div className="text-2xl font-bold font-display text-white flex items-center space-x-2">
-                  <span>{searchParams.to.city}</span>
-                  <span className="text-cyan-400 font-mono text-base font-semibold">({searchParams.to.code})</span>
-                </div>
-                <div className="text-xs text-slate-300 truncate max-w-[200px] mt-0.5">
-                  {searchParams.to.name}
-                </div>
-              </div>
-              <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-cyan-400 transition-colors" />
+            <div className="text-xs font-mono text-warm-gray mt-0.5 flex items-center justify-between">
+              <span>{searchParams.cabinClass}</span>
+              <ChevronDown className="w-3 h-3 opacity-60" />
             </div>
+          </button>
 
-            {/* TO AUTOCOMPLETE DROPDOWN */}
-            {toOpen && (
-              <div className="absolute top-full left-0 mt-2 w-80 rounded-2xl bg-aeriva-charcoal border border-white/20 shadow-2xl p-3 z-50 backdrop-blur-xl">
-                <input
-                  type="text"
-                  placeholder="Search city or airport code (LHR, HND)..."
-                  value={toQuery}
-                  onChange={e => setToQuery(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs placeholder-slate-400 mb-2 focus:outline-none focus:border-cyan-400"
-                  autoFocus
-                />
-                
-                <div className="text-[10px] font-mono uppercase text-slate-400 px-2 py-1">Popular Hubs</div>
-                <div className="max-h-60 overflow-y-auto space-y-1">
-                  {filteredTo.map(a => (
-                    <button
-                      key={a.code}
-                      onClick={() => handleSelectAirport('to', a)}
-                      className={`w-full text-left p-2.5 rounded-xl flex items-center justify-between text-xs transition-colors ${
-                        searchParams.to.code === a.code
-                          ? 'bg-aeriva-blue/20 text-cyan-300 font-bold border border-cyan-500/30'
-                          : 'text-slate-300 hover:bg-white/5'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        <span className="text-base">{a.flag}</span>
-                        <div>
-                          <div className="font-bold text-white flex items-center space-x-1.5">
-                            <span>{a.city}</span>
-                            <span className="text-cyan-400 font-mono text-[11px]">({a.code})</span>
-                          </div>
-                          <div className="text-[10px] text-slate-400 truncate max-w-[180px]">{a.name}</div>
-                        </div>
-                      </div>
-                      {searchParams.to.code === a.code && <Check className="w-4 h-4 text-cyan-400" />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* DATES: DEPARTURE & RETURN (Col 7-9) */}
-          <div className="lg:col-span-3">
-            <label className="block text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-1.5">
-              DATES (DEPARTURE ➔ RETURN)
-            </label>
-            <div
-              onClick={() => setIsDatePickerOpen(true)}
-              className="glass-input p-4 rounded-2xl cursor-pointer hover:border-cyan-400/50 flex items-center justify-between group transition-all"
-            >
-              <div className="flex items-center space-x-3">
-                <Calendar className="w-4 h-4 text-cyan-400" />
+          {/* PASSENGERS POPOVER */}
+          {passengerOpen && (
+            <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-warm-gray-border shadow-paper-elevated p-4 z-50 space-y-4">
+              <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-bold font-mono text-white">
-                    {searchParams.departureDate}
-                  </div>
-                  <div className="text-[11px] font-mono text-cyan-400">
-                    {searchParams.tripType === 'round' ? `Return: ${searchParams.returnDate}` : 'One Way'}
-                  </div>
+                  <div className="text-xs font-bold text-ink">Adults</div>
+                  <div className="text-[10px] text-warm-gray">Age 12+</div>
                 </div>
-              </div>
-              <span className="text-[10px] font-mono text-slate-400 uppercase bg-white/5 px-2 py-1 rounded-lg">
-                Modify
-              </span>
-            </div>
-          </div>
-
-          {/* PASSENGERS & CABIN (Col 10-12) */}
-          <div ref={passengerRef} className="relative lg:col-span-2">
-            <label className="block text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-1.5">
-              PASSENGERS & CABIN
-            </label>
-            <div
-              onClick={() => setPassengerOpen(!passengerOpen)}
-              className="glass-input p-4 rounded-2xl cursor-pointer hover:border-cyan-400/50 flex items-center justify-between group transition-all"
-            >
-              <div>
-                <div className="text-sm font-bold text-white">
-                  {totalPax} {totalPax === 1 ? 'Adult' : 'Travelers'}
-                </div>
-                <div className="text-[11px] text-cyan-400 font-mono">
-                  {searchParams.cabinClass}
-                </div>
-              </div>
-              <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-cyan-400 transition-colors" />
-            </div>
-
-            {/* PASSENGER POPOVER */}
-            {passengerOpen && (
-              <div
-                onClick={e => e.stopPropagation()}
-                className="absolute top-full right-0 mt-2 w-72 rounded-2xl bg-aeriva-charcoal border border-white/20 shadow-2xl p-4 z-50 backdrop-blur-xl"
-              >
-                <div className="space-y-3.5">
-                  {/* Adults */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-bold text-white">Adults</div>
-                      <div className="text-[10px] text-slate-400">Age 12+</div>
-                    </div>
-                    <div className="flex items-center space-x-2.5">
-                      <button
-                        onClick={() => updateCount('adults', -1)}
-                        disabled={searchParams.passengers.adults <= 1}
-                        className="w-7 h-7 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 disabled:opacity-30 flex items-center justify-center font-bold"
-                      >
-                        −
-                      </button>
-                      <span className="w-4 text-center font-mono text-xs text-white">
-                        {searchParams.passengers.adults}
-                      </span>
-                      <button
-                        onClick={() => updateCount('adults', 1)}
-                        className="w-7 h-7 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center font-bold"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Children */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-bold text-white">Children</div>
-                      <div className="text-[10px] text-slate-400">Age 2–11</div>
-                    </div>
-                    <div className="flex items-center space-x-2.5">
-                      <button
-                        onClick={() => updateCount('children', -1)}
-                        disabled={searchParams.passengers.children <= 0}
-                        className="w-7 h-7 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 disabled:opacity-30 flex items-center justify-center font-bold"
-                      >
-                        −
-                      </button>
-                      <span className="w-4 text-center font-mono text-xs text-white">
-                        {searchParams.passengers.children}
-                      </span>
-                      <button
-                        onClick={() => updateCount('children', 1)}
-                        className="w-7 h-7 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center font-bold"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Infants */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-bold text-white">Infants</div>
-                      <div className="text-[10px] text-slate-400">Under 2</div>
-                    </div>
-                    <div className="flex items-center space-x-2.5">
-                      <button
-                        onClick={() => updateCount('infants', -1)}
-                        disabled={searchParams.passengers.infants <= 0}
-                        className="w-7 h-7 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 disabled:opacity-30 flex items-center justify-center font-bold"
-                      >
-                        −
-                      </button>
-                      <span className="w-4 text-center font-mono text-xs text-white">
-                        {searchParams.passengers.infants}
-                      </span>
-                      <button
-                        onClick={() => updateCount('infants', 1)}
-                        className="w-7 h-7 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center font-bold"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Cabin Classes */}
-                  <div className="pt-3 border-t border-white/10">
-                    <div className="text-[10px] font-mono uppercase text-slate-400 mb-2">Cabin Class</div>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {cabinClasses.map(cls => (
-                        <button
-                          key={cls}
-                          onClick={() => setSearchParams(prev => ({ ...prev, cabinClass: cls }))}
-                          className={`p-2 rounded-xl text-left text-xs font-medium transition-colors ${
-                            searchParams.cabinClass === cls
-                              ? 'bg-aeriva-blue/25 text-cyan-300 border border-cyan-500/40 font-bold'
-                              : 'text-slate-300 hover:bg-white/5'
-                          }`}
-                        >
-                          {cls}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
+                <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => setPassengerOpen(false)}
-                    className="w-full mt-2 py-2.5 rounded-xl bg-cyan-400 text-slate-950 font-bold text-xs hover:bg-cyan-300 transition-colors shadow-glow-cyan"
+                    type="button"
+                    disabled={searchParams.passengers.adults <= 1}
+                    onClick={() =>
+                      setSearchParams(prev => ({
+                        ...prev,
+                        passengers: { ...prev.passengers, adults: Math.max(1, prev.passengers.adults - 1) },
+                      }))
+                    }
+                    className="w-7 h-7 border border-warm-gray-border text-ink disabled:opacity-30 hover:border-ink"
                   >
-                    DONE
+                    -
+                  </button>
+                  <span className="font-mono text-xs font-bold w-4 text-center">
+                    {searchParams.passengers.adults}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSearchParams(prev => ({
+                        ...prev,
+                        passengers: { ...prev.passengers, adults: prev.passengers.adults + 1 },
+                      }))
+                    }
+                    className="w-7 h-7 border border-warm-gray-border text-ink hover:border-ink"
+                  >
+                    +
                   </button>
                 </div>
               </div>
-            )}
-          </div>
+
+              {/* Cabin Class Selection */}
+              <div className="pt-3 border-t border-warm-gray-border/60">
+                <label className="text-[10px] font-mono uppercase text-warm-gray block mb-2">Cabin Class</label>
+                <div className="grid grid-cols-2 gap-1.5 text-xs">
+                  {(['Economy', 'Premium Economy', 'Business', 'First'] as CabinClass[]).map(c => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => {
+                        setSearchParams(prev => ({ ...prev, cabinClass: c }));
+                      }}
+                      className={`p-1.5 text-left text-xs border ${
+                        searchParams.cabinClass === c
+                          ? 'border-terracotta bg-terracotta/5 text-terracotta font-bold'
+                          : 'border-warm-gray-border text-ink/80 hover:border-ink'
+                      }`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* BOTTOM ACTION BAR WITH PRIMARY SEARCH BUTTON */}
-        <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-4 text-xs text-slate-400 font-mono">
-            <span className="flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Direct airline inventory feed</span>
-            </span>
-            <span>· All fares include standard taxes</span>
-          </div>
+      </div>
 
-          <button
-            onClick={searchFlights}
-            disabled={isSearching}
-            className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-aerova-blue via-blue-600 to-cyan-500 text-white font-extrabold text-xs tracking-wider uppercase shadow-glow-blue hover:shadow-cyan-500/40 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-2"
-          >
-            <span>SEARCH FLIGHTS</span>
-            <Search className="w-4 h-4" />
-          </button>
+      {/* 3. CTA FOOTER: MUTED TERRACOTTA ACCENT */}
+      <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-xs text-warm-gray font-sans flex items-center space-x-4">
+          <span className="font-mono text-terracotta">DEL ➔ DXB · LHR</span>
+          <span className="hidden sm:inline">|</span>
+          <span>Zero booking fees · 24h free cancellation</span>
         </div>
+
+        <button
+          type="button"
+          onClick={searchFlights}
+          disabled={isSearching}
+          className="w-full sm:w-auto px-10 py-4 bg-terracotta hover:bg-terracotta-dark text-white font-sans font-bold text-xs tracking-wider uppercase transition-all duration-200 flex items-center justify-center space-x-2.5 shadow-terracotta"
+        >
+          {isSearching ? (
+            <span>SEARCHING FLIGHTS...</span>
+          ) : (
+            <>
+              <Search className="w-3.5 h-3.5" />
+              <span>SEARCH FLIGHTS</span>
+            </>
+          )}
+        </button>
       </div>
     </div>
   );
