@@ -110,28 +110,29 @@ export const FlightStatusModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/25 overflow-y-auto">
-      <div className="bg-paper w-full max-w-3xl rounded-xl border border-border shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-ink">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[rgba(23,23,23,0.25)] overflow-y-auto">
+      <div className="bg-[#FFFFFF] w-full max-w-3xl rounded-[12px] border border-[#D8D1C5] shadow-[0_20px_60px_rgba(23,23,23,0.12)] p-6 sm:p-8 my-auto relative text-[#171717]">
         
         {/* HEADER */}
-        <div className="flex items-center justify-between pb-5 border-b border-border">
+        <div className="flex items-center justify-between pb-5 border-b border-[#D8D1C5]">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-sand border border-border flex items-center justify-center text-terracotta">
+            <div className="w-10 h-10 rounded-[8px] bg-[#EFE9DE] border border-[#D8D1C5] flex items-center justify-center text-[#963F24]">
               <Activity className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-2xl font-serif font-light text-ink">
+              <span className="text-[10px] font-mono tracking-widest text-[#59604F] uppercase font-semibold block">
+                FLIGHT RADAR &bull; OPERATIONAL TELEMETRY
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-serif font-light text-[#171717]">
                 Live Flight Status
               </h2>
-              <p className="text-xs text-warm-gray font-serif">
-                Direct IATA radar telemetry, gates, and baggage carousels.
-              </p>
             </div>
           </div>
 
           <button
             onClick={() => setIsFlightStatusOpen(false)}
-            className="p-2 rounded-lg hover:bg-sand text-warm-gray hover:text-ink transition-colors"
+            className="p-2 rounded-[8px] hover:bg-[#EFE9DE] text-[#6F6A61] hover:text-[#171717] transition-colors font-mono text-xs"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>
@@ -142,98 +143,111 @@ export const FlightStatusModal: React.FC = () => {
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="Enter flight number (e.g. EK 513, AI 101, BA 142)"
+              placeholder="Search flight number (e.g. EK 513)"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full p-2.5 pl-9 rounded-lg border border-border text-xs font-mono uppercase bg-paper text-ink placeholder-warm-gray/60 focus:outline-none focus:border-terracotta"
+              className="h-12 w-full pl-11 pr-4 rounded-[8px] border border-[#D8D1C5] text-xs font-mono uppercase bg-[#FFFFFF] text-[#171717] placeholder-[#6F6A61] focus:outline-none focus:border-[#963F24]"
             />
-            <Search className="w-4 h-4 text-warm-gray absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-[#6F6A61] absolute left-4 top-4" />
           </div>
           <button
             type="submit"
-            className="px-5 py-2.5 rounded-lg bg-terracotta hover:bg-terracotta-hover text-paper font-mono text-xs font-medium uppercase tracking-wider transition-colors shadow-sm"
+            className="h-12 px-6 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-[#FFFFFF] font-mono text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
           >
-            Track
+            TRACK FLIGHT
           </button>
         </form>
 
-        {/* LIVE STATUS CARD */}
-        <div className="p-6 rounded-xl bg-sand/30 border border-border space-y-6">
+        {/* LIVE STATUS CARD - CLEAN OPERATIONAL BUT PREMIUM UI (NOT A DARK CONTROL PANEL) */}
+        <div className="p-6 sm:p-8 rounded-[12px] bg-[#F6F2EA] border border-[#D8D1C5] space-y-6">
           
           {/* Status Badge & Airline */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#D8D1C5]">
             <div>
-              <div className="text-xl font-serif font-medium text-ink flex items-center space-x-2">
+              <div className="text-2xl font-serif font-bold text-[#171717] flex items-center space-x-3">
                 <span>{activeResult.flightNumber}</span>
-                <span className="text-xs font-mono text-warm-gray font-normal">
+                <span className="text-xs font-mono text-[#6F6A61] font-normal">
                   ({activeResult.airline})
                 </span>
               </div>
-              <div className="text-xs text-warm-gray font-mono">{activeResult.aircraft}</div>
+              <div className="text-xs text-[#6F6A61] font-mono mt-0.5">{activeResult.aircraft}</div>
             </div>
 
-            <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-olive/10 text-olive border border-olive/20 text-xs font-mono font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-olive animate-pulse" />
-              <span>{activeResult.status.toUpperCase()}</span>
+            <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-[#59604F]/10 text-[#59604F] border border-[#59604F]/20 text-xs font-mono font-bold tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-[#59604F] animate-pulse" />
+              <span>ON TIME</span>
             </div>
           </div>
 
-          {/* Route Radar Timeline */}
+          {/* Route Display: DEL → LHR */}
           <div className="grid grid-cols-3 gap-4 items-center pt-2">
             <div>
-              <div className="text-3xl font-serif font-bold text-ink">{activeResult.from.code}</div>
-              <div className="text-xs text-warm-gray">{activeResult.from.city}</div>
-              <div className="text-xs font-mono text-warm-gray mt-1">
-                Dep: <strong className="text-ink font-medium">{activeResult.actualDeparture}</strong>
-              </div>
+              <span className="text-[10px] font-mono text-[#6F6A61] uppercase block">Origin</span>
+              <div className="text-3xl sm:text-4xl font-serif font-bold text-[#171717]">{activeResult.from.code}</div>
+              <div className="text-xs text-[#6F6A61]">{activeResult.from.city}</div>
             </div>
 
             <div className="flex flex-col items-center">
-              <span className="text-[10px] font-mono text-warm-gray mb-1">
-                {activeResult.progressPercent}% Route Completed
-              </span>
-              <div className="w-full bg-sand rounded-full h-1.5 relative overflow-hidden border border-border">
-                <div
-                  className="h-full bg-terracotta rounded-full transition-all duration-500"
-                  style={{ width: `${activeResult.progressPercent}%` }}
-                />
+              <div className="text-xl sm:text-2xl font-serif text-[#171717] flex items-center gap-2">
+                <span>{activeResult.from.code}</span>
+                <span className="text-[#963F24] text-lg">➔</span>
+                <span>{activeResult.to.code}</span>
               </div>
-              <Plane className="w-4 h-4 text-terracotta mt-2 rotate-90" />
+              <span className="text-[10px] font-mono text-[#59604F] font-semibold mt-1">Airborne Radar Active</span>
+              <Plane className="w-4 h-4 text-[#963F24] mt-2 rotate-90" />
             </div>
 
             <div className="text-right">
-              <div className="text-3xl font-serif font-bold text-ink">{activeResult.to.code}</div>
-              <div className="text-xs text-warm-gray">{activeResult.to.city}</div>
-              <div className="text-xs font-mono text-warm-gray mt-1">
-                Est: <strong className="text-ink font-medium">{activeResult.estimatedArrival}</strong>
-              </div>
+              <span className="text-[10px] font-mono text-[#6F6A61] uppercase block">Destination</span>
+              <div className="text-3xl sm:text-4xl font-serif font-bold text-[#171717]">{activeResult.to.code}</div>
+              <div className="text-xs text-[#6F6A61]">{activeResult.to.city}</div>
             </div>
           </div>
 
-          {/* Airport Telemetry: Terminal, Gate, Baggage Carousel */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-border text-xs font-mono">
-            <div className="p-3 rounded-lg bg-paper border border-border">
-              <div className="text-[10px] text-warm-gray uppercase">Terminal</div>
-              <div className="text-sm font-medium text-ink mt-0.5">{activeResult.terminal}</div>
+          {/* Airport Telemetry: Departure, Boarding, Gate, Terminal, Arrival */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-6 border-t border-[#D8D1C5] text-xs font-mono">
+            {/* Departure */}
+            <div className="p-3.5 rounded-[8px] bg-[#FFFFFF] border border-[#D8D1C5]">
+              <div className="text-[10px] text-[#6F6A61] uppercase">Departure</div>
+              <div className="text-base font-serif font-bold text-[#171717] mt-0.5">{activeResult.actualDeparture}</div>
+              <div className="text-[9px] text-[#59604F]">Scheduled</div>
             </div>
 
-            <div className="p-3 rounded-lg bg-paper border border-border">
-              <div className="text-[10px] text-warm-gray uppercase">Departure Gate</div>
-              <div className="text-sm font-medium text-terracotta mt-0.5">{activeResult.gate}</div>
+            {/* Boarding */}
+            <div className="p-3.5 rounded-[8px] bg-[#FFFFFF] border border-[#D8D1C5]">
+              <div className="text-[10px] text-[#6F6A61] uppercase">Boarding</div>
+              <div className="text-base font-serif font-bold text-[#59604F] mt-0.5">01:55</div>
+              <div className="text-[9px] text-[#59604F]">Gate open</div>
             </div>
 
-            <div className="p-3 rounded-lg bg-paper border border-border">
-              <div className="text-[10px] text-warm-gray uppercase">Baggage Claim</div>
-              <div className="text-sm font-medium text-olive mt-0.5">{activeResult.baggageBelt}</div>
+            {/* Gate */}
+            <div className="p-3.5 rounded-[8px] bg-[#FFFFFF] border border-[#D8D1C5]">
+              <div className="text-[10px] text-[#6F6A61] uppercase">Gate</div>
+              <div className="text-base font-serif font-bold text-[#963F24] mt-0.5">{activeResult.gate}</div>
+              <div className="text-[9px] text-[#6F6A61]">Concourse B</div>
+            </div>
+
+            {/* Terminal */}
+            <div className="p-3.5 rounded-[8px] bg-[#FFFFFF] border border-[#D8D1C5]">
+              <div className="text-[10px] text-[#6F6A61] uppercase">Terminal</div>
+              <div className="text-base font-serif font-bold text-[#171717] mt-0.5">{activeResult.terminal}</div>
+              <div className="text-[9px] text-[#6F6A61]">International</div>
+            </div>
+
+            {/* Arrival */}
+            <div className="col-span-2 sm:col-span-1 p-3.5 rounded-[8px] bg-[#FFFFFF] border border-[#D8D1C5]">
+              <div className="text-[10px] text-[#6F6A61] uppercase">Arrival</div>
+              <div className="text-base font-serif font-bold text-[#171717] mt-0.5">{activeResult.estimatedArrival}</div>
+              <div className="text-[9px] text-[#59604F]">Estimated</div>
             </div>
           </div>
         </div>
 
         {/* FOOTER */}
-        <div className="pt-4 mt-4 border-t border-border flex justify-end">
+        <div className="pt-4 mt-6 border-t border-[#D8D1C5] flex justify-end">
           <button
             onClick={() => setIsFlightStatusOpen(false)}
-            className="px-5 py-2.5 rounded-lg bg-sand hover:bg-sand/80 text-ink font-mono text-xs font-medium transition-colors"
+            className="h-11 px-5 rounded-[8px] bg-[#EFE9DE] hover:bg-[#D8D1C5] text-[#171717] font-mono text-xs font-semibold uppercase tracking-wider transition-colors"
           >
             Close Radar
           </button>

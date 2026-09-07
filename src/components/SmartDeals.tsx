@@ -30,23 +30,23 @@ export const SmartDeals: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <span className="w-2.5 h-2.5 rounded-full bg-terracotta" />
-              <span className="text-xs uppercase tracking-[0.25em] text-warm-gray font-mono font-medium">
-                Advance Inventory Rates
+              <span className="w-2.5 h-2.5 rounded-full bg-[#963F24]" />
+              <span className="text-xs uppercase tracking-[0.25em] text-[#59604F] font-mono font-medium">
+                CURATED INVENTORY RATES
               </span>
             </div>
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-light tracking-tight text-ink">
-              Some journeys are worth <br />
-              <span className="italic font-normal">booking early.</span>
+            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-light tracking-tight text-[#171717] leading-none uppercase">
+              BETTER FARES.<br />
+              <span className="font-normal italic">FURTHER AWAY.</span>
             </h2>
-            <p className="mt-4 text-warm-gray text-base sm:text-lg font-light leading-relaxed">
-              Privileged fares negotiated directly with top-tier international flag carriers. Locked fare buckets with complimentary flexible rescheduling.
+            <p className="mt-4 text-[#6F6A61] text-base sm:text-lg font-sans leading-relaxed">
+              Negotiated advance inventory across international flag carriers. Privileged long-range routes with guaranteed fare parity and complimentary seat selection.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-paper border border-border text-xs font-mono text-warm-gray self-start md:self-end">
-            <Clock className="w-3.5 h-3.5 text-terracotta" />
-            <span>Updated 12m ago &bull; Verified Inventory</span>
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFFFF] border border-[#D8D1C5] text-xs font-mono text-[#6F6A61] self-start md:self-end">
+            <Clock className="w-3.5 h-3.5 text-[#963F24]" />
+            <span>Live Inventory &bull; Updated Moments Ago</span>
           </div>
         </div>
 
@@ -56,60 +56,58 @@ export const SmartDeals: React.FC = () => {
             <div
               key={deal.id}
               onClick={() => handleBookDeal(deal)}
-              className="group bg-paper rounded-2xl border border-border hover:border-ink/40 p-5 sm:p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer"
+              className="group bg-[#FFFFFF] rounded-[12px] border border-[#D8D1C5] hover:border-[#171717] p-5 sm:p-6 shadow-xs hover:shadow-[0_20px_50px_rgba(23,23,23,0.08)] transition-all duration-300 flex flex-col justify-between cursor-pointer"
             >
               <div>
                 {/* Top Badge & Carrier */}
                 <div className="flex items-center justify-between gap-2 mb-4">
-                  <span className="px-2.5 py-1 rounded-full bg-terracotta/10 text-terracotta text-xs font-mono font-semibold tracking-wide flex items-center gap-1">
+                  <span className="px-2.5 py-1 rounded-full bg-[#963F24]/10 text-[#963F24] text-[10px] font-mono font-bold tracking-wider uppercase flex items-center gap-1">
                     <Sparkles className="w-3 h-3" />
-                    SAVE {deal.discountPercent}%
+                    SAVINGS: {deal.discountPercent}% OFF
                   </span>
-                  <span className="text-xs font-mono text-warm-gray truncate">
+                  <span className="text-xs font-mono text-[#6F6A61] truncate font-medium">
                     {deal.airline}
                   </span>
                 </div>
 
                 {/* Destination Thumbnail */}
-                <div className="aspect-[16/10] rounded-xl overflow-hidden mb-4 bg-sand">
+                <div className="aspect-[16/10] rounded-[8px] overflow-hidden mb-4 bg-[#EFE9DE]">
                   <img
                     src={deal.image}
                     alt={`${deal.origin} to ${deal.destination}`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter saturate-[0.95]"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
                 </div>
 
                 {/* Route Header */}
                 <div className="mb-2">
-                  <div className="text-lg font-serif font-medium text-ink flex items-center gap-2">
-                    <span>{deal.origin}</span>
-                    <span className="text-warm-gray text-sm">➔</span>
+                  <div className="text-xl font-serif font-bold text-[#171717] flex items-center gap-2">
                     <span>{deal.destination}</span>
                   </div>
-                  <div className="text-xs font-mono text-warm-gray mt-0.5">
-                    {deal.originCode} &bull; {deal.destinationCode}
+                  <div className="text-xs font-mono text-[#6F6A61] mt-0.5">
+                    From {deal.origin} ({deal.originCode} ➔ {deal.destinationCode})
                   </div>
                 </div>
 
                 {/* Travel Window */}
-                <div className="text-xs font-mono text-warm-gray/90 mb-6">
-                  Travel: <span className="text-ink font-medium">{deal.travelPeriod}</span>
+                <div className="text-xs font-mono text-[#6F6A61] mb-6">
+                  Travel period: <span className="text-[#171717] font-semibold">{deal.travelPeriod}</span>
                 </div>
               </div>
 
               {/* Price & Action Button */}
-              <div className="pt-4 border-t border-border flex items-end justify-between">
+              <div className="pt-4 border-t border-[#D8D1C5] flex items-end justify-between">
                 <div>
-                  <div className="text-[11px] font-mono text-warm-gray line-through">
+                  <div className="text-[11px] font-mono text-[#6F6A61] line-through">
                     {formatPrice(deal.previousPriceINR, currency)}
                   </div>
-                  <div className="text-2xl font-serif font-bold text-ink group-hover:text-terracotta transition-colors">
+                  <div className="text-2xl font-serif font-bold text-[#171717] group-hover:text-[#963F24] transition-colors">
                     {formatPrice(deal.currentPriceINR, currency)}
                   </div>
                 </div>
 
-                <div className="w-9 h-9 rounded-full bg-cream group-hover:bg-terracotta border border-border group-hover:border-terracotta flex items-center justify-center text-ink group-hover:text-paper transition-all duration-300">
+                <div className="w-10 h-10 rounded-full bg-[#F6F2EA] group-hover:bg-[#963F24] border border-[#D8D1C5] group-hover:border-[#963F24] flex items-center justify-center text-[#171717] group-hover:text-[#FFFFFF] transition-all duration-300 shadow-xs">
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                 </div>
               </div>
