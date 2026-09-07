@@ -29,9 +29,12 @@ import { PaymentModal } from './components/PaymentModal';
 import { BookingConfirmation } from './components/BookingConfirmation';
 import { FlightStatusModal } from './components/FlightStatusModal';
 import { MyTripsModal } from './components/MyTripsModal';
+import { DesignFoundationShowcase } from './components/DesignFoundationShowcase';
+import { Sparkles } from 'lucide-react';
 
 const MainContent: React.FC = () => {
   const { activeView, currentStep, isFlightStatusOpen, isMyTripsOpen, setActiveView, setSearchParams } = useBooking();
+  const [isFoundationOpen, setIsFoundationOpen] = React.useState(false);
 
   return (
     <div className="min-h-screen bg-cream text-ink flex flex-col selection:bg-terracotta/20 selection:text-terracotta antialiased">
@@ -142,6 +145,22 @@ const MainContent: React.FC = () => {
       {/* DEDICATED TRACKER & MY TRIPS MODALS */}
       {isFlightStatusOpen && <FlightStatusModal />}
       {isMyTripsOpen && <MyTripsModal />}
+
+      {/* PHASE 01 DESIGN FOUNDATION INSPECTOR */}
+      <button
+        onClick={() => setIsFoundationOpen(true)}
+        className="fixed bottom-5 left-5 z-40 px-3.5 py-2 rounded-lg bg-surface border border-border text-ink hover:border-ink shadow-sm text-xs font-mono font-semibold flex items-center gap-2 transition-all hover:shadow-md cursor-pointer select-none"
+        title="View AERIVA Phase 01 Design System Specifications"
+      >
+        <Sparkles className="w-3.5 h-3.5 text-accent-primary" />
+        <span className="hidden sm:inline">Design Foundation</span>
+        <span className="px-1.5 py-0.5 rounded bg-sand text-[10px] text-warm-gray">Phase 01</span>
+      </button>
+
+      <DesignFoundationShowcase
+        isOpen={isFoundationOpen}
+        onClose={() => setIsFoundationOpen(false)}
+      />
     </div>
   );
 };

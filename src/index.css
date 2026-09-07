@@ -1,59 +1,74 @@
+@import './styles/tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    background-color: #F6F2EA;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Reset default selection to warm terracotta tone */
+  ::selection {
+    background-color: rgba(201, 107, 69, 0.2);
     color: #171717;
-    font-family: "Instrument Sans", Manrope, system-ui, sans-serif;
   }
 }
 
 /* Warm Luxury Editorial Paper Panels */
 .paper-card {
-  background: #FFFFFF;
-  border: 1px solid #D8D1C5;
-  box-shadow: 0 4px 20px -2px rgba(23, 23, 23, 0.04), 0 1px 2px rgba(23, 23, 23, 0.03);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .paper-card-elevated {
-  background: #FFFFFF;
-  border: 1px solid #D8D1C5;
-  box-shadow: 0 20px 40px -15px rgba(23, 23, 23, 0.08), 0 4px 10px -2px rgba(23, 23, 23, 0.03);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
 
 .paper-input {
-  background: #FFFFFF;
-  border: 1px solid #D8D1C5;
-  color: #171717;
-  transition: all 0.2s ease;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-sm);
+  transition: all var(--motion-base) var(--ease-editorial);
 }
 
 .paper-input:focus {
   outline: none;
-  border-color: #C96B45;
+  border-color: var(--color-accent-warm);
   box-shadow: 0 0 0 2px rgba(201, 107, 69, 0.15);
 }
 
-/* Backward-compatibility aliases for existing modals */
+/* Backward-compatibility aliases for existing panels (SOLID, NO BLUR) */
 .glass-panel {
-  background: #FFFFFF;
-  border: 1px solid #D8D1C5;
-  box-shadow: 0 20px 40px -15px rgba(23, 23, 23, 0.12);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-modal);
 }
 
 .glass-input {
   background: #FAF8F4;
-  border: 1px solid #D8D1C5;
-  color: #171717;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
 }
 
 .glass-input:focus {
   outline: none;
-  border-color: #C96B45;
+  border-color: var(--color-accent-warm);
   box-shadow: 0 0 0 2px rgba(201, 107, 69, 0.15);
-  background: #FFFFFF;
+  background: var(--color-surface);
 }
 
 /* Editorial Film Grain & Atmosphere */
@@ -68,16 +83,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F6F2EA;
+  background: var(--color-bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D8D1C5;
-  border-radius: 4px;
+  background: var(--color-border);
+  border-radius: var(--radius-xs);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6F6A61;
+  background: var(--color-text-secondary);
 }
 
 /* Perspective utilities for 3D */

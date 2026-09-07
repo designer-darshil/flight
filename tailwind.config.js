@@ -7,6 +7,29 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Core AERIVA Color System
+        'bg-primary': '#F6F2EA',
+        'bg-secondary': '#EFE9DE',
+        surface: '#FFFFFF',
+
+        'text-primary': '#171717',
+        'text-secondary': '#6F6A61',
+
+        border: '#D8D1C5',
+
+        // Accents
+        'accent-warm': '#C96B45',
+        'accent-primary': '#963F24',      // Accessible primary accent (> 4.5:1 on white)
+        'accent-primary-hover': '#7E331B',
+        'accent-secondary': '#596052',    // Deep Olive
+        'accent-soft': '#E9DDD3',         // Soft Champagne
+
+        // Semantic Status Colors
+        success: '#3F6B4F',
+        warning: '#8A5A1F',
+        error: '#9B3D32',
+
+        // Palette aliases for seamless template compatibility
         cream: {
           DEFAULT: '#F6F2EA',
           50: '#FAF8F4',
@@ -20,6 +43,7 @@ export default {
           100: '#EFE9DE',
           200: '#E4DCBE',
         },
+        paper: '#FFFFFF',
         ink: {
           DEFAULT: '#171717',
           muted: '#6F6A61',
@@ -33,7 +57,8 @@ export default {
         },
         terracotta: {
           DEFAULT: '#C96B45',
-          dark: '#B15733',
+          accessible: '#963F24',
+          dark: '#963F24',
           light: '#D98461',
           subtle: '#FAF0EB',
         },
@@ -48,38 +73,41 @@ export default {
           light: '#CFB88D',
           subtle: '#F7F4EE',
         },
-        aeriva: {
-          cream: '#F6F2EA',
-          sand: '#EFE9DE',
-          ink: '#171717',
-          terracotta: '#C96B45',
-          olive: '#596052',
-          champagne: '#B79B69',
-          border: '#D8D1C5',
-          blue: '#C96B45', // Aliased for smooth migration
-          surface: '#FFFFFF',
-          charcoal: '#F6F2EA',
-          navy: '#F6F2EA',
-          electric: '#C96B45',
-          cyan: '#C96B45',
-        },
       },
       fontFamily: {
-        sans: ['"Instrument Sans"', 'Manrope', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Manrope', '"Instrument Sans"', 'sans-serif'],
-        editorial: ['"Instrument Sans"', 'Manrope', 'sans-serif'],
+        sans: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Manrope', 'sans-serif'],
+        editorial: ['Manrope', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
-      letterSpacing: {
-        tightest: '-0.04em',
-        tighter: '-0.025em',
-        widestlabel: '0.22em',
+      spacing: {
+        '4.5': '18px',
+        // 4px base grid scale additions
+        '18': '72px',
+        '28': '112px',
+        '30': '120px',
+        '36': '144px',
+      },
+      borderRadius: {
+        'xs': '6px',
+        'sm': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '20px',
       },
       boxShadow: {
-        'paper': '0 2px 8px rgba(23, 23, 23, 0.04), 0 1px 2px rgba(23, 23, 23, 0.03)',
-        'paper-elevated': '0 20px 40px -15px rgba(23, 23, 23, 0.07), 0 4px 10px -2px rgba(23, 23, 23, 0.03)',
-        'terracotta': '0 10px 30px -5px rgba(201, 107, 69, 0.3)',
-        'card-depth': '0 25px 50px -12px rgba(23, 23, 23, 0.12)',
+        'sm': '0 4px 16px rgba(23, 23, 23, 0.06)',
+        'md': '0 12px 32px rgba(23, 23, 23, 0.08)',
+        'lg': '0 24px 60px rgba(23, 23, 23, 0.10)',
+        'modal': '0 20px 60px rgba(23, 23, 23, 0.12)',
+        'drawer': '-20px 0 60px rgba(23, 23, 23, 0.08)',
+        // Tactile paper shadows
+        'paper': '0 4px 16px rgba(23, 23, 23, 0.06)',
+        'paper-elevated': '0 12px 32px rgba(23, 23, 23, 0.08)',
+      },
+      maxWidth: {
+        'desktop': '1280px',
+        'extended': '1440px',
       },
       animation: {
         'float-slow': 'float 7s ease-in-out infinite',
