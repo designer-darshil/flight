@@ -39,7 +39,11 @@ type SidebarTab =
 
 type TripsFilter = 'upcoming' | 'completed' | 'cancelled';
 
-export const UserDashboard: React.FC = () => {
+export interface UserDashboardProps {
+  initialTab?: SidebarTab;
+}
+
+export const UserDashboard: React.FC<UserDashboardProps> = ({ initialTab = 'overview' }) => {
   const {
     setActiveView,
     setIsBoardingPassOpen,
@@ -50,7 +54,7 @@ export const UserDashboard: React.FC = () => {
     setCurrency,
   } = useBooking();
 
-  const [activeSidebarTab, setActiveSidebarTab] = useState<SidebarTab>('overview');
+  const [activeSidebarTab, setActiveSidebarTab] = useState<SidebarTab>(initialTab);
   const [tripsFilter, setTripsFilter] = useState<TripsFilter>('upcoming');
   const [selectedTripDetails, setSelectedTripDetails] = useState<Booking | null>(null);
 

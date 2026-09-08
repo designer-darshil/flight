@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   SearchParams,
   Flight,
@@ -8,6 +9,9 @@ import {
   Passenger,
   Booking,
   Currency,
+  TripType,
+  CabinClass,
+  Airport,
 } from '../types';
 import { AIRPORTS, DEFAULT_FROM, DEFAULT_TO } from '../data/airports';
 import { FLAGSHIP_FLIGHTS, generateAerivaFlights } from '../data/mockFlights';
@@ -24,6 +28,7 @@ interface BookingContextType {
   searchParams: SearchParams;
   setSearchParams: React.Dispatch<React.SetStateAction<SearchParams>>;
   flights: Flight[];
+  setFlights: React.Dispatch<React.SetStateAction<Flight[]>>;
   isSearching: boolean;
   searchProgressText: string;
   selectedFlight: Flight | null;
@@ -52,7 +57,9 @@ interface BookingContextType {
   setAuthMode: (mode: 'login' | 'signup') => void;
   isLoggedIn: boolean;
   setIsLoggedIn: (loggedIn: boolean) => void;
-  searchFlights: () => void;
+  searchFlights: (overrideParams?: SearchParams, onDone?: () => void) => boolean;
+  syncSearchParamsFromUrl: (urlSearchParams: URLSearchParams) => SearchParams | null;
+  buildSearchQuery: (params?: SearchParams) => string;
   selectFlight: (flight: Flight) => void;
   setFareTier: (tier: FareTier) => void;
   toggleSeat: (seat: Seat) => void;
@@ -64,11 +71,66 @@ interface BookingContextType {
   cancelBooking: (bookingId: string) => void;
 }
 
+
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
+function parseDateParam(dateStr: string | null, fallback: string = '18 Sep 2026'): string {
+  if (!dateStr) return fallback;
+  const decoded = decodeURIComponent(dateStr).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(decoded)) {
+    const [y, m, d] = decoded.split('-');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthName = months[parseInt(m, 10) - 1] || 'Sep';
+    return `${parseInt(d, 10)} ${monthName} ${y}`;
+  }
+  return decoded;
+}
+
+function parseReturnDateParam(dateStr: string | null, fallback: string = ''): string {
+  if (!dateStr) return fallback;
+  const decoded = decodeURIComponent(dateStr).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(decoded)) {
+    const [y, m, d] = decoded.split('-');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthName = months[parseInt(m, 10) - 1] || 'Sep';
+    return `${parseInt(d, 10)} ${monthName} ${y}`;
+  }
+  return decoded;
+}
+
+function findAirportByCode(code: string, fallbackCity: string = ''): Airport {
+  const cleanCode = code.trim().toUpperCase();
+  const match = AIRPORTS.find(a => a.code.toUpperCase() === cleanCode);
+  if (match) return match;
+  return {
+    code: cleanCode,
+    city: fallbackCity || cleanCode,
+    name: `${cleanCode} International Airport`,
+    country: 'International',
+    flag: '🌐',
+    lat: 0,
+    lng: 0,
+  };
+}
+
 export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
   const [currency, setCurrency] = useState<Currency>('INR');
-  const [activeView, setActiveView] = useState<ActiveView>('marketing');
+  const [activeViewState, setActiveViewState] = useState<ActiveView>('marketing');
+
+  const setActiveView = (view: ActiveView) => {
+    setActiveViewState(view);
+    if (view === 'marketing') {
+      navigate('/');
+    } else if (view === 'results') {
+      const query = buildSearchQuery();
+      navigate(`/flights?${query}`);
+    } else if (view === 'dashboard') {
+      navigate('/dashboard');
+    }
+  };
+
+
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
     tripType: 'round',
@@ -221,37 +283,100 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setDrawerFlight(null);
   };
 
-  const searchFlights = () => {
+  const buildSearchQuery = (params: SearchParams = searchParams): string => {
+    const query = new URLSearchParams({
+      from: params.from.code,
+      to: params.to.code,
+      departure: params.departureDate,
+      adults: String(params.passengers.adults),
+      children: String(params.passengers.children),
+      infants: String(params.passengers.infants),
+      cabin: params.cabinClass,
+      tripType: params.tripType,
+    });
+    if (params.returnDate && params.tripType === 'round') {
+      query.set('return', params.returnDate);
+    }
+    return query.toString();
+  };
+
+  const syncSearchParamsFromUrl = (urlSearchParams: URLSearchParams): SearchParams | null => {
+    const fromCode = urlSearchParams.get('from');
+    const toCode = urlSearchParams.get('to');
+    if (!fromCode && !toCode) return null;
+
+    const fromAirport = fromCode ? findAirportByCode(fromCode, 'New Delhi') : searchParams.from;
+    const toAirport = toCode ? findAirportByCode(toCode, 'London') : searchParams.to;
+    const departure = parseDateParam(urlSearchParams.get('departure') || urlSearchParams.get('dep'), searchParams.departureDate);
+    const returnParam = urlSearchParams.get('return') || urlSearchParams.get('ret');
+    const ret = returnParam ? parseReturnDateParam(returnParam, searchParams.returnDate) : (searchParams.tripType === 'round' ? searchParams.returnDate : '');
+    const adults = parseInt(urlSearchParams.get('adults') || '1', 10) || 1;
+    const children = parseInt(urlSearchParams.get('children') || '0', 10) || 0;
+    const infants = parseInt(urlSearchParams.get('infants') || '0', 10) || 0;
+    const cabin = (urlSearchParams.get('cabin') || urlSearchParams.get('cabinClass') || searchParams.cabinClass) as CabinClass;
+    const trip = (urlSearchParams.get('tripType') || (ret ? 'round' : 'oneway')) as TripType;
+
+    const newParams: SearchParams = {
+      from: fromAirport,
+      to: toAirport,
+      departureDate: departure,
+      returnDate: ret,
+      passengers: { adults, children, infants },
+      cabinClass: cabin,
+      tripType: trip,
+    };
+
+    setSearchParams(newParams);
+    const generated = generateAerivaFlights(fromAirport, toAirport, departure, cabin);
+    setFlights(generated);
+    return newParams;
+  };
+
+  const searchFlights = (overrideParams?: SearchParams, onDone?: () => void): boolean => {
+    const targetParams = overrideParams || searchParams;
+
+    if (!targetParams.from || !targetParams.to) {
+      return false;
+    }
+    if (targetParams.from.code === targetParams.to.code) {
+      return false;
+    }
+
     setIsSearching(true);
     setSearchProgressText('SEARCHING THE GLOBAL NETWORK...');
 
+    const queryString = buildSearchQuery(targetParams);
+    navigate(`/flights?${queryString}`);
+
     setTimeout(() => {
       setSearchProgressText('Finding the best routes...');
-    }, 450);
+    }, 400);
 
     setTimeout(() => {
       setSearchProgressText('Comparing fares & airlines...');
-    }, 900);
+      const generated = generateAerivaFlights(
+        targetParams.from,
+        targetParams.to,
+        targetParams.departureDate,
+        targetParams.cabinClass
+      );
+      setFlights(generated);
+    }, 800);
 
     setTimeout(() => {
       setSearchProgressText('Checking live cabin availability...');
-    }, 1300);
+    }, 1200);
 
     setTimeout(() => {
-      const generated = generateAerivaFlights(
-        searchParams.from,
-        searchParams.to,
-        searchParams.departureDate,
-        searchParams.cabinClass
-      );
-      setFlights(generated);
       setIsSearching(false);
       setActiveView('results');
-
-      // Scroll smoothly to top of results application
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 1750);
+      onDone?.();
+    }, 1500);
+
+    return true;
   };
+
 
   const swapAirports = () => {
     setSearchParams(prev => ({
@@ -366,13 +491,14 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   return (
     <BookingContext.Provider
       value={{
-        activeView,
+        activeView: activeViewState,
         setActiveView,
         currency,
         setCurrency,
         searchParams,
         setSearchParams,
         flights,
+        setFlights,
         isSearching,
         searchProgressText,
         selectedFlight,
@@ -402,6 +528,8 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isLoggedIn,
         setIsLoggedIn,
         searchFlights,
+        syncSearchParamsFromUrl,
+        buildSearchQuery,
         selectFlight,
         setFareTier,
         toggleSeat,

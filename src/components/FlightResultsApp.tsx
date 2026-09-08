@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   SlidersHorizontal,
-  Bell,
   Filter,
   X,
   Plane,
@@ -12,23 +12,32 @@ import {
 import { useBooking } from '../context/BookingContext';
 import { FlightCard } from './FlightCard';
 import { FlightDetailsDrawer } from './FlightDetailsDrawer';
-import { formatPrice, CURRENCIES } from '../utils/currency';
-import { Currency } from '../types';
+import { BookingEngine } from './BookingEngine';
+import { formatPrice } from '../utils/currency';
 
 type SortOption = 'recommended' | 'cheapest' | 'fastest' | 'value';
 
 export const FlightResultsApp: React.FC = () => {
+  const [searchParamsUrl] = useSearchParams();
+  const navigate = useNavigate();
+
   const {
     flights,
     searchParams,
     currency,
-    setCurrency,
-    setActiveView,
-    setIsMyTripsOpen,
+    syncSearchParamsFromUrl,
   } = useBooking();
 
+  const [isEditingSearch, setIsEditingSearch] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>('recommended');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  // Synchronize state from URL query parameters on mount or when URL changes
+  useEffect(() => {
+    if (searchParamsUrl.get('from') || searchParamsUrl.get('to')) {
+      syncSearchParamsFromUrl(searchParamsUrl);
+    }
+  }, [searchParamsUrl]);
 
   // Filters
   const [stopsFilter, setStopsFilter] = useState<number[]>([]);
@@ -38,6 +47,7 @@ export const FlightResultsApp: React.FC = () => {
   const [maxPrice, setMaxPrice] = useState<number>(75000);
   const [refundableOnly, setRefundableOnly] = useState(false);
   const [checkedBagOnly, setCheckedBagOnly] = useState(false);
+
 
   const airlinesList = [
     'Emirates',
@@ -283,116 +293,64 @@ export const FlightResultsApp: React.FC = () => {
     </div>
   );
 
+  const totalPax =
+    searchParams.passengers.adults +
+    searchParams.passengers.children +
+    searchParams.passengers.infants;
+
   return (
     <div className="min-h-screen bg-[#F6F2EA] text-ink pb-24">
       
-      {/* TOP APPLICATION NAVIGATION */}
-      <header className="sticky top-0 z-40 bg-[#F6F2EA] border-b border-border shadow-sm">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 flex items-center justify-between h-16">
-          
-          <div className="flex items-center space-x-8">
-            <button
-              onClick={() => setActiveView('marketing')}
-              className="flex items-center space-x-2.5 text-left group cursor-pointer"
-            >
-              <div className="w-8 h-8 rounded-[8px] bg-ink text-white flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-                  <path d="M12 2L21 20L12 16L3 20L12 2Z" />
-                </svg>
-              </div>
-              <span className="text-xl font-serif font-light tracking-widest text-ink">
-                AERIVA
-              </span>
-            </button>
-
-            {/* App Nav Items */}
-            <nav className="hidden md:flex items-center space-x-6 text-xs font-mono text-warm-gray">
-              <span className="text-ink border-b-2 border-[#963F24] py-5 font-semibold">Flights</span>
-              <button onClick={() => setActiveView('marketing')} className="hover:text-ink py-5 transition-colors cursor-pointer">Explore</button>
-              <button onClick={() => setIsMyTripsOpen(true)} className="hover:text-ink py-5 transition-colors cursor-pointer">Trips</button>
-            </nav>
-          </div>
-
-          <div className="flex items-center space-x-3 text-xs">
-            <button className="p-2 rounded-[8px] text-warm-gray hover:text-ink hover:bg-sand transition-colors cursor-pointer" title="Notifications">
-              <Bell className="w-4 h-4" />
-            </button>
-
-            <select
-              value={currency}
-              onChange={e => setCurrency(e.target.value as Currency)}
-              className="px-2.5 py-1.5 rounded-[8px] bg-white border border-border text-xs font-mono font-medium text-ink focus:outline-none focus:border-[#963F24] cursor-pointer"
-            >
-              {(['USD', 'INR', 'EUR', 'AED', 'GBP'] as Currency[]).map(c => (
-                <option key={c} value={c}>{c} ({CURRENCIES[c].symbol})</option>
-              ))}
-            </select>
-
-            <button
-              onClick={() => setIsMyTripsOpen(true)}
-              className="flex items-center space-x-2 p-1.5 pl-2.5 rounded-[8px] bg-white border border-border hover:border-ink/40 text-ink font-mono text-xs transition-colors cursor-pointer"
-            >
-              <span>Alex</span>
-              <div className="w-6 h-6 rounded-[6px] bg-ink text-white flex items-center justify-center text-[10px] font-mono font-bold">
-                A
-              </div>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* MAIN HEADER AS REQUIRED */}
-      <div className="bg-white border-b border-border py-8">
+      {/* 1. CANONICAL RESULTS PAGE HEADER */}
+      <div className="bg-white border-b border-[#D8D1C5] py-7">
         <div className="max-w-[1440px] mx-auto px-6 sm:px-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center space-x-2 text-xs font-mono text-warm-gray mb-3">
+              <div className="flex items-center space-x-2 text-xs font-mono text-warm-gray mb-2.5">
                 <button
-                  onClick={() => setActiveView('marketing')}
+                  type="button"
+                  onClick={() => navigate('/')}
                   className="text-[#963F24] hover:underline flex items-center space-x-1 font-medium cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Modify Search</span>
+                  <span>Return to Home</span>
                 </button>
                 <span>&bull;</span>
                 <span>{searchParams.cabinClass.toUpperCase()}</span>
                 <span>&bull;</span>
-                <span>{searchParams.passengers.adults + searchParams.passengers.children + searchParams.passengers.infants} TRAVELERS</span>
+                <span>{totalPax} {totalPax === 1 ? 'TRAVELER' : 'TRAVELERS'}</span>
               </div>
 
-              {/* Exact Header Specification:
-                  DELHI → LONDON
-                  18 SEPTEMBER
-                  127 FLIGHTS FOUND
-              */}
-              <h1 className="text-3xl sm:text-5xl font-serif font-light text-ink tracking-tight mb-2 uppercase">
-                {searchParams.from.city.toUpperCase()} → {searchParams.to.city.toUpperCase()}
+              {/* Route Title in Outfit font, bold, uppercase */}
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-ink tracking-tight uppercase mb-2">
+                {searchParams.from.city} ({searchParams.from.code}) → {searchParams.to.city} ({searchParams.to.code})
               </h1>
 
-              <div className="text-sm sm:text-base font-mono font-medium text-warm-gray uppercase tracking-wider mb-1">
-                {searchParams.departureDate.replace(/202\d/, '').trim().toUpperCase() || '18 SEPTEMBER'}
-              </div>
-
-              <div className="text-xs sm:text-sm font-mono font-bold text-[#963F24] tracking-widest uppercase">
-                127 FLIGHTS FOUND
-                <span className="text-warm-gray font-normal lowercase tracking-normal ml-2">
-                  ({sortedFlights.length} matching current filters)
+              {/* Trip details + flight count badge */}
+              <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm font-mono">
+                <span className="font-semibold text-warm-gray uppercase tracking-wider">
+                  {searchParams.departureDate}
+                  {searchParams.returnDate && searchParams.tripType === 'round' ? ` — ${searchParams.returnDate}` : ''}
+                </span>
+                <span className="text-[#D8D1C5]">&bull;</span>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#963F24]/10 text-[#963F24] font-bold text-xs tracking-wider uppercase">
+                  {sortedFlights.length} {sortedFlights.length === 1 ? 'FLIGHT' : 'FLIGHTS'} AVAILABLE
                 </span>
               </div>
             </div>
 
             {/* Micro Route Visualization Widget */}
-            <div className="hidden lg:flex items-center space-x-6 p-4 rounded-[12px] bg-sand/40 border border-border text-xs font-mono">
+            <div className="hidden lg:flex items-center space-x-6 p-4 rounded-[12px] bg-sand/40 border border-[#D8D1C5] text-xs font-mono">
               <div className="text-center">
                 <span className="text-warm-gray block text-[10px]">ORIGIN</span>
                 <span className="font-bold text-ink text-sm">{searchParams.from.code}</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-[10px] text-[#963F24] font-semibold">10h 00m</span>
-                <div className="w-20 border-t border-dashed border-border relative my-1">
+                <span className="text-[10px] text-[#963F24] font-semibold">DIRECT &amp; CONNECTING</span>
+                <div className="w-24 border-t border-dashed border-[#D8D1C5] relative my-1">
                   <Plane className="w-3.5 h-3.5 text-[#963F24] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90" />
                 </div>
-                <span className="text-[9px] text-warm-gray">1 STOP (DXB)</span>
+                <span className="text-[9px] text-warm-gray">{searchParams.tripType === 'round' ? 'ROUND TRIP' : 'ONE WAY'}</span>
               </div>
               <div className="text-center">
                 <span className="text-warm-gray block text-[10px]">DESTINATION</span>
@@ -400,6 +358,49 @@ export const FlightResultsApp: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 2. PROMINENT SEARCH SUMMARY BAR WITH EDIT SEARCH TRIGGER */}
+      <div className="max-w-[1440px] mx-auto px-6 sm:px-10 pt-6">
+        <div className="bg-white border border-[#D8D1C5] rounded-[12px] p-4 shadow-xs transition-all">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs font-mono text-ink">
+              <span className="font-bold text-sm text-[#963F24]">
+                {searchParams.from.code} → {searchParams.to.code}
+              </span>
+              <span className="text-warm-gray-border">|</span>
+              <span className="text-warm-gray">
+                {searchParams.departureDate} {searchParams.returnDate && searchParams.tripType === 'round' ? `– ${searchParams.returnDate}` : ''}
+              </span>
+              <span className="text-warm-gray-border">|</span>
+              <span className="text-warm-gray">
+                {totalPax} {totalPax === 1 ? 'Traveler' : 'Travelers'}
+              </span>
+              <span className="text-warm-gray-border">|</span>
+              <span className="text-warm-gray">
+                {searchParams.cabinClass}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsEditingSearch(!isEditingSearch)}
+              className="px-4 py-2 rounded-[8px] border border-[#D8D1C5] hover:border-ink/50 bg-[#F6F2EA] hover:bg-sand text-ink text-xs font-mono font-semibold uppercase tracking-wider transition-colors cursor-pointer self-start sm:self-auto"
+            >
+              {isEditingSearch ? 'Close Search' : 'Edit Search'}
+            </button>
+          </div>
+
+          {/* EXPANDED INLINE EDIT SEARCH PANEL */}
+          {isEditingSearch && (
+            <div className="mt-4 pt-4 border-t border-[#D8D1C5] animate-fadeIn">
+              <BookingEngine
+                isEmbedded
+                onSearchComplete={() => setIsEditingSearch(false)}
+              />
+            </div>
+          )}
         </div>
       </div>
 

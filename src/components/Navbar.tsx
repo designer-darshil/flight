@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Globe,
   Menu,
@@ -9,7 +10,15 @@ import {
 import { useBooking } from '../context/BookingContext';
 import { Currency } from '../types';
 
-export const Navbar: React.FC = () => {
+export interface NavbarProps {
+  variant?: 'marketing' | 'app';
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ variant }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isApp = variant === 'app' || (variant === undefined && location.pathname !== '/');
+
   const {
     currency,
     setCurrency,
@@ -45,29 +54,48 @@ export const Navbar: React.FC = () => {
   ];
 
   const scrollToSection = (sectionId: string) => {
-    setActiveView('marketing');
     setMobileMenuOpen(false);
-    setTimeout(() => {
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 150);
+    } else {
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
-    }, 50);
+    }
   };
 
   const handleBookFlightClick = () => {
-    setActiveView('marketing');
-    const el = document.getElementById('booking-panel');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setMobileMenuOpen(false);
+    if (location.pathname === '/') {
+      const el = document.getElementById('booking-panel');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } else {
+      navigate('/');
+      setTimeout(() => {
+        const el = document.getElementById('booking-panel');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
   };
+
+  const isSolidHeader = isApp || isScrolled;
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-cream border-b border-border shadow-sm py-4 text-ink'
+        isSolidHeader
+          ? 'bg-cream border-b border-[#D8D1C5] shadow-sm py-3.5 text-ink'
           : 'bg-gradient-to-b from-black/60 via-black/20 to-transparent py-6 text-white'
       }`}
     >
@@ -77,13 +105,14 @@ export const Navbar: React.FC = () => {
         <div
           onClick={() => {
             setActiveView('marketing');
+            navigate('/');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           className="flex items-center space-x-3 cursor-pointer select-none group"
         >
           {/* Minimalist vector delta mark */}
           <div className={`w-8 h-8 flex items-center justify-center transition-transform group-hover:scale-105 ${
-            isScrolled ? 'text-terracotta' : 'text-white'
+            isSolidHeader ? 'text-terracotta' : 'text-white'
           }`}>
             <svg
               viewBox="0 0 24 24"
@@ -100,7 +129,7 @@ export const Navbar: React.FC = () => {
 
           <div className="flex flex-col text-left">
             <span className={`text-2xl font-display font-black tracking-tightest leading-none ${
-              isScrolled ? 'text-ink' : 'text-white'
+              isSolidHeader ? 'text-ink' : 'text-white'
             }`}>
               AERIVA
             </span>
@@ -110,33 +139,46 @@ export const Navbar: React.FC = () => {
         {/* CENTER EDITORIAL NAVIGATION */}
         <nav className="hidden md:flex items-center space-x-8 text-xs font-sans tracking-wider uppercase font-semibold">
           <button
-            onClick={() => scrollToSection('booking-panel')}
-            className={`transition-colors ${
-              isScrolled ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
+            onClick={() => {
+              if (location.pathname === '/flights') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                scrollToSection('booking-panel');
+              }
+            }}
+            className={`transition-colors relative py-1 ${
+              location.pathname === '/flights'
+                ? 'text-ink font-bold'
+                : isSolidHeader
+                ? 'text-ink/80 hover:text-terracotta'
+                : 'text-white/85 hover:text-white'
             }`}
           >
-            Flights
+            <span>Flights</span>
+            {location.pathname === '/flights' && (
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-terracotta" />
+            )}
           </button>
           <button
             onClick={() => scrollToSection('destination-showcase')}
-            className={`transition-colors ${
-              isScrolled ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
+            className={`transition-colors py-1 ${
+              isSolidHeader ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
             }`}
           >
             Explore
           </button>
           <button
             onClick={() => scrollToSection('smart-deals-section')}
-            className={`transition-colors ${
-              isScrolled ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
+            className={`transition-colors py-1 ${
+              isSolidHeader ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
             }`}
           >
             Deals
           </button>
           <button
             onClick={() => setIsMyTripsOpen(true)}
-            className={`transition-colors flex items-center space-x-1.5 ${
-              isScrolled ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
+            className={`transition-colors py-1 flex items-center space-x-1.5 ${
+              isSolidHeader ? 'text-ink/80 hover:text-terracotta' : 'text-white/85 hover:text-white'
             }`}
           >
             <span>Trips</span>
@@ -146,6 +188,7 @@ export const Navbar: React.FC = () => {
           </button>
         </nav>
 
+
         {/* RIGHT CONTROLS: USD, EN, SIGN IN, OUTLINED CTA */}
         <div className="hidden lg:flex items-center space-x-5 text-xs font-sans">
           
@@ -154,7 +197,7 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
               className={`flex items-center space-x-1 font-mono uppercase tracking-wider py-1.5 px-2 transition-colors ${
-                isScrolled ? 'text-ink/70 hover:text-ink' : 'text-white/80 hover:text-white'
+                isSolidHeader ? 'text-ink/70 hover:text-ink' : 'text-white/80 hover:text-white'
               }`}
             >
               <span>{currency}</span>
@@ -187,7 +230,7 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => setLangDropdownOpen(!langDropdownOpen)}
               className={`flex items-center space-x-1 font-mono uppercase tracking-wider py-1.5 px-2 transition-colors ${
-                isScrolled ? 'text-ink/70 hover:text-ink' : 'text-white/80 hover:text-white'
+                isSolidHeader ? 'text-ink/70 hover:text-ink' : 'text-white/80 hover:text-white'
               }`}
             >
               <Globe className="w-3 h-3 opacity-70 mr-0.5" />
@@ -219,9 +262,12 @@ export const Navbar: React.FC = () => {
           {/* Sign In / Account Button */}
           {isLoggedIn ? (
             <button
-              onClick={() => setActiveView('dashboard')}
+              onClick={() => {
+                setActiveView('dashboard');
+                navigate('/dashboard');
+              }}
               className={`font-semibold tracking-wider uppercase transition-colors px-2.5 py-1 rounded-[6px] flex items-center space-x-2 ${
-                isScrolled ? 'bg-[#EFE9DE] text-[#171717] hover:bg-[#D8D1C5]' : 'bg-white/20 text-white hover:bg-white/30'
+                isSolidHeader ? 'bg-[#EFE9DE] text-[#171717] hover:bg-[#D8D1C5]' : 'bg-white/20 text-white hover:bg-white/30'
               }`}
             >
               <div className="w-5 h-5 rounded-full bg-[#963F24] text-white flex items-center justify-center text-[10px] font-bold">
@@ -236,7 +282,7 @@ export const Navbar: React.FC = () => {
                 setIsAuthModalOpen(true);
               }}
               className={`font-semibold tracking-wider uppercase transition-colors px-2 py-1.5 flex items-center space-x-1.5 ${
-                isScrolled ? 'text-ink/80 hover:text-ink' : 'text-white/90 hover:text-white'
+                isSolidHeader ? 'text-ink/80 hover:text-ink' : 'text-white/90 hover:text-white'
               }`}
             >
               <User className="w-3.5 h-3.5 opacity-70" />
@@ -248,7 +294,7 @@ export const Navbar: React.FC = () => {
           <button
             onClick={handleBookFlightClick}
             className={`px-4 py-2 border text-xs tracking-wider uppercase font-semibold transition-all duration-200 ${
-              isScrolled
+              isSolidHeader
                 ? 'border-ink text-ink hover:bg-ink hover:text-white'
                 : 'border-white text-white hover:bg-white hover:text-ink'
             }`}
@@ -263,7 +309,7 @@ export const Navbar: React.FC = () => {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
             className={`min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] transition-colors focus-visible:ring-2 focus-visible:ring-[#963F24] cursor-pointer ${
-              isScrolled ? 'text-ink' : 'text-white'
+              isSolidHeader ? 'text-ink' : 'text-white'
             }`}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

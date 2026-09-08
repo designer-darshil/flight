@@ -9,7 +9,12 @@ import { useBooking } from '../context/BookingContext';
 import { TripType, CabinClass } from '../types';
 import { AIRPORTS } from '../data/airports';
 
-export const BookingEngine: React.FC = () => {
+export interface BookingEngineProps {
+  isEmbedded?: boolean;
+  onSearchComplete?: () => void;
+}
+
+export const BookingEngine: React.FC<BookingEngineProps> = ({ isEmbedded = false, onSearchComplete }) => {
   const {
     searchParams,
     setSearchParams,
@@ -24,9 +29,43 @@ export const BookingEngine: React.FC = () => {
   const [toOpen, setToOpen] = useState(false);
   const [passengerOpen, setPassengerOpen] = useState(false);
 
+  // Validation error states
+  const [fromError, setFromError] = useState<string | null>(null);
+  const [toError, setToError] = useState<string | null>(null);
+  const [dateError, setDateError] = useState<string | null>(null);
+
   // Search input filters
   const [fromQuery, setFromQuery] = useState('');
   const [toQuery, setToQuery] = useState('');
+
+  const handleSearchSubmit = () => {
+    let hasError = false;
+    setFromError(null);
+    setToError(null);
+    setDateError(null);
+
+    if (!searchParams.from || !searchParams.from.code) {
+      setFromError('Please select departure airport');
+      hasError = true;
+    }
+    if (!searchParams.to || !searchParams.to.code) {
+      setToError('Please select destination airport');
+      hasError = true;
+    }
+    if (searchParams.from && searchParams.to && searchParams.from.code === searchParams.to.code) {
+      setToError('Origin & destination cannot be the same');
+      hasError = true;
+    }
+    if (!searchParams.departureDate) {
+      setDateError('Please select departure date');
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    searchFlights(searchParams, onSearchComplete);
+  };
+
 
   // Dropdown click-outside refs
   const fromRef = useRef<HTMLDivElement>(null);
@@ -75,8 +114,12 @@ export const BookingEngine: React.FC = () => {
 
   return (
     <div
-      id="booking-panel"
-      className="w-full max-w-[1320px] mx-auto bg-white border border-border rounded-[12px] shadow-[0_12px_32px_rgba(23,23,23,0.08)] p-6 sm:p-8 text-ink select-none relative z-30"
+      id={isEmbedded ? undefined : 'booking-panel'}
+      className={`w-full bg-white border border-[#D8D1C5] rounded-[12px] text-ink select-none relative z-30 ${
+        isEmbedded
+          ? 'p-5 sm:p-6 shadow-xs'
+          : 'max-w-[1320px] mx-auto shadow-[0_12px_32px_rgba(23,23,23,0.08)] p-6 sm:p-8'
+      }`}
     >
       {/* 1. TABS ROW: ROUND TRIP, ONE WAY, MULTI CITY + CABIN CLASS */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-warm-gray-border/60">
@@ -133,6 +176,11 @@ export const BookingEngine: React.FC = () => {
               <span className="truncate">{searchParams.from.name}</span>
             </div>
           </button>
+          {fromError && (
+            <p className="text-[11px] font-mono text-[#963F24] font-semibold mt-1.5 animate-fadeIn">
+              {fromError}
+            </p>
+          )}
 
           {/* FROM DROPDOWN / AIRPORT SELECTOR POPOVER */}
           {fromOpen && (
@@ -292,6 +340,11 @@ export const BookingEngine: React.FC = () => {
               <span className="truncate">{searchParams.to.name}</span>
             </div>
           </button>
+          {toError && (
+            <p className="text-[11px] font-mono text-[#963F24] font-semibold mt-1.5 animate-fadeIn">
+              {toError}
+            </p>
+          )}
 
           {/* TO DROPDOWN / AIRPORT SELECTOR POPOVER */}
           {toOpen && (
@@ -443,6 +496,11 @@ export const BookingEngine: React.FC = () => {
               </>
             )}
           </div>
+          {dateError && (
+            <p className="text-[11px] font-mono text-[#963F24] font-semibold mt-1.5 animate-fadeIn">
+              {dateError}
+            </p>
+          )}
         </div>
 
         {/* PASSENGERS & CABIN (Col 10-12) */}
@@ -635,7 +693,7 @@ export const BookingEngine: React.FC = () => {
 
         <button
           type="button"
-          onClick={searchFlights}
+          onClick={handleSearchSubmit}
           disabled={isSearching}
           className="w-full sm:w-auto h-12 px-8 rounded-[8px] bg-[#963F24] hover:bg-[#7E331B] text-white font-sans font-bold text-xs tracking-wider uppercase transition-all duration-200 flex items-center justify-center space-x-2.5 shadow-sm hover:shadow-md cursor-pointer disabled:opacity-50"
         >

@@ -34,100 +34,127 @@ import { DesignFoundationShowcase } from './components/DesignFoundationShowcase'
 import { ComponentLibraryShowcase } from './components/ComponentLibraryShowcase';
 import { Sparkles, Layers } from 'lucide-react';
 
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+
+const HomePage: React.FC = () => {
+  const { setActiveView, setSearchParams } = useBooking();
+
+  return (
+    <main className="flex-1">
+      {/* 1. Full-Bleed Coastal Approach Hero with Editorial Headline */}
+      <Hero />
+
+      {/* 2. Floating Physical White Booking Panel Anchored Over Hero Bottom */}
+      <div
+        id="booking-engine-section"
+        className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-24 md:-mt-32 mb-16"
+      >
+        <BookingEngine />
+      </div>
+
+      {/* 3. Destination Discovery: WHERE WILL YOU GO NEXT? (Tokyo Hero + Lisbon, Dubai, Paris, Bali, NYC) */}
+      <div id="explore-section">
+        <DestinationExplorer />
+      </div>
+
+      {/* 4. Product Search Section: THE BETTER WAY TO BOOK (Editorial narrative + Live Flight Search App) */}
+      <ProductSearchSection />
+
+      {/* 5. Price Intelligence: KNOW BEFORE YOU BOOK (30-day algorithmic line chart + Good Time to Book) */}
+      <PriceIntelligence />
+
+      {/* 6. Three.js 3D Earth Globe: ONE JOURNEY. MANY MOMENTS. */}
+      <JourneyGlobe3D />
+
+      {/* 7. Product Showcase: EVERYTHING IN ITS PLACE (Floating perspective UI cards) */}
+      <DashboardShowcase />
+
+      {/* 8. Live Trip Dashboard Preview: YOUR NEXT JOURNEY */}
+      <TripDashboardSection 
+        onOpenDashboard={() => setActiveView('dashboard')}
+        onExploreFlight={(fromCode, toCode) => {
+          setSearchParams(prev => ({
+            ...prev,
+            from: { ...prev.from, code: fromCode },
+            to: { ...prev.to, code: toCode }
+          }));
+          const el = document.getElementById('booking-engine-section');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
+      />
+
+      {/* 9. Tactile Digital Boarding Pass */}
+      <DigitalBoardingPassSection 
+        onBookNow={() => {
+          const el = document.getElementById('booking-engine-section');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
+      />
+
+      {/* 10. Sensory Travel Moments: THE JOURNEY MATTERS TOO (06:42, 18:20, 23:11) */}
+      <TravelMoments />
+
+      {/* 11. Curated Smart Deals: SOME JOURNEYS ARE WORTH BOOKING EARLY */}
+      <SmartDeals />
+
+      {/* 12. Minimal Trust Statement: 1.2M+ Travelers Rely on AERIVA */}
+      <TrustStatement />
+
+      {/* 13. High-Impact Final Travel Image & CTA: WHERE WILL YOU GO NEXT? */}
+      <FinalCTA />
+
+      {/* 14. Global Warm-White Footer */}
+      <Footer />
+    </main>
+  );
+};
+
 const MainContent: React.FC = () => {
-  const { activeView, currentStep, isFlightStatusOpen, isMyTripsOpen, setActiveView, setSearchParams } = useBooking();
+  const { currentStep, isFlightStatusOpen, isMyTripsOpen } = useBooking();
   const [isFoundationOpen, setIsFoundationOpen] = React.useState(false);
   const [isComponentLibOpen, setIsComponentLibOpen] = React.useState(false);
+  const location = useLocation();
+
+  const isAppRoute = location.pathname !== '/';
 
   return (
     <div className="min-h-screen bg-cream text-ink flex flex-col selection:bg-terracotta/20 selection:text-terracotta antialiased">
       
-      {/* Global Minimal Editorial Navigation Bar */}
-      <Navbar />
+      {/* Global Minimal Editorial Navigation Bar — EXACTLY ONE HEADER AT ALL TIMES */}
+      <Navbar variant={isAppRoute ? 'app' : 'marketing'} />
 
-      {/* RENDER ACTIVE VIEW */}
-      {activeView === 'marketing' && (
-        <main className="flex-1">
-          {/* 1. Full-Bleed Coastal Approach Hero with Editorial Headline */}
-          <Hero />
-
-          {/* 2. Floating Physical White Booking Panel Anchored Over Hero Bottom */}
-          <div
-            id="booking-engine-section"
-            className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-24 md:-mt-32 mb-16"
-          >
-            <BookingEngine />
-          </div>
-
-          {/* 3. Destination Discovery: WHERE WILL YOU GO NEXT? (Tokyo Hero + Lisbon, Dubai, Paris, Bali, NYC) */}
-          <div id="explore-section">
-            <DestinationExplorer />
-          </div>
-
-          {/* 4. Product Search Section: THE BETTER WAY TO BOOK (Editorial narrative + Live Flight Search App) */}
-          <ProductSearchSection />
-
-          {/* 5. Price Intelligence: KNOW BEFORE YOU BOOK (30-day algorithmic line chart + Good Time to Book) */}
-          <PriceIntelligence />
-
-          {/* 6. Three.js 3D Earth Globe: ONE JOURNEY. MANY MOMENTS. */}
-          <JourneyGlobe3D />
-
-          {/* 7. Product Showcase: EVERYTHING IN ITS PLACE (Floating perspective UI cards) */}
-          <DashboardShowcase />
-
-          {/* 8. Live Trip Dashboard Preview: YOUR NEXT JOURNEY */}
-          <TripDashboardSection 
-            onOpenDashboard={() => setActiveView('dashboard')}
-            onExploreFlight={(fromCode, toCode) => {
-              setSearchParams(prev => ({
-                ...prev,
-                from: { ...prev.from, code: fromCode },
-                to: { ...prev.to, code: toCode }
-              }));
-              const el = document.getElementById('booking-engine-section');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-          />
-
-          {/* 9. Tactile Digital Boarding Pass */}
-          <DigitalBoardingPassSection 
-            onBookNow={() => {
-              const el = document.getElementById('booking-engine-section');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-          />
-
-          {/* 10. Sensory Travel Moments: THE JOURNEY MATTERS TOO (06:42, 18:20, 23:11) */}
-          <TravelMoments />
-
-          {/* 11. Curated Smart Deals: SOME JOURNEYS ARE WORTH BOOKING EARLY */}
-          <SmartDeals />
-
-          {/* 12. Minimal Trust Statement: 1.2M+ Travelers Rely on AERIVA */}
-          <TrustStatement />
-
-          {/* 13. High-Impact Final Travel Image & CTA: WHERE WILL YOU GO NEXT? */}
-          <FinalCTA />
-
-          {/* 14. Global Warm-White Footer */}
-          <Footer />
-        </main>
-      )}
-
-      {activeView === 'results' && (
-        <main className="flex-1 pt-20">
-          <FlightResultsApp />
-          <Footer />
-        </main>
-      )}
-
-      {activeView === 'dashboard' && (
-        <main className="flex-1 pt-20">
-          <UserDashboard />
-          <Footer />
-        </main>
-      )}
+      {/* ROUTED CONTENT */}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/flights"
+          element={
+            <main className="flex-1 pt-16 sm:pt-20">
+              <FlightResultsApp />
+              <Footer />
+            </main>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <main className="flex-1 pt-16 sm:pt-20">
+              <UserDashboard />
+              <Footer />
+            </main>
+          }
+        />
+        <Route
+          path="/trips"
+          element={
+            <main className="flex-1 pt-16 sm:pt-20">
+              <UserDashboard initialTab="my-trips" />
+              <Footer />
+            </main>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
 
       {/* FULL SCREEN SEARCH RADAR TRANSITION */}
       <SearchLoading />
